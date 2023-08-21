@@ -1,9 +1,13 @@
 |Proyecto EMMAX|
 --
 |Sebastian fernandez #1102556 (cvstian)|
+
 |Rayfel Ogando #1107535 (Rayfel)|
+
 |Avis Zucco #1104970 (arinaploplo)|
+
 |Denzel Perez #1102259 (Denzelpm)|
+
 |Guillermo Jorge	#1107266 (guillermusmax)|
 
 La tienda virtual "EMMAX" es un proyecto que tiene como objetivo crear una plataforma en línea completa y atractiva para la compra y venta de una amplia variedad de productos de la marca EMMAX. La idea central es proporcionar a los usuarios una experiencia de compra cómoda y conveniente desde la comodidad de sus hogares, mientras también ofrece a los vendedores una plataforma eficiente para llegar a un público global.
