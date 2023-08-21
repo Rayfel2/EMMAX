@@ -12,7 +12,7 @@ ASP.NET MONGODB (BACKEND)
 ANGULAR (FRONTEND)
 
 
-Azure: https://dev.azure.com/11075350752/Shop%20EMMAX
-Paleta: https://coolors.co/1c1c1c-daddd8-ecebe4-eef0f2-fafaff
-Base de datos: https://lucid.app/lucidchart/3fe31cdd-185e-4da5-ab9d-0c14b0fc9c76/edit?invitationId=inv_78a2c82a-2d1c-4b54-99c2-69e78d98a50a&page=0_0#
+- Azure: https://dev.azure.com/11075350752/Shop%20EMMAX
+- Paleta: https://coolors.co/1c1c1c-daddd8-ecebe4-eef0f2-fafaff
+- Base de datos: https://lucid.app/lucidchart/3fe31cdd-185e-4da5-ab9d-0c14b0fc9c76/edit?invitationId=inv_78a2c82a-2d1c-4b54-99c2-69e78d98a50a&page=0_0#
 
