@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "MdMlPj/0lCixeM/MZp2K6CJNKnJXx/b20kjH3jBux9udamdtALjF+GK2dNznm/NcKO5nIzpxiPHLfXL0wYAnxg==",
+  "dgSpecHash": "Mh1x2KH8cM1GOjKkdx7ETbmrA3Xc/4/R1DFwSPVHv3+iXY6XS0nfgrwoaEWuYPjTa/UUAA9mo4T50c+WGQLA3A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\avisz\\Documents\\universidad\\tendencias_desarrollo_software\\finalCore\\finalCore\\finalCore.csproj",
+  "projectFilePath": "C:\\Users\\sebastian\\Desktop\\.vs\\github\\core final seba 2\\core_seba\\backend\\finalCore\\finalCore\\finalCore.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\avisz\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.18.1\\microsoft.visualstudio.azure.containers.tools.targets.1.18.1.nupkg.sha512"
+    "C:\\Users\\sebastian\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.18.1\\microsoft.visualstudio.azure.containers.tools.targets.1.18.1.nupkg.sha512"
   ],
   "logs": []
 }
