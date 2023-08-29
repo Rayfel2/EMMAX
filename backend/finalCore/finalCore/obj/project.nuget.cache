@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "MdMlPj/0lCixeM/MZp2K6CJNKnJXx/b20kjH3jBux9udamdtALjF+GK2dNznm/NcKO5nIzpxiPHLfXL0wYAnxg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\avisz\\Documents\\universidad\\tendencias_desarrollo_software\\finalCore\\finalCore\\finalCore.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\avisz\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.18.1\\microsoft.visualstudio.azure.containers.tools.targets.1.18.1.nupkg.sha512"
+  ],
+  "logs": []
+}
