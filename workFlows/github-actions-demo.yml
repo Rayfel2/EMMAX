@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+- job: RestoreAndBuild
+  displayName: 'Restore and Build finalCore'
+  steps:
+  - checkout: self
+
+  - script: dotnet restore finalCore/finalCore/finalCore.csproj
+    displayName: 'Restore Dependencies'
+
+  - script: dotnet build --configuration Release finalCore/finalCore/finalCore.csproj
+    displayName: 'Build Project'
