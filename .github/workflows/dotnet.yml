@@ -12,8 +12,8 @@ jobs:
   steps:
   - checkout: self
 
-  - script: dotnet restore parte core/finalCore/finalCore.csproj
+  - script: dotnet restore 'parte core'/finalCore/finalCore.csproj
     displayName: 'Restore Dependencies'
 
-  - script: dotnet build --configuration Release parte core/finalCore/finalCore.csproj
+  - script: dotnet build --configuration Release 'parte core'/finalCore/finalCore.csproj
     displayName: 'Build Project'
