@@ -1,31 +1,20 @@
-name: .NET CI/CD
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
 jobs:
-  build:
+- job: RestoreAndBuild
+  displayName: 'Restore and Build finalCore'
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v2
 
-    runs-on: windows-latest
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v2
+    with:
+      dotnet-version: '6.0.x'
 
-    steps:
-    - uses: actions/checkout@v2
+  - name: Restore dependencies
+    run: dotnet restore backend/"Parte Core"/finalCore/finalCore.csproj
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '6.0.x'
+  - name: Build
+    run: dotnet build --configuration Release backend/"Parte Core"/finalCore/finalCore.csproj
 
-    - name: Restore dependencies
-      run: dotnet restore ../backend/Parte Core/finalCore/finalCore.csproj
-
-    - name: Build
-      run: dotnet build --configuration Release ../backend/Parte Core/finalCore/finalCore.csproj
-
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+  - name: Test
+    run: dotnet test --no-build --verbosity normal
