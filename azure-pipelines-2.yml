@@ -1,0 +1,23 @@
+trigger:
+- main
+
+pr: none  # Evita que se active en las solicitudes de extracción
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+- job: BuildAndTest
+  displayName: 'Build and Test finalCore'
+  steps:
+  - checkout: self
+
+  - script: dotnet restore finalCore/finalCore/finalCore.csproj
+    displayName: 'Restore Dependencies'
+
+  - script: dotnet build --configuration Release finalCore/finalCore/finalCore.csproj
+    displayName: 'Build Project'
+
+  - script: dotnet test --configuration Release --no-build finalCore/finalCore/finalCore.csproj
+    displayName: 'Run Tests'
+
