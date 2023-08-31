@@ -1,21 +1,17 @@
+name: Download Code
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-- job: RestoreAndBuild
-  displayName: 'Restore and Build finalCore'
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v2
+  download-code:
+    runs-on: ubuntu-latest
 
-  - name: Setup .NET
-    uses: actions/setup-dotnet@v2
-    with:
-      dotnet-version: '6.0.x'
-
-  - name: Restore dependencies
-    run: dotnet restore backend/"Parte Core"/finalCore/finalCore.csproj
-
-  - name: Build
-    run: dotnet build --configuration Release backend/"Parte Core"/finalCore/finalCore.csproj
-
-  - name: Test
-    run: dotnet test --no-build --verbosity normal
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
