@@ -1,19 +1,31 @@
-trigger:
-- main
+name: .NET CI/CD
 
-pr: none
-
-pool:
-  vmImage: 'windows-latest'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-- job: RestoreAndBuild
-  displayName: 'Restore and Build finalCore'
-  steps:
-  - checkout: self
+  build:
 
-  - script: dotnet restore backend/'parte core'/finalCore/finalCore.csproj
-    displayName: 'Restore Dependencies'
+    runs-on: windows-latest
 
-  - script: dotnet build --configuration Release backend/'parte core'/finalCore/finalCore.csproj
-    displayName: 'Build Project'
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore backend/parte core/finalCore/finalCore.csproj
+
+    - name: Build
+      run: dotnet build --configuration Release backend/parte core/finalCore/finalCore.csproj
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
