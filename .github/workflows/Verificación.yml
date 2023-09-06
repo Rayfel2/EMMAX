@@ -22,7 +22,7 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore backend/"Parte Core"/finalCore/finalCore.csproj
+      run: dotnet restore backend/"Core"/finalCore/finalCore.csproj
 
     - name: Build
       run: dotnet build --configuration Release backend/"Core"/finalCore/finalCore.csproj
