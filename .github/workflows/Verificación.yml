@@ -22,10 +22,10 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore BackEnd/Core/finalCore/finalCore.csproj
+      run: dotnet restore Backend/Core/finalCore/finalCore.csproj
 
     - name: Build
-      run: dotnet build --configuration Release BackEnd/Core/finalCore/finalCore.csproj
+      run: dotnet build --configuration Release Backend/Core/finalCore/finalCore.csproj
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal BackEnd/Core/finalCore/finalCore.csproj
+      run: dotnet test --no-build --verbosity normal Backend/Core/finalCore/finalCore.csproj
