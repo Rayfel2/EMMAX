@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore backend/"Parte Core"/finalCore/finalCore.csproj
 
     - name: Build
-      run: dotnet build --configuration Release backend/"Parte Core"/finalCore/finalCore.csproj
+      run: dotnet build --configuration Release backend/"Core"/finalCore/finalCore.csproj
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal backend/"Parte Core"/finalCore/finalCore.csproj
+      run: dotnet test --no-build --verbosity normal backend/"Core"/finalCore/finalCore.csproj
