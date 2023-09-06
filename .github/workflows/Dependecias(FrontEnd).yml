@@ -24,4 +24,4 @@ jobs:
 
     - name: Instalación de Dependencias
       run: npm install
-      working-directory: App
+      working-directory: FrontEnd/App
