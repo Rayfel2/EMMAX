@@ -17,10 +17,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '14'  # Especifica la versión de Node.js que necesitas
-    - name: Configuración de entorno
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'  # Especifica la versión de Node.js que necesitas
 
     - name: Instalación de Dependencias
       run: npm install
