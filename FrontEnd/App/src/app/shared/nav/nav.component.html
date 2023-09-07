@@ -1,0 +1,22 @@
+<nav bg-black text-white> <!--No funciona estos styles-->
+<ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" routerLink="/inicio">Inicio</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Quienes somos? </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Contactanos</a>
+    </li>
+    <li *ngIf="!userLoginOn" class="nav-item">
+        <button type="button" class="btn btn-success " routerLink="/iniciar-sesion">Iniciar sesión</button>
+
+    </li>
+
+    <li *ngIf="userLoginOn" class="nav-item">
+        <button type="button" class="btn btn-danger"  routerLink="/inicio">Cerrar sesión</button>
+    <!--  <a class="nav-link disabled" aria-disabled="true">Iniciar seccion</a> -->
+    </li>
+  </ul>
+</nav>
