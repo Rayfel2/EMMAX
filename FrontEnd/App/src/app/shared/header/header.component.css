@@ -1,0 +1,22 @@
+a {
+    color: #c4c4c4;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: #c4c4c4;
+    text-decoration: none;
+  }
+
+  .iconos{
+    margin-left:7px;
+  }
+  .icono-grupo{
+    margin-left:30px;
+  }
+
+  .custom-search {
+    max-width: 37em; /* Define el ancho máximo que desees */
+    margin: 0 auto; /* Centra horizontalmente el contenedor */
+  }
+  

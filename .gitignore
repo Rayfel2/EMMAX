@@ -1,0 +1,8 @@
+# Archivos y directorios generados
+node_modules/
+build/
+dist/
+
+# Archivos sensibles (se recomienda no incluir credenciales)
+.env
+.env.local

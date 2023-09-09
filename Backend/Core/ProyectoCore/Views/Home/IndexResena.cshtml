@@ -1,0 +1,52 @@
+﻿@model List<ProyectoCore.Models.Reseña>
+@{
+
+    ViewData["Title"] = "Resena";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Resena</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Lista de resenas</h5>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" asp-action="Resena_Detalle" asp-controller="Home" asp-route-idResena="0">Crear Nuevo</a>
+        <hr />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>valor resena</th>
+                    <th>Usuario</th>
+                    <th>Producto</th>
+                    <th>comentario</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ValorReseña</td>
+                        <td>@item.oUsuario?.NombreUsuario</td>
+                        <td>@item.oProducto?.Nombre</td>
+                        <td>@item.Comentario</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm " asp-action="Resena_Detalle" asp-controller="Home" asp-route-idResena="@item.IdReseña"> Editar</a>
+                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_Resena" asp-controller="Home" asp-route-idResena="@item.IdReseña"> Eliminar</a>
+                        </td>
+                    </tr>
+
+
+
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
