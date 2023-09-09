@@ -1,0 +1,47 @@
+﻿@model ProyectoCore.Models.CarritoProducto
+@{
+    ViewData["Title"] = "Eliminar_CarritoProducto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="text-danger"> ¿Esta seguro de eliminar el CarritoProducto?</h3>
+<hr />
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="Eliminar_CarritoProducto" asp-controller="Home" method="post">
+            <input type="hidden" asp-for="IdCarrito" />
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IdCarrito">IDCarrito</label>
+                <input class="form-control form-control-sm" asp-for="oCarrito.IdUsuario" type="text" disabled />
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" asp-for="IdProducto">Producto</label>
+                <input class="form-control form-control-sm" asp-for="oProducto.Nombre" type="text" disabled />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="Cantidad">Cantidad</label>
+                <input class="form-control form-control-sm" asp-for="Cantidad" type="text" disabled />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="Precio">Precio</label>
+                <input class="form-control form-control-sm" asp-for="Precio" type="text" disabled />
+            </div>
+
+            <div class="mb-2">
+
+                <button class="btn btn-danger btn-sm w-25" type="submit">Eliminar</button>
+                <a class="btn btn-dark btn-sm" asp-action="IndexCarritoProducto" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
