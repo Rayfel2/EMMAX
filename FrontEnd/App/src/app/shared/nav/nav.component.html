@@ -1,4 +1,4 @@
-<nav bg-black text-white> <!--No funciona estos styles-->
+<!-- <nav bg-black text-white> 
 <ul class="nav nav-pills">
     <li class="nav-item">
       <a class="nav-link active" aria-current="page" routerLink="/inicio">Inicio</a>
@@ -16,7 +16,18 @@
 
     <li *ngIf="userLoginOn" class="nav-item">
         <button (click)="logout()" type="button" class="btn btn-danger"  routerLink="/inicio">Cerrar sesión</button>
-    <!--  <a class="nav-link disabled" aria-disabled="true">Iniciar seccion</a> -->
+
     </li>
   </ul>
+</nav>
+-->
+
+<nav id="navbar" class="navbar order-last order-lg-0">
+  <ul>
+    <li><a href="index.html" class="active">Inicio</a></li>
+    <li><a href="services.html">Sobre Nosotros</a></li>
+    <li><a href="portfolio.html">Contactanos</a></li>
+
+  </ul>
+  <i class="bi bi-list mobile-nav-toggle"></i>
 </nav>
