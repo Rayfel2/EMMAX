@@ -15,7 +15,7 @@
     </li>
 
     <li *ngIf="userLoginOn" class="nav-item">
-        <button type="button" class="btn btn-danger"  routerLink="/inicio">Cerrar sesión</button>
+        <button (click)="logout()" type="button" class="btn btn-danger"  routerLink="/inicio">Cerrar sesión</button>
     <!--  <a class="nav-link disabled" aria-disabled="true">Iniciar seccion</a> -->
     </li>
   </ul>

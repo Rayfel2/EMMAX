@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoginService } from 'src/app/services/auth/login.service';
+import { LoginRequest } from 'src/app/services/auth/loginRequest';
 
 @Component({
   selector: 'app-login',
@@ -8,11 +10,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent { 
+  loginError: string = "";
   loginForm=this.fb.group({
 email: ['rayfelogando@gmail.com', [Validators.required, Validators.email]],
 password: ['', [Validators.required]],
   })
-  constructor(private fb: FormBuilder, private router: Router) { }
+  constructor(private fb: FormBuilder, private router: Router, private LoginService: LoginService) { }
 
   get email(){
     return this.loginForm.controls.email;
@@ -23,9 +26,21 @@ password: ['', [Validators.required]],
 
   login(){
     if (this.loginForm.valid){
-      console.log("aqui se llamaria al servicio de login");
-      this.router.navigateByUrl('/inicio');
-      this.loginForm.reset();
+      this.LoginService.login(this.loginForm.value as LoginRequest).subscribe({
+        next: (userData) => {
+          console.log(userData);
+        },
+        error: (errorData) => {
+          console.error(errorData);
+          this.loginError= errorData;
+        },
+        complete: () => {
+          console.info("Login hecho exitosamente");
+          this.router.navigateByUrl('/perfil');
+          this.loginForm.reset();
+        }
+      })
+
     } else {
       this.loginForm.markAllAsTouched();
       alert ("error al ingresar los datos");
