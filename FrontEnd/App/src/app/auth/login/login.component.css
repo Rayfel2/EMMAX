@@ -17,7 +17,7 @@ form{
    
    .user-label {
     position: absolute;
-    color: #e8e8e8;
+    color: #1a1010;
     pointer-events: none;
     transform: translateY(1rem) translateX(1rem);
     transition: 150ms cubic-bezier(0.4,0,0.2,1);
