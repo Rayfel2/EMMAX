@@ -17,7 +17,7 @@ public partial class Recibo
 
     public string? Campo { get; set; }
 
-    public virtual Carrito? IdCarritoNavigation { get; set; }
+    public virtual Carrito? oCarrito { get; set; }
 
-    public virtual MetodoPago? IdMetodoPagoNavigation { get; set; }
+    public virtual MetodoPago? oMetodoPago { get; set; }
 }

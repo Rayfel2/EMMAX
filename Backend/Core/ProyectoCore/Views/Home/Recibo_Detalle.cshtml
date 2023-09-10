@@ -1,0 +1,71 @@
+﻿@model ProyectoCore.Models.ViewModels.ReciboVM
+@{
+    ViewData["Title"] = "Recibo_Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.oRecibo.IdRecibo == 0)
+{
+
+    <h1>Crear Recibo</h1>
+}
+else
+{
+    <h1>Editar Recibo</h1>
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="Recibo_Detalle" asp-controller="Home" method="post">
+            <input type="hidden" asp-for="oRecibo.IdRecibo" />
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oRecibo.IdMetodoPago">Metodo de pago</label>
+                <select class="form-select form-select-sm" asp-for="oRecibo.IdMetodoPago" asp-items="@Model.oListaMetodoPago">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oRecibo.IdCarrito">Id carrito</label>
+                <select class="form-select form-select-sm" asp-for="oRecibo.IdCarrito" asp-items="@Model.oListaCarrito">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oRecibo.Subtotal">Subtotal</label>
+                <input class="form-control form-control-sm" asp-for="oRecibo.Subtotal" type="text" />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oRecibo.Impuestos">Impuestos</label>
+                <input class="form-control form-control-sm" asp-for="oRecibo.Impuestos" type="text" />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oRecibo.Campo">Campo</label>
+                <input class="form-control form-control-sm" asp-for="oRecibo.Campo" type="text" />
+            </div>
+
+            <div class="mb-2">
+
+                @if (Model.oRecibo.IdRecibo == 0)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Actualizar</button>
+
+                }
+                <a class="btn btn-dark btn-sm" asp-action="IndexRecibo" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

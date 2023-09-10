@@ -13,7 +13,7 @@ public partial class CarritoProducto
 
     public double? Precio { get; set; }
 
-    public virtual Carrito IdCarritoNavigation { get; set; } = null!;
+    public virtual Carrito oCarrito { get; set; } = null!;
 
-    public virtual Producto IdProductoNavigation { get; set; } = null!;
+    public virtual Producto oProducto { get; set; } = null!;
 }

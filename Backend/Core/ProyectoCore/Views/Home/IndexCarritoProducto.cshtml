@@ -1,0 +1,55 @@
+﻿@model List<ProyectoCore.Models.CarritoProducto>
+@{
+
+    ViewData["Title"] = "CarritoProducto";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Carrito Producto</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Lista de Carrito Producto</h5>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="0">Crear Nuevo</a>
+        <hr />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>idCarrito</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.oCarrito.IdCarrito</td>
+                        <td>@item.oProducto.Nombre</td>
+                        <td>@item.Cantidad</td>
+                        <td>@item.Precio</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm " asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Editar</a>
+                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_CarritoProducto" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Eliminar</a>
+                        </td>
+                    </tr>
+
+
+
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+
+

@@ -48,7 +48,7 @@ public partial class TiendaPruebaContext : DbContext
             entity.Property(e => e.IdCarrito).HasColumnName("Id_carrito");
             entity.Property(e => e.IdUsuario).HasColumnName("Id_Usuario");
 
-            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Carritos)
+            entity.HasOne(d => d.oUsuario).WithMany(p => p.Carritos)
                 .HasForeignKey(d => d.IdUsuario)
                 .HasConstraintName("FK__Carrito__Id_Usua__4316F928");
         });
@@ -64,12 +64,12 @@ public partial class TiendaPruebaContext : DbContext
                 .HasColumnName("Id_carrito");
             entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
 
-            entity.HasOne(d => d.IdCarritoNavigation).WithMany(p => p.CarritoProductos)
+            entity.HasOne(d => d.oCarrito).WithMany(p => p.CarritoProductos)
                 .HasForeignKey(d => d.IdCarrito)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Carrito_p__Id_ca__4CA06362");
 
-            entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.CarritoProductos)
+            entity.HasOne(d => d.oProducto).WithMany(p => p.CarritoProductos)
                 .HasForeignKey(d => d.IdProducto)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Carrito_p__Id_pr__4D94879B");
@@ -97,7 +97,7 @@ public partial class TiendaPruebaContext : DbContext
             entity.Property(e => e.IdLista).HasColumnName("Id_Lista");
             entity.Property(e => e.IdUsuario).HasColumnName("Id_Usuario");
 
-            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.ListaDeseos)
+            entity.HasOne(d => d.oUsuario).WithMany(p => p.ListaDeseos)
                 .HasForeignKey(d => d.IdUsuario)
                 .HasConstraintName("FK__Lista_des__Id_Us__5070F446");
 
@@ -168,11 +168,11 @@ public partial class TiendaPruebaContext : DbContext
             entity.Property(e => e.Impuestos).HasColumnName("impuestos");
             entity.Property(e => e.Subtotal).HasColumnName("subtotal");
 
-            entity.HasOne(d => d.IdCarritoNavigation).WithMany(p => p.Recibos)
+            entity.HasOne(d => d.oCarrito).WithMany(p => p.Recibos)
                 .HasForeignKey(d => d.IdCarrito)
                 .HasConstraintName("FK__Recibo__Id_Carri__46E78A0C");
 
-            entity.HasOne(d => d.IdMetodoPagoNavigation).WithMany(p => p.Recibos)
+            entity.HasOne(d => d.oMetodoPago).WithMany(p => p.Recibos)
                 .HasForeignKey(d => d.IdMetodoPago)
                 .HasConstraintName("FK__Recibo__Id_metod__45F365D3");
         });

@@ -1,0 +1,46 @@
+﻿@model List<ProyectoCore.Models.MetodoPago>
+@{
+
+    ViewData["Title"] = "Metodo de pago";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Metodo de pago</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Lista de metodos de pago</h5>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" asp-action="MetodoPago_Detalle" asp-controller="Home" asp-route-idMetodoPago="0">Crear Nuevo</a>
+        <hr />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tipo de metodo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TipoMetodo</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm " asp-action="MetodoPago_Detalle" asp-controller="Home" asp-route-idMetodoPago="@item.IdMetodo"> Editar</a>
+                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_MetodoPago" asp-controller="Home" asp-route-idMetodoPago="@item.IdMetodo"> Eliminar</a>
+                        </td>
+                    </tr>
+
+
+
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
