@@ -9,7 +9,7 @@ public partial class ListaDeseo
 
     public int? IdUsuario { get; set; }
 
-    public virtual Usuario? IdUsuarioNavigation { get; set; }
+    public virtual Usuario? oUsuario { get; set; }
 
     public virtual ICollection<Producto> IdProductos { get; set; } = new List<Producto>();
 }

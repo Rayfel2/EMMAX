@@ -1,0 +1,48 @@
+﻿@model ProyectoCore.Models.ViewModels.RoleVM
+@{
+    ViewData["Title"] = "Role_Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.oRole.IdRoles == 0)
+{
+
+    <h1>Crear Role</h1>
+}
+else
+{
+    <h1>Editar Role</h1>
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="Role_Detalle" asp-controller="Home" method="post">
+            <input type="hidden" asp-for="oRole.IdRoles" />
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oRole.Rol">Rol</label>
+                <input class="form-control form-control-sm" asp-for="oRole.Rol" type="text" />
+            </div>
+
+            <div class="mb-2">
+
+                @if (Model.oRole.IdRoles == 0)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Actualizar</button>
+
+                }
+                <a class="btn btn-dark btn-sm" asp-action="IndexRole" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+

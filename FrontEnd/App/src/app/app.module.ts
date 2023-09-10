@@ -11,6 +11,12 @@ import { NavComponent } from './shared/nav/nav.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { AboutComponent } from './pages/about/about.component';
+import { ShopComponent } from './pages/shop/shop.component';
+import { CarComponent } from './pages/car/car.component';
+import { ListComponent } from './pages/list/list.component';
+import { RegisterComponent } from './auth/register/register.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +27,12 @@ import { ProfileComponent } from './pages/profile/profile.component';
     LoginComponent,
     NavComponent,
     ProfileComponent,
+    ContactComponent,
+    AboutComponent,
+    ShopComponent,
+    CarComponent,
+    ListComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

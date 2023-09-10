@@ -12,7 +12,7 @@ import { LoginRequest } from 'src/app/services/auth/loginRequest';
 export class LoginComponent { 
   loginError: string = "";
   loginForm=this.fb.group({
-email: [ '', [Validators.required, Validators.email]],
+email: ['rayfelogando@gmail.com', [Validators.required, Validators.email]],
 password: ['', [Validators.required]],
   })
   constructor(private fb: FormBuilder, private router: Router, private LoginService: LoginService) { }
