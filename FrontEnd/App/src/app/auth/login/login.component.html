@@ -1,9 +1,10 @@
 <form [formGroup]="loginForm">
   <p class ="text-danger">{{loginError}}</p>
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Email address</label>
-      <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-      <div *ngIf="email.invalid && (email.dirty || email.touched)"
+    <div class="mb-3 input-group">
+      <input required = "" formControlName="email" type="email" class="form-control input" id="exampleInputEmail1" aria-describedby="emailHelp">
+      <label for="exampleInputEmail1" class="form-label user-label">Email address</label>
+    </div>
+    <div *ngIf="email.invalid && (email.dirty || email.touched)"
     class="text-danger">
 
   <div *ngIf="email.errors?.['required']">
@@ -14,21 +15,22 @@
   </div>
 
 </div>
-      <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> 
+<br>
+    <div class="mb-3 input-group">
+      <input required = "" formControlName="password" type="password" class="form-control input" id="exampleInputPassword1">
+      <label for="exampleInputPassword1" class="form-label user-label">Password</label>
     </div>
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Password</label>
-      <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
-      <div *ngIf="password.invalid && (password.dirty || password.touched)"
-      class="text-danger">
-      <div *ngIf="password.errors?.['required']">
-        Contraseña es requerida
-      </div>
-      </div>
+    <div *ngIf="password.invalid && (password.dirty || password.touched)"
+    class="text-danger">
+    <div *ngIf="password.errors?.['required']">
+      Contraseña es requerida
     </div>
+    </div>
+    
+    
     <div class="mb-3 form-check">
       <input type="checkbox" class="form-check-input" id="exampleCheck1">
-      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+      <span class="form-check-label" for="exampleCheck1">Check me out</span>
     </div>
     <button (click)="login()" type="submit" class="btn btn-primary">Submit</button>
   </form>
