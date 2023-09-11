@@ -14,7 +14,7 @@ var appsettings = builder.Configuration.GetConnectionString("cadenaSQL"); // est
 
 
 builder.Services.AddDbContext<TiendaPruebaContext>(options =>
-    options.UseSqlServer(env)
+    options.UseSqlServer(env) // en este caso usamos la varaibles de entorno
 );
 
 
