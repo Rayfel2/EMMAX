@@ -11,15 +11,16 @@
 
         <form asp-action="Eliminar_CarritoProducto" asp-controller="Home" method="post">
             <input type="hidden" asp-for="IdCarrito" />
+            <input type="hidden" asp-for="IdProducto" />
 
             <div class="mb-3">
                 <label class="form-label" asp-for="IdCarrito">IDCarrito</label>
-                <input class="form-control form-control-sm" asp-for="oCarrito.IdUsuario" type="text" disabled />
+                <input class="form-control form-control-sm" asp-for="oCarrito.IdCarrito" type="text" disabled />
             </div>
             
             <div class="mb-3">
                 <label class="form-label" asp-for="IdProducto">Producto</label>
-                <input class="form-control form-control-sm" asp-for="oProducto.Nombre" type="text" disabled />
+                <input class="form-control form-control-sm" asp-for="oProducto.IdProducto" type="text" disabled />
             </div>
 
             <div class="mb-2">

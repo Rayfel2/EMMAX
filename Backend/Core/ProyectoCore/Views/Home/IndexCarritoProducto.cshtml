@@ -15,12 +15,12 @@
     </div>
     <div class="card-body">
         <a class="btn btn-success btn-sm" asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="0">Crear Nuevo</a>
-        <hr />
+        <hr/>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>idCarrito</th>
-                    <th>Producto</th>
+                    <th>idProducto</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
                     <th></th>
@@ -31,12 +31,12 @@
                 {
                     <tr>
                         <td>@item.oCarrito.IdCarrito</td>
-                        <td>@item.oProducto.Nombre</td>
+                        <td>@item.oProducto.IdProducto</td>
                         <td>@item.Cantidad</td>
                         <td>@item.Precio</td>
                         <td>
-                            <a class="btn btn-primary btn-sm " asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Editar</a>
-                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_CarritoProducto" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Eliminar</a>
+                            <a class="btn btn-primary btn-sm " asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarrito="@item.IdCarrito" asp-route-idProducto="@item.IdProducto"> Editar</a>
+                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_CarritoProducto" asp-controller="Home" asp-route-idCarrito="@item.IdCarrito" asp-route-idProducto="@item.IdProducto"> Eliminar</a>
                         </td>
                     </tr>
 

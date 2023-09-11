@@ -16,4 +16,5 @@ public partial class CarritoProducto
     public virtual Carrito oCarrito { get; set; } = null!;
 
     public virtual Producto oProducto { get; set; } = null!;
+
 }

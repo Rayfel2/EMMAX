@@ -451,7 +451,9 @@ namespace ProyectoCore.Controllers
         {
             if (oUsuarioVM.oUsuario.IdUsuario == 0)
             {
+                
                 _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
+                //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
             }
             else
             {
@@ -493,7 +495,7 @@ namespace ProyectoCore.Controllers
 
 
         [HttpGet]
-        public IActionResult CarritoProducto_Detalle(int idCarritoProducto)
+        public IActionResult CarritoProducto_Detalle(int idCarrito, int idProducto)
         {
             CarritoProductoVM oCarritoProductoVM = new CarritoProductoVM()
             {
@@ -506,15 +508,19 @@ namespace ProyectoCore.Controllers
 
                 oListaProducto = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
                 {
-                    Text = Producto.Nombre,
+                    Text = Producto.IdProducto.ToString(),
                     Value = Producto.IdProducto.ToString()
                 }).ToList(),
 
-            };
-
-            if (idCarritoProducto != 0)
+            };     
+            var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+        .FirstOrDefault(cp => cp.IdCarrito == idCarrito
+                            && cp.IdProducto == idProducto);
+            ViewBag.ExistingCarritoProducto = existingCarritoProducto;
+            if (idCarrito != 0 && idProducto != 0 )
             {
-                oCarritoProductoVM.oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Find(idCarritoProducto);
+                
+                oCarritoProductoVM.oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Find(idCarrito, idProducto);
 
             }
 
@@ -524,26 +530,42 @@ namespace ProyectoCore.Controllers
         [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
-            if (oCarritoProductoVM.oCarritoProducto.IdCarrito == 0)
+            var carrito = oCarritoProductoVM.oCarritoProducto.IdCarrito;
+            var producto = oCarritoProductoVM.oCarritoProducto.IdProducto;
+
+            var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+        .FirstOrDefault(cp => cp.IdCarrito == carrito
+                            && cp.IdProducto == producto);
+
+            if (existingCarritoProducto == null)
             {
+                
                 _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
+                
             }
             else
             {
-                _TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio; 
+                existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
+                // Actualiza otras propiedades según sea necesario
+                _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.SaveChanges();
             }
 
-
+            
             _TiendaPruebaContext.SaveChanges();
 
             return RedirectToAction("IndexCarritoProducto", "Home");
         }
 
         [HttpGet]
-        public IActionResult Eliminar_CarritoProducto(int idCarritoProducto)
+        public IActionResult Eliminar_CarritoProducto(int idCarrito, int idProducto)
         {
-            CarritoProducto oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).Where(e => e.IdCarrito == idCarritoProducto).FirstOrDefault();
 
+  
+            CarritoProducto oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).Where(e => e.IdCarrito == idCarrito && e.IdProducto == idProducto ).FirstOrDefault();
+            
             return View(oCarritoProducto);
         }
 
