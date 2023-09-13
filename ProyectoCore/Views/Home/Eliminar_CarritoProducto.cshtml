@@ -11,15 +11,27 @@
 
         <form asp-action="Eliminar_CarritoProducto" asp-controller="Home" method="post">
             <input type="hidden" asp-for="IdCarrito" />
+<<<<<<< HEAD:ProyectoCore/Views/Home/Eliminar_CarritoProducto.cshtml
 
             <div class="mb-3">
                 <label class="form-label" asp-for="IdCarrito">IDCarrito</label>
                 <input class="form-control form-control-sm" asp-for="oCarrito.IdUsuario" type="text" disabled />
+=======
+            <input type="hidden" asp-for="IdProducto" />
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IdCarrito">IDCarrito</label>
+                <input class="form-control form-control-sm" asp-for="oCarrito.IdCarrito" type="text" disabled />
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/Eliminar_CarritoProducto.cshtml
             </div>
             
             <div class="mb-3">
                 <label class="form-label" asp-for="IdProducto">Producto</label>
+<<<<<<< HEAD:ProyectoCore/Views/Home/Eliminar_CarritoProducto.cshtml
                 <input class="form-control form-control-sm" asp-for="oProducto.Nombre" type="text" disabled />
+=======
+                <input class="form-control form-control-sm" asp-for="oProducto.IdProducto" type="text" disabled />
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/Eliminar_CarritoProducto.cshtml
             </div>
 
             <div class="mb-2">

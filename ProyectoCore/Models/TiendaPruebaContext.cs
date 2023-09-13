@@ -60,7 +60,7 @@ public partial class TiendaPruebaContext : DbContext
             entity.ToTable("Carrito_productos");
 
             entity.Property(e => e.IdCarrito)
-                .ValueGeneratedOnAdd()
+                //.ValueGeneratedOnAdd()
                 .HasColumnName("Id_carrito");
             entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
 

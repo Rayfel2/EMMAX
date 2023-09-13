@@ -15,12 +15,20 @@
     </div>
     <div class="card-body">
         <a class="btn btn-success btn-sm" asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="0">Crear Nuevo</a>
+<<<<<<< HEAD:ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
         <hr />
+=======
+        <hr/>
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>idCarrito</th>
+<<<<<<< HEAD:ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
                     <th>Producto</th>
+=======
+                    <th>idProducto</th>
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
                     <th>Cantidad</th>
                     <th>Precio</th>
                     <th></th>
@@ -31,12 +39,21 @@
                 {
                     <tr>
                         <td>@item.oCarrito.IdCarrito</td>
+<<<<<<< HEAD:ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
                         <td>@item.oProducto.Nombre</td>
                         <td>@item.Cantidad</td>
                         <td>@item.Precio</td>
                         <td>
                             <a class="btn btn-primary btn-sm " asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Editar</a>
                             <a class="btn btn-danger btn-sm " asp-action="Eliminar_CarritoProducto" asp-controller="Home" asp-route-idCarritoProducto="@item.IdCarrito"> Eliminar</a>
+=======
+                        <td>@item.oProducto.IdProducto</td>
+                        <td>@item.Cantidad</td>
+                        <td>@item.Precio</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm " asp-action="CarritoProducto_Detalle" asp-controller="Home" asp-route-idCarrito="@item.IdCarrito" asp-route-idProducto="@item.IdProducto"> Editar</a>
+                            <a class="btn btn-danger btn-sm " asp-action="Eliminar_CarritoProducto" asp-controller="Home" asp-route-idCarrito="@item.IdCarrito" asp-route-idProducto="@item.IdProducto"> Eliminar</a>
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/IndexCarritoProducto.cshtml
                         </td>
                     </tr>
 

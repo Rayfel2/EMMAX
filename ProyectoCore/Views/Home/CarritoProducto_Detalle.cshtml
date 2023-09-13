@@ -4,7 +4,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<<<<<<< HEAD:ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
 @if (Model.oCarritoProducto.IdCarrito == 0)
+=======
+
+
+@if (ViewBag.existingCarritoProducto == null)
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
 {
 
     <h1>Crear CarritoProducto</h1>
@@ -19,7 +25,10 @@ else
     <div class="col-sm-4">
 
         <form asp-action="CarritoProducto_Detalle" asp-controller="Home" method="post">
+<<<<<<< HEAD:ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
             <input type="hidden" asp-for="oCarritoProducto.IdCarrito" />
+=======
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
 
             <div class="mb-3">
                 <label class="form-label" asp-for="oCarritoProducto.IdCarrito">idCarrito</label>
@@ -47,7 +56,11 @@ else
 
             <div class="mb-2">
 
+<<<<<<< HEAD:ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
                 @if (Model.oCarritoProducto.IdCarrito == 0)
+=======
+                @if (ViewBag.existingCarritoProducto == null)
+>>>>>>> 41d7c60235fdb8ff0cabafcdbdd1b70dd2eabb63:Backend/Core/ProyectoCore/Views/Home/CarritoProducto_Detalle.cshtml
                 {
                     <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
                 }
