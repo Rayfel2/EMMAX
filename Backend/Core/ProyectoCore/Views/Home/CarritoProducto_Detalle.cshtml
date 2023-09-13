@@ -1,0 +1,69 @@
+﻿@model ProyectoCore.Models.ViewModels.CarritoProductoVM
+@{
+    ViewData["Title"] = "CarritoProducto_Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@if (ViewBag.existingCarritoProducto == null)
+{
+
+    <h1>Crear CarritoProducto</h1>
+}
+else
+{
+    <h1>Editar CarritoProducto</h1>
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="CarritoProducto_Detalle" asp-controller="Home" method="post">
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oCarritoProducto.IdCarrito">idCarrito</label>
+                <select class="form-select form-select-sm" asp-for="oCarritoProducto.IdCarrito" asp-items="@Model.oListaCarrito">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oCarritoProducto.IdProducto">Producto</label>
+                <select class="form-select form-select-sm" asp-for="oCarritoProducto.IdProducto" asp-items="@Model.oListaProducto">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oCarritoProducto.Cantidad">Cantidad</label>
+                <input class="form-control form-control-sm" asp-for="oCarritoProducto.Cantidad" type="text" />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label" asp-for="oCarritoProducto.Precio">Precio</label>
+                <input class="form-control form-control-sm" asp-for="oCarritoProducto.Precio" type="text" />
+            </div>
+
+            <div class="mb-2">
+
+                @if (ViewBag.existingCarritoProducto == null)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Actualizar</button>
+
+                }
+                <a class="btn btn-dark btn-sm" asp-action="IndexCarritoProducto" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+

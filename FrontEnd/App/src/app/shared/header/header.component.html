@@ -1,0 +1,25 @@
+<header class="bg-black text-white">
+            <div class="container d-flex align-items-center">
+
+                <h1 class="logo me-auto"><a href="inicio">EMMAX</a></h1>
+
+   
+
+                <app-nav></app-nav>
+              
+                
+                <div class="header-logic-links d-flex">
+
+                    <div class="barra-separadora "></div>
+                    <a *ngIf="userLoginOn" routerLink="/carrito" class="icono-grupo"><i class="fas fa-shopping-cart"></i></a>
+                    <a *ngIf="userLoginOn"  routerLink="/deseos" class="iconos"><i class="fas fa-heart"></i></a>
+                    <a *ngIf="userLoginOn" routerLink="/perfil" class="iconos"><i class="fas fa-user"></i></a>
+                    <a  *ngIf="userLoginOn"  (click)="logout()"  class="iconos"><i class="fas fa-sign-out-alt"></i></a>
+                    <button *ngIf="!userLoginOn" type="button" class="btn btn-success icono-grupo" routerLink="/iniciar-sesion">Iniciar sesión</button>
+
+                    <!--  <a class="nav-link disabled" aria-disabled="true">Iniciar seccion</a> -->
+
+                  </div>
+            </div>
+  
+</header>

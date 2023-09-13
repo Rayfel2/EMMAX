@@ -1,0 +1,37 @@
+<form [formGroup]="loginForm">
+  <h1 class="center">Iniciar Seccion</h1>
+  <p class ="text-danger">{{loginError}}</p>
+    <div class="mb-3 input-group">
+      <input required = "" formControlName="email" type="email" class="form-control input" id="exampleInputEmail1" aria-describedby="emailHelp">
+      <label for="exampleInputEmail1" class="form-label user-label">Email address</label>
+    </div>
+    <div *ngIf="email.invalid && (email.dirty || email.touched)"
+    class="text-danger">
+
+  <div *ngIf="email.errors?.['required']">
+    Email es requerido
+  </div>
+  <div *ngIf="email.errors?.['email']">
+    Email debe tener un formato valido
+  </div>
+
+</div>
+<br>
+    <div class="mb-3 input-group">
+      <input required = "" formControlName="password" type="password" class="form-control input" id="exampleInputPassword1">
+      <label for="exampleInputPassword1" class="form-label user-label">Password</label>
+    </div>
+    <div *ngIf="password.invalid && (password.dirty || password.touched)"
+    class="text-danger">
+    <div *ngIf="password.errors?.['required']">
+      Contraseña es requerida
+    </div>
+    </div>
+    
+    
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+      <span class="form-check-label" for="exampleCheck1">Check me out</span>
+    </div>
+    <button (click)="login()" type="submit" class="btn btn-primary">Submit</button>
+  </form>

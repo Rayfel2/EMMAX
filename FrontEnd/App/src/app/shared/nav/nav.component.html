@@ -1,0 +1,44 @@
+<!-- <nav bg-black text-white> 
+<ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" routerLink="/inicio">Inicio</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Quienes somos? </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Contactanos</a>
+    </li>
+    <li *ngIf="!userLoginOn" class="nav-item">
+        <button type="button" class="btn btn-success " routerLink="/iniciar-sesion">Iniciar sesión</button>
+
+    </li>
+
+    <li *ngIf="userLoginOn" class="nav-item">
+        <button (click)="logout()" type="button" class="btn btn-danger"  routerLink="/inicio">Cerrar sesión</button>
+
+    </li>
+  </ul>
+</nav>
+-->
+<div class="input-group custom-search">
+  <input type="text" class="form-control" placeholder="Buscar">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+
+
+
+<nav id="navbar" class="navbar order-last order-lg-0">
+  <ul>
+    <li><a  class="active" aria-current="page" routerLink="/inicio">Inicio</a></li>
+    <li><a  aria-current="page" routerLink="/quienes-somos">Sobre Nosotros</a></li>
+    <li><a aria-current="page" routerLink="/contactos">Contactanos</a></li>
+    <li><a aria-current="page" routerLink="/tienda">Tienda</a></li>
+
+  </ul>
+  <i class="bi bi-list mobile-nav-toggle"></i>
+</nav>
+</div>
