@@ -250,6 +250,32 @@ public partial class TiendaPruebaContext : DbContext
             entity.Property(e => e.Teléfono).HasMaxLength(12);
         });
 
+        modelBuilder.Entity<ListaProducto>(entity =>
+        {
+            entity.HasKey(e => new { e.IDLista, e.IdProducto }).HasName("PK__ListaProducto___1882BA4FA452C27B");
+
+            entity.ToTable("Lista_Producto");
+
+            entity.Property(e => e.IDLista)
+                //.ValueGeneratedOnAdd()
+                .HasColumnName("Id_Lista");
+            entity.Property(e => e.IdProducto).HasColumnName("Id_Productos");
+
+            entity.HasOne(d => d.oListaDeseo).WithMany(p => p.idListas)
+                .HasForeignKey(d => d.IDLista)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Lista_p__Id_li__4CA06362");
+
+            entity.HasOne(d => d.oProducto).WithMany(p => p.idLista)
+                .HasForeignKey(d => d.IdProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Carrito_p__Id_pr__4D94879B");
+        });
+
+
+
+
+
         OnModelCreatingPartial(modelBuilder);
     }
 
