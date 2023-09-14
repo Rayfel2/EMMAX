@@ -32,4 +32,5 @@ public partial class Usuario
     public virtual ICollection<Reseña> Reseñas { get; set; } = new List<Reseña>();
 
     public virtual ICollection<Role> IdRoles { get; set; } = new List<Role>();
+    public virtual ICollection<RolesUsuario> RolesUsuarios { get; set; } = new List<RolesUsuario>();
 }

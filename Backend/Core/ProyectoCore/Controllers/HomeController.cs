@@ -720,7 +720,7 @@ namespace ProyectoCore.Controllers
         //ListaProductoControllers--------------------------------------------------------------------------------
         public IActionResult IndexListaProducto()
         {
-            List<ListaProducto> lista = _TiendaPruebaContext.ListaProductos.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+            List<ListaProducto> lista = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
             return View(lista);
         }
 
@@ -745,14 +745,14 @@ namespace ProyectoCore.Controllers
                 }).ToList(),
 
             };
-            var existingListaProducto = _TiendaPruebaContext.ListaProductos
+            var existingListaProducto = _TiendaPruebaContext.ListaProducto
         .FirstOrDefault(cp => cp.IDListaProducto == idListaProducto
                             && cp.IdProducto == idProducto);
-            ViewBag.ExistingCarritoProducto = existingListaProducto;
+            ViewBag.ExistingListaProducto = existingListaProducto;
             if (idListaProducto != 0 && idProducto != 0)
             {
 
-                oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProductos.Find(idListaProducto, idProducto);
+                oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProducto.Find(idListaProducto, idProducto);
 
             }
 
@@ -762,24 +762,24 @@ namespace ProyectoCore.Controllers
         [HttpPost]
         public IActionResult ListaProducto_Detalle(ListaProductoVM oListaProductoVM)
         {
-            var Lista = oListaProductoVM.oListaProducto.IDListaProducto;
+            var ListaProducto = oListaProductoVM.oListaProducto.IDListaProducto;
             var producto = oListaProductoVM.oListaProducto.IdProducto;
 
-            var existingListaProducto = _TiendaPruebaContext.ListaProductos
-        .FirstOrDefault(cp => cp.IDListaProducto == Lista
+            var existingListaProducto = _TiendaPruebaContext.ListaProducto
+        .FirstOrDefault(cp => cp.IDListaProducto == ListaProducto
                             && cp.IdProducto == producto);
 
             if (existingListaProducto == null)
             {
 
-                _TiendaPruebaContext.ListaProductos.Add(oListaProductoVM.oListaProducto);
+                _TiendaPruebaContext.ListaProducto.Add(oListaProductoVM.oListaProducto);
 
             }
             else
             {
                 //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
                 // Actualiza otras propiedades según sea necesario
-                _TiendaPruebaContext.ListaProductos.Update(existingListaProducto); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.ListaProducto.Update(existingListaProducto); // Importante: Actualiza la entidad existente
                 _TiendaPruebaContext.SaveChanges();
             }
 
@@ -794,7 +794,7 @@ namespace ProyectoCore.Controllers
         {
 
 
-            ListaProducto oListaProducto = _TiendaPruebaContext.ListaProductos.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
+            ListaProducto oListaProducto = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
 
             return View(oListaProducto);
         }
@@ -802,11 +802,103 @@ namespace ProyectoCore.Controllers
         [HttpPost]
         public IActionResult Eliminar_ListaProducto(ListaProducto oListaProducto)
         {
-            _TiendaPruebaContext.ListaProductos.Remove(oListaProducto);
+            _TiendaPruebaContext.ListaProducto.Remove(oListaProducto);
             _TiendaPruebaContext.SaveChanges();
 
 
             return View(oListaProducto);
+        }
+
+        //RolesUsuario----------------------------------------------------------------------------------------------------------
+        public IActionResult IndexRolesUsuario()
+        {
+            List<RolesUsuario> lista = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+            return View(lista);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult RolesUsuario_Detalle(int idRoles, int idUsuario)
+        {
+            RolesUsuarioVM oRolesUsuarioVM = new RolesUsuarioVM()
+            {
+                oRolesUsuario = new RolesUsuario(),
+                oListaRoles = _TiendaPruebaContext.Roles.Select(Role => new SelectListItem()
+                {
+                    Text = Role.IdRoles.ToString(),
+                    Value = Role.IdRoles.ToString()
+                }).ToList(),
+
+                oListaUsuarios = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                {
+                    Text = Usuario.IdUsuario.ToString(),
+                    Value = Usuario.IdUsuario.ToString()
+                }).ToList(),
+
+            };
+            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+        .FirstOrDefault(cp => cp.IdRoles == idRoles
+                            && cp.IdUsuario == idUsuario);
+            ViewBag.existingRolesUsuario = existingRolesUsuario;
+            if (idRoles != 0 && idUsuario != 0)
+            {
+
+                oRolesUsuarioVM.oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Find(idRoles, idUsuario);
+
+            }
+
+            return View(oRolesUsuarioVM);
+        }
+
+        [HttpPost]
+        public IActionResult RolesUsuario_Detalle(RolesUsuarioVM oRolesUsuarioVM)
+        {
+            var Roles = oRolesUsuarioVM.oRolesUsuario.IdRoles;
+            var Usuario = oRolesUsuarioVM.oRolesUsuario.IdUsuario;
+
+            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+        .FirstOrDefault(cp => cp.IdRoles == Roles
+                            && cp.IdUsuario == Usuario);
+
+            if (existingRolesUsuario == null)
+            {
+
+                _TiendaPruebaContext.RolesUsuario.Add(oRolesUsuarioVM.oRolesUsuario);
+
+            }
+            else
+            {
+                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                // Actualiza otras propiedades según sea necesario
+                _TiendaPruebaContext.RolesUsuario.Update(existingRolesUsuario); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.SaveChanges();
+            }
+
+
+            _TiendaPruebaContext.SaveChanges();
+
+            return RedirectToAction("IndexRolesUsuario", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Eliminar_RolesUsuario(int idRoles, int idUsuario)
+        {
+
+
+            RolesUsuario oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).Where(e => e.IdRoles == idRoles && e.IdUsuario == idUsuario).FirstOrDefault();
+
+            return View(oRolesUsuario);
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar_RolesUsuario(RolesUsuario oRolesUsuario)
+        {
+            _TiendaPruebaContext.RolesUsuario.Remove(oRolesUsuario);
+            _TiendaPruebaContext.SaveChanges();
+
+
+            return View(oRolesUsuario);
         }
 
 
