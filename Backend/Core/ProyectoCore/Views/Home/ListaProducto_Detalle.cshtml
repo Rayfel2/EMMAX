@@ -1,0 +1,59 @@
+﻿@model ProyectoCore.Models.ViewModels.ListaProductoVM
+@{
+    ViewData["Title"] = "ListaProducto_Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@if (ViewBag.existingListaProducto == null)
+{
+
+    <h1>Crear ListaProducto</h1>
+}
+else
+{
+    <h1>Editar ListaProducto</h1>
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="ListaProducto_Detalle" asp-controller="Home" method="post">
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oListaProducto.IDListaProducto">idLista</label>
+                <select class="form-select form-select-sm" asp-for="oListaProducto.IDListaProducto" asp-items="@Model.oListaDeListas">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oListaProducto.IdProducto">Producto</label>
+                <select class="form-select form-select-sm" asp-for="oListaProducto.IdProducto" asp-items="@Model.oListaProductoProductos">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+
+                @if (ViewBag.existingListaProducto == null)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Actualizar</button>
+
+                }
+                <a class="btn btn-dark btn-sm" asp-action="IndexListaProducto" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+

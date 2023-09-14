@@ -12,5 +12,5 @@ public partial class ListaDeseo
     public virtual Usuario? oUsuario { get; set; }
 
     public virtual ICollection<Producto> IdProductos { get; set; } = new List<Producto>();
-    public virtual ICollection<ListaProducto> idListas { get; set; } = new List<ListaProducto>();
+    public virtual ICollection<ListaProducto> IDListaProducto { get; set; } = new List<ListaProducto>();
 }

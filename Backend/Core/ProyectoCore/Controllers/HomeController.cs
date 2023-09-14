@@ -717,6 +717,99 @@ namespace ProyectoCore.Controllers
             return View(oListaDeseo);
         }
 
+        //ListaProductoControllers--------------------------------------------------------------------------------
+        public IActionResult IndexListaProducto()
+        {
+            List<ListaProducto> lista = _TiendaPruebaContext.ListaProductos.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+            return View(lista);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ListaProducto_Detalle(int idListaProducto, int idProducto)
+        {
+            ListaProductoVM oListaProductoVM = new ListaProductoVM()
+            {
+                oListaProducto = new ListaProducto(),
+                oListaDeListas = _TiendaPruebaContext.ListaDeseos.Select(ListaDeseo => new SelectListItem()
+                {
+                    Text = ListaDeseo.IdLista.ToString(),
+                    Value = ListaDeseo.IdLista.ToString()
+                }).ToList(),
+
+                oListaProductoProductos = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                {
+                    Text = Producto.IdProducto.ToString(),
+                    Value = Producto.IdProducto.ToString()
+                }).ToList(),
+
+            };
+            var existingListaProducto = _TiendaPruebaContext.ListaProductos
+        .FirstOrDefault(cp => cp.IDListaProducto == idListaProducto
+                            && cp.IdProducto == idProducto);
+            ViewBag.ExistingCarritoProducto = existingListaProducto;
+            if (idListaProducto != 0 && idProducto != 0)
+            {
+
+                oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProductos.Find(idListaProducto, idProducto);
+
+            }
+
+            return View(oListaProductoVM);
+        }
+
+        [HttpPost]
+        public IActionResult ListaProducto_Detalle(ListaProductoVM oListaProductoVM)
+        {
+            var Lista = oListaProductoVM.oListaProducto.IDListaProducto;
+            var producto = oListaProductoVM.oListaProducto.IdProducto;
+
+            var existingListaProducto = _TiendaPruebaContext.ListaProductos
+        .FirstOrDefault(cp => cp.IDListaProducto == Lista
+                            && cp.IdProducto == producto);
+
+            if (existingListaProducto == null)
+            {
+
+                _TiendaPruebaContext.ListaProductos.Add(oListaProductoVM.oListaProducto);
+
+            }
+            else
+            {
+                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                // Actualiza otras propiedades según sea necesario
+                _TiendaPruebaContext.ListaProductos.Update(existingListaProducto); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.SaveChanges();
+            }
+
+
+            _TiendaPruebaContext.SaveChanges();
+
+            return RedirectToAction("IndexListaProducto", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Eliminar_ListaProducto(int idListaProducto, int idProducto)
+        {
+
+
+            ListaProducto oListaProducto = _TiendaPruebaContext.ListaProductos.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
+
+            return View(oListaProducto);
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar_ListaProducto(ListaProducto oListaProducto)
+        {
+            _TiendaPruebaContext.ListaProductos.Remove(oListaProducto);
+            _TiendaPruebaContext.SaveChanges();
+
+
+            return View(oListaProducto);
+        }
+
+
 
 
 
