@@ -35,7 +35,10 @@ public partial class TiendaPruebaContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-    
+    public virtual DbSet<ListaProducto> ListaProducto { get; set; }
+    public virtual DbSet<RolesUsuario> RolesUsuario { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -249,6 +252,57 @@ public partial class TiendaPruebaContext : DbContext
                 .HasColumnName("Nombre_Usuario");
             entity.Property(e => e.Teléfono).HasMaxLength(12);
         });
+
+
+        modelBuilder.Entity<ListaProducto>(entity =>
+        {
+            entity.HasKey(e => new { e.IDListaProducto, e.IdProducto }).HasName("PK__ListaProducto___1882BA4FA452C27B");
+
+            entity.ToTable("Lista_Producto");
+
+            entity.Property(e => e.IDListaProducto)
+                //.ValueGeneratedOnAdd()
+                .HasColumnName("Id_Lista");
+            entity.Property(e => e.IdProducto).HasColumnName("Id_producto");
+
+            entity.HasOne(d => d.oListaDeseo).WithMany(p => p.IDListaProducto)
+                .HasForeignKey(d => d.IDListaProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ListaProducto_p__Id_ca__4CA06362");
+
+            entity.HasOne(d => d.oProducto).WithMany(p => p.IDListaProducto)
+                .HasForeignKey(d => d.IdProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ListaProducto_p__Id_pr__4D94879B");
+        });
+
+        modelBuilder.Entity<RolesUsuario>(entity =>
+        {
+            entity.HasKey(e => new { e.IdRoles, e.IdUsuario }).HasName("PK__RoleUsuario___1882BA4FA452C27B");
+
+            entity.ToTable("Roles_Usuario");
+
+            entity.Property(e => e.IdRoles)
+                //.ValueGeneratedOnAdd()
+                .HasColumnName("Id_Roles");
+            entity.Property(e => e.IdUsuario).HasColumnName("Id_Usuario");
+
+            entity.HasOne(d => d.oRole).WithMany(p => p.RolesUsuarios)
+                .HasForeignKey(d => d.IdRoles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolesUsuario_U__Id_ca__4CA06362");
+
+            entity.HasOne(d => d.oUsuario).WithMany(p => p.RolesUsuarios)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolesUsuario_p__Id_pr__4D94879B");
+        });
+
+
+
+
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

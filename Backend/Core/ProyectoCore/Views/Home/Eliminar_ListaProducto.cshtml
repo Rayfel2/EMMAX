@@ -1,0 +1,38 @@
+﻿@model ProyectoCore.Models.ListaProducto
+@{
+    ViewData["Title"] = "Eliminar_ListaProducto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="text-danger"> ¿Esta seguro de eliminar la ListaProducto?</h3>
+<hr />
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="Eliminar_ListaProducto" asp-controller="Home" method="post">
+            <input type="hidden" asp-for="IDListaProducto" />
+            <input type="hidden" asp-for="IdProducto" />
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IDListaProducto">IDCarrito</label>
+                <input class="form-control form-control-sm" asp-for="oListaDeseo.IdLista" type="text" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IdProducto">IDProducto</label>
+                <input class="form-control form-control-sm" asp-for="oProducto.IdProducto" type="text" disabled />
+            </div>
+
+            <div class="mb-2">
+
+                <button class="btn btn-danger btn-sm w-25" type="submit">Eliminar</button>
+                <a class="btn btn-dark btn-sm" asp-action="IndexListaProducto" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
