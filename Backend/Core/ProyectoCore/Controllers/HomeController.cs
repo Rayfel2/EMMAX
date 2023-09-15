@@ -546,36 +546,46 @@ namespace ProyectoCore.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
             var carrito = oCarritoProductoVM.oCarritoProducto.IdCarrito;
             var producto = oCarritoProductoVM.oCarritoProducto.IdProducto;
 
-            var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
-        .FirstOrDefault(cp => cp.IdCarrito == carrito
-                            && cp.IdProducto == producto);
+            // Obtener el producto seleccionado desde la base de datos
+            var selectedProduct = _TiendaPruebaContext.Productos.FirstOrDefault(p => p.IdProducto == producto);
 
-            if (existingCarritoProducto == null)
+            if (selectedProduct != null)
             {
-                
-                _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
-                
-            }
-            else
-            {
-                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
-                existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio; 
-                existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
-                // Actualiza otras propiedades según sea necesario
-                _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto); // Importante: Actualiza la entidad existente
+                // Establecer el precio del CarritoProducto igual al precio del Producto
+                oCarritoProductoVM.oCarritoProducto.Precio = selectedProduct.Precio;
+
+                // Comprobar si el CarritoProducto ya existe en la base de datos
+                var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+                    .FirstOrDefault(cp => cp.IdCarrito == carrito && cp.IdProducto == producto);
+
+                if (existingCarritoProducto == null)
+                {
+                    // Si no existe, agregar el nuevo CarritoProducto
+                    _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
+                }
+                else
+                {
+                    // Si existe, actualizar el CarritoProducto existente con el nuevo precio
+                    existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio;
+                    existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
+
+                    // Actualizar otras propiedades según sea necesario
+                    _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto);
+                }
+
+                // Guardar cambios en la base de datos
                 _TiendaPruebaContext.SaveChanges();
             }
 
-            
-            _TiendaPruebaContext.SaveChanges();
-
             return RedirectToAction("IndexCarritoProducto", "Home");
         }
+
 
         [HttpGet]
         public IActionResult Eliminar_CarritoProducto(int idCarrito, int idProducto)
