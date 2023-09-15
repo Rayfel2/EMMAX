@@ -105,6 +105,11 @@ namespace ProyectoCore.Controllers
             {
                 oCategoriaVM.oCategoria = _TiendaPruebaContext.Categoria.Find(idCategoria);
 
+                if (oCategoriaVM.oCategoria == null) // if para validar que esxista             
+                {
+                    return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+                }
+
             }
 
             return View(oCategoriaVM);
@@ -132,6 +137,11 @@ namespace ProyectoCore.Controllers
         public IActionResult Eliminar_Categoria(int idCategoria)
         {
             Categorium oCategoria = _TiendaPruebaContext.Categoria.Where(e => e.IdCategoria == idCategoria).FirstOrDefault();
+            
+            if (oCategoria == null)
+            {
+                return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+            }
 
             return View(oCategoria);
         }
@@ -453,6 +463,14 @@ namespace ProyectoCore.Controllers
             {
                 
                 _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
+                Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
+                NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
+                _TiendaPruebaContext.Carritos.Add(NuevoCarrito); // se agrega el carro a la base de datos
+
+                ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
+                listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
+                _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
+
                 //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
             }
             else
