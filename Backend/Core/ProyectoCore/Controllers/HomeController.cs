@@ -545,7 +545,7 @@ namespace ProyectoCore.Controllers
             return View(oCarritoProductoVM);
         }
 
-        [HttpPost]
+     
         [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
@@ -567,6 +567,13 @@ namespace ProyectoCore.Controllers
                 if (existingCarritoProducto == null)
                 {
                     // Si no existe, agregar el nuevo CarritoProducto
+                    if (oCarritoProductoVM.oCarritoProducto.Cantidad > selectedProduct.Stock)
+                    {
+                        // Lanzar una excepción
+                        return NotFound("la cantidad no puede ser mayor al stock");
+                        //throw new Exception("La cantidad no puede ser mayor que el stock");
+                    }
+
                     _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
                 }
                 else
