@@ -16,6 +16,18 @@ DotEnv.Load();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200") // Reemplaza con la URL de tu aplicación Angular
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 var env = Environment.GetEnvironmentVariable("ConnectionStrings__cadenaSQL"); //esta usa el connectionstring de la variable de entorno
@@ -45,6 +57,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseCors("AllowSpecificOrigin");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -71,5 +85,8 @@ if (api.Environment.IsDevelopment())
 api.UseAuthorization();
 
 api.MapControllers();
+
+api.UseCors("AllowSpecificOrigin");
+
 
 api.Run();

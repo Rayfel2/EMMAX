@@ -46,7 +46,7 @@ namespace ProyectoCore.ControllersApi
                 var allProductos = _RepositoryProducto.GetProductos();
 
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5204/Producto?page=1&pageSize=10
+                // A nivel de rutas seria por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
                 var pagedProductos = allProductos.Skip(startIndex).Take(pageSize).ToList();
                 //.skip omite un numero de registro
                 //.Take cantidad elemento que se van a tomar
