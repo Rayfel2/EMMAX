@@ -105,6 +105,11 @@ namespace ProyectoCore.Controllers
             {
                 oCategoriaVM.oCategoria = _TiendaPruebaContext.Categoria.Find(idCategoria);
 
+                if (oCategoriaVM.oCategoria == null) // if para validar que esxista             
+                {
+                    return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+                }
+
             }
 
             return View(oCategoriaVM);
@@ -132,6 +137,11 @@ namespace ProyectoCore.Controllers
         public IActionResult Eliminar_Categoria(int idCategoria)
         {
             Categorium oCategoria = _TiendaPruebaContext.Categoria.Where(e => e.IdCategoria == idCategoria).FirstOrDefault();
+            
+            if (oCategoria == null)
+            {
+                return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+            }
 
             return View(oCategoria);
         }
@@ -453,6 +463,14 @@ namespace ProyectoCore.Controllers
             {
                 
                 _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
+                Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
+                NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
+                _TiendaPruebaContext.Carritos.Add(NuevoCarrito); // se agrega el carro a la base de datos
+
+                ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
+                listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
+                _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
+
                 //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
             }
             else
@@ -528,36 +546,46 @@ namespace ProyectoCore.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
             var carrito = oCarritoProductoVM.oCarritoProducto.IdCarrito;
             var producto = oCarritoProductoVM.oCarritoProducto.IdProducto;
 
-            var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
-        .FirstOrDefault(cp => cp.IdCarrito == carrito
-                            && cp.IdProducto == producto);
+            // Obtener el producto seleccionado desde la base de datos
+            var selectedProduct = _TiendaPruebaContext.Productos.FirstOrDefault(p => p.IdProducto == producto);
 
-            if (existingCarritoProducto == null)
+            if (selectedProduct != null)
             {
-                
-                _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
-                
-            }
-            else
-            {
-                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
-                existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio; 
-                existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
-                // Actualiza otras propiedades según sea necesario
-                _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto); // Importante: Actualiza la entidad existente
+                // Establecer el precio del CarritoProducto igual al precio del Producto
+                oCarritoProductoVM.oCarritoProducto.Precio = selectedProduct.Precio;
+
+                // Comprobar si el CarritoProducto ya existe en la base de datos
+                var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+                    .FirstOrDefault(cp => cp.IdCarrito == carrito && cp.IdProducto == producto);
+
+                if (existingCarritoProducto == null)
+                {
+                    // Si no existe, agregar el nuevo CarritoProducto
+                    _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
+                }
+                else
+                {
+                    // Si existe, actualizar el CarritoProducto existente con el nuevo precio
+                    existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio;
+                    existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
+
+                    // Actualizar otras propiedades según sea necesario
+                    _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto);
+                }
+
+                // Guardar cambios en la base de datos
                 _TiendaPruebaContext.SaveChanges();
             }
 
-            
-            _TiendaPruebaContext.SaveChanges();
-
             return RedirectToAction("IndexCarritoProducto", "Home");
         }
+
 
         [HttpGet]
         public IActionResult Eliminar_CarritoProducto(int idCarrito, int idProducto)
@@ -716,6 +744,191 @@ namespace ProyectoCore.Controllers
 
             return View(oListaDeseo);
         }
+
+        //ListaProductoControllers--------------------------------------------------------------------------------
+        public IActionResult IndexListaProducto()
+        {
+            List<ListaProducto> lista = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+            return View(lista);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ListaProducto_Detalle(int idListaProducto, int idProducto)
+        {
+            ListaProductoVM oListaProductoVM = new ListaProductoVM()
+            {
+                oListaProducto = new ListaProducto(),
+                oListaDeListas = _TiendaPruebaContext.ListaDeseos.Select(ListaDeseo => new SelectListItem()
+                {
+                    Text = ListaDeseo.IdLista.ToString(),
+                    Value = ListaDeseo.IdLista.ToString()
+                }).ToList(),
+
+                oListaProductoProductos = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                {
+                    Text = Producto.IdProducto.ToString(),
+                    Value = Producto.IdProducto.ToString()
+                }).ToList(),
+
+            };
+            var existingListaProducto = _TiendaPruebaContext.ListaProducto
+        .FirstOrDefault(cp => cp.IDListaProducto == idListaProducto
+                            && cp.IdProducto == idProducto);
+            ViewBag.ExistingListaProducto = existingListaProducto;
+            if (idListaProducto != 0 && idProducto != 0)
+            {
+
+                oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProducto.Find(idListaProducto, idProducto);
+
+            }
+
+            return View(oListaProductoVM);
+        }
+
+        [HttpPost]
+        public IActionResult ListaProducto_Detalle(ListaProductoVM oListaProductoVM)
+        {
+            var ListaProducto = oListaProductoVM.oListaProducto.IDListaProducto;
+            var producto = oListaProductoVM.oListaProducto.IdProducto;
+
+            var existingListaProducto = _TiendaPruebaContext.ListaProducto
+        .FirstOrDefault(cp => cp.IDListaProducto == ListaProducto
+                            && cp.IdProducto == producto);
+
+            if (existingListaProducto == null)
+            {
+
+                _TiendaPruebaContext.ListaProducto.Add(oListaProductoVM.oListaProducto);
+
+            }
+            else
+            {
+                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                // Actualiza otras propiedades según sea necesario
+                _TiendaPruebaContext.ListaProducto.Update(existingListaProducto); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.SaveChanges();
+            }
+
+
+            _TiendaPruebaContext.SaveChanges();
+
+            return RedirectToAction("IndexListaProducto", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Eliminar_ListaProducto(int idListaProducto, int idProducto)
+        {
+
+
+            ListaProducto oListaProducto = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
+
+            return View(oListaProducto);
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar_ListaProducto(ListaProducto oListaProducto)
+        {
+            _TiendaPruebaContext.ListaProducto.Remove(oListaProducto);
+            _TiendaPruebaContext.SaveChanges();
+
+
+            return View(oListaProducto);
+        }
+
+        //RolesUsuario----------------------------------------------------------------------------------------------------------
+        public IActionResult IndexRolesUsuario()
+        {
+            List<RolesUsuario> lista = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+            return View(lista);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult RolesUsuario_Detalle(int idRoles, int idUsuario)
+        {
+            RolesUsuarioVM oRolesUsuarioVM = new RolesUsuarioVM()
+            {
+                oRolesUsuario = new RolesUsuario(),
+                oListaRoles = _TiendaPruebaContext.Roles.Select(Role => new SelectListItem()
+                {
+                    Text = Role.IdRoles.ToString(),
+                    Value = Role.IdRoles.ToString()
+                }).ToList(),
+
+                oListaUsuarios = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                {
+                    Text = Usuario.IdUsuario.ToString(),
+                    Value = Usuario.IdUsuario.ToString()
+                }).ToList(),
+
+            };
+            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+        .FirstOrDefault(cp => cp.IdRoles == idRoles
+                            && cp.IdUsuario == idUsuario);
+            ViewBag.existingRolesUsuario = existingRolesUsuario;
+            if (idRoles != 0 && idUsuario != 0)
+            {
+
+                oRolesUsuarioVM.oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Find(idRoles, idUsuario);
+
+            }
+
+            return View(oRolesUsuarioVM);
+        }
+
+        [HttpPost]
+        public IActionResult RolesUsuario_Detalle(RolesUsuarioVM oRolesUsuarioVM)
+        {
+            var Roles = oRolesUsuarioVM.oRolesUsuario.IdRoles;
+            var Usuario = oRolesUsuarioVM.oRolesUsuario.IdUsuario;
+
+            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+        .FirstOrDefault(cp => cp.IdRoles == Roles
+                            && cp.IdUsuario == Usuario);
+
+            if (existingRolesUsuario == null)
+            {
+
+                _TiendaPruebaContext.RolesUsuario.Add(oRolesUsuarioVM.oRolesUsuario);
+
+            }
+            else
+            {
+                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                // Actualiza otras propiedades según sea necesario
+                _TiendaPruebaContext.RolesUsuario.Update(existingRolesUsuario); // Importante: Actualiza la entidad existente
+                _TiendaPruebaContext.SaveChanges();
+            }
+
+
+            _TiendaPruebaContext.SaveChanges();
+
+            return RedirectToAction("IndexRolesUsuario", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Eliminar_RolesUsuario(int idRoles, int idUsuario)
+        {
+
+
+            RolesUsuario oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).Where(e => e.IdRoles == idRoles && e.IdUsuario == idUsuario).FirstOrDefault();
+
+            return View(oRolesUsuario);
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar_RolesUsuario(RolesUsuario oRolesUsuario)
+        {
+            _TiendaPruebaContext.RolesUsuario.Remove(oRolesUsuario);
+            _TiendaPruebaContext.SaveChanges();
+
+
+            return View(oRolesUsuario);
+        }
+
 
 
 

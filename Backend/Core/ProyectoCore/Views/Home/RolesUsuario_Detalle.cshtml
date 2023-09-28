@@ -1,0 +1,61 @@
+﻿@model ProyectoCore.Models.ViewModels.RolesUsuarioVM
+@{
+    ViewData["Title"] = "RolesUsuario_Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@if (ViewBag.existingRolesUsuario == null)
+{
+
+    <h1>Crear RolesUsuario</h1>
+}
+else
+{
+    <h1>Editar RolesUsuario</h1>
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form asp-action="RolesUsuario_Detalle" asp-controller="Home" method="post">
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oRolesUsuario.IdRoles">idRoles</label>
+                <select class="form-select form-select-sm" asp-for="oRolesUsuario.IdRoles" asp-items="@Model.oListaRoles">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="oRolesUsuario.IdUsuario">Usuario</label>
+                <select class="form-select form-select-sm" asp-for="oRolesUsuario.IdUsuario" asp-items="@Model.oListaUsuarios">
+                    <option selected disabled>-- Seleccionar --</option>
+                </select>
+            </div>
+
+            <div class="mb-2">
+
+                @if (ViewBag.existingRolesUsuario == null)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Actualizar</button>
+
+                }
+                <a class="btn btn-dark btn-sm" asp-action="IndexRolesUsuario" asp-controller="Home">Volver</a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
