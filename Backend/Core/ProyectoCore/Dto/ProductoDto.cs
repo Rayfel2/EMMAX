@@ -14,6 +14,6 @@
 
         public int? Stock { get; set; }
 
-        public byte[]? Imagen { get; set; }
+        public string? Imagen { get; set; }
     }
 }
