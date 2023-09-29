@@ -472,6 +472,20 @@ namespace ProyectoCore.Controllers
                 ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
                 listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
                 _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
+                //---------------------------------
+                _TiendaPruebaContext.SaveChanges(); // Guardar cambios para obtener el ID del usuario asignado
+
+                // Crear un nuevo registro en la tabla RolesUsuario para asignar el rol con ID 7
+                RolesUsuario nuevoRolUsuario = new RolesUsuario
+                {
+                    IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
+                    IdRoles = 7 // ID del rol que deseas asignar
+                };
+
+                _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
+                _TiendaPruebaContext.SaveChanges();
+
+
 
                 //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
             }
