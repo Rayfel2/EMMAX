@@ -1,0 +1,9 @@
+.contenedor {
+    display: flex; /* Utilizamos flexbox para alinear elementos en línea */
+    align-items: center; /* Alineamos verticalmente */
+}
+
+.titulo {
+    font-size: 24px;
+    font-weight: bold;
+}
