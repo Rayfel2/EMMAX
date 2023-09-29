@@ -2,7 +2,7 @@
     <div class="card" *ngFor="let item of datos">
       <div class="card-body">
         <h5 class="card-title">{{ item.nombre }}</h5>
-        <p class="card-text">Precio: {{ item.precio }}</p>
+        <p class="card-text">Precio: {{ item.precio }}$</p>
       </div>
       <img class="card-img" [src]="item.imagen" alt="Imagen">
     </div>
