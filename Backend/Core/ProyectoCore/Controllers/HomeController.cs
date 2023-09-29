@@ -302,6 +302,8 @@ namespace ProyectoCore.Controllers
 
 
 
+
+
         [HttpGet]
         public IActionResult Recibo_Detalle(int idRecibo)
         {
