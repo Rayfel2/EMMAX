@@ -302,6 +302,8 @@ namespace ProyectoCore.Controllers
 
 
 
+
+
         [HttpGet]
         public IActionResult Recibo_Detalle(int idRecibo)
         {
@@ -470,6 +472,20 @@ namespace ProyectoCore.Controllers
                 ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
                 listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
                 _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
+                //---------------------------------
+                _TiendaPruebaContext.SaveChanges(); // Guardar cambios para obtener el ID del usuario asignado
+
+                // Crear un nuevo registro en la tabla RolesUsuario para asignar el rol con ID 7
+                RolesUsuario nuevoRolUsuario = new RolesUsuario
+                {
+                    IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
+                    IdRoles = 7 // ID del rol que deseas asignar
+                };
+
+                _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
+                _TiendaPruebaContext.SaveChanges();
+
+
 
                 //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
             }
@@ -545,7 +561,7 @@ namespace ProyectoCore.Controllers
             return View(oCarritoProductoVM);
         }
 
-        [HttpPost]
+     
         [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
@@ -567,6 +583,13 @@ namespace ProyectoCore.Controllers
                 if (existingCarritoProducto == null)
                 {
                     // Si no existe, agregar el nuevo CarritoProducto
+                    if (oCarritoProductoVM.oCarritoProducto.Cantidad > selectedProduct.Stock)
+                    {
+                        // Lanzar una excepción
+                        return NotFound("la cantidad no puede ser mayor al stock");
+                        //throw new Exception("La cantidad no puede ser mayor que el stock");
+                    }
+
                     _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
                 }
                 else
