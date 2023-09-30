@@ -15,6 +15,7 @@ export class LoginComponent {
 email: ['', [Validators.required, Validators.email]],
 password: ['', [Validators.required]],
   })
+  
   constructor(private fb: FormBuilder, private router: Router, private LoginService: LoginService) { }
 
   get email(){
@@ -47,4 +48,6 @@ password: ['', [Validators.required]],
     }
 
   }
+  
 }
+

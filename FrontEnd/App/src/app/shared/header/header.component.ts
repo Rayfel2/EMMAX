@@ -9,6 +9,20 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   userLoginOn: boolean=false;
+
+  isLoginModalOpen = false;
+
+  // Método para abrir la ventana emergente
+  openLoginModal() {
+    this.isLoginModalOpen = true;
+  }
+
+  // Método para cerrar la ventana emergente
+  closeLoginModal() {
+    this.isLoginModalOpen = false;
+  }
+  
+  
   constructor(private loginService:LoginService, private router: Router) {}
   logout() {
    this.loginService.logout();
@@ -29,4 +43,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
    });
  
   }
+  
 }
+
