@@ -4,6 +4,8 @@ using ProyectoCore.Models.ViewModels;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
 
 namespace ProyectoCore.Controllers
 {
@@ -336,40 +338,63 @@ namespace ProyectoCore.Controllers
         [HttpPost]
         public IActionResult Recibo_Detalle(ReciboVM oReciboVM)
         {
-            if (oReciboVM.oRecibo.IdRecibo == 0)
+            if (oReciboVM != null &&
+    oReciboVM.oRecibo != null &&
+    oReciboVM.oRecibo.oCarrito != null &&
+    oReciboVM.oRecibo.oCarrito.CarritoProductos != null)
             {
-                _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
-                _TiendaPruebaContext.SaveChanges(); // esto es parte del codigo no funcional
-
-                // codigo agregado no funciona por el momento----------------------------------------------------------------------------------------------------------------
-                // Recorrer los elementos del carrito y actualizar el stock de los productos
-                foreach (var item in oReciboVM.oRecibo.oCarrito.CarritoProductos)
+                using (var transaction = _TiendaPruebaContext.Database.BeginTransaction())
                 {
-                    var producto = _TiendaPruebaContext.Productos.Find(item.IdProducto);
-
-                    if (producto != null)
+                    try
                     {
-                        // Restar la cantidad del carrito del stock del producto
-                        producto.Stock -= item.Cantidad;
+                        _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
+                        decimal totalSubtotal = 0;  // Inicializa una variable para el total de los subtotales
 
-                        // Guardar los cambios en el producto
-                        _TiendaPruebaContext.Productos.Update(producto);
+                        foreach (var item in oReciboVM.oRecibo.oCarrito.CarritoProductos)
+                        {
+                            var producto = _TiendaPruebaContext.Productos.Find(item.IdProducto);
+
+                            if (producto != null)
+                            {
+                                // Restar la cantidad del carrito del stock del producto
+                                producto.Stock -= item.Cantidad;
+
+                                // Calcular el subtotal para este producto y agregarlo al total
+                                decimal subtotal = (decimal)(item.Cantidad * item.Precio);
+                                totalSubtotal += subtotal;
+                            }
+                            else
+                            {
+                                // Manejar el caso en que el producto no se encuentra
+                                // Puedes lanzar una excepción o tomar la acción apropiada
+                            }
+                        }
+                        // Asignar el total de los subtotales al Recibo
+                        oReciboVM.oRecibo.Subtotal = (double?)totalSubtotal;
+
+                        // Guardar los cambios en la base de datos
+                        _TiendaPruebaContext.SaveChanges();
+
+                        // Confirmar la transacción
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejar la excepción, por ejemplo, registrarla o mostrar un mensaje de error al usuario.
+                        // También puedes realizar un rollback de la transacción en caso de error.
+                        transaction.Rollback();
                     }
                 }
-                // hasta aqui--------------------------------------------------------------------------------------------------------------
-
-                _TiendaPruebaContext.SaveChanges();
             }
             else
             {
                 _TiendaPruebaContext.Recibos.Update(oReciboVM.oRecibo);
             }
 
-
-            _TiendaPruebaContext.SaveChanges();
-
             return RedirectToAction("IndexRecibo", "Home");
         }
+
+
 
         [HttpGet]
         public IActionResult Eliminar_Recibo(int idRecibo)
@@ -483,7 +508,13 @@ namespace ProyectoCore.Controllers
         {
             if (oUsuarioVM.oUsuario.IdUsuario == 0)
             {
-                
+                // Generar un hash de contraseña
+                string contrasena = oUsuarioVM.oUsuario.Contraseña; // Obtén la contraseña sin hash
+                string contrasenaHash = HashPassword(contrasena); // Genera el hash de la contraseña
+
+                // Asignar el hash de la contraseña al usuario
+                oUsuarioVM.oUsuario.ContraseñaHash = contrasenaHash;
+
                 _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
                 Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
                 NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
@@ -499,7 +530,7 @@ namespace ProyectoCore.Controllers
                 RolesUsuario nuevoRolUsuario = new RolesUsuario
                 {
                     IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
-                    IdRoles = 1 // ID del rol que deseas asignar
+                    IdRoles = 7 // ID del rol que deseas asignar
                 };
 
                 _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
@@ -518,6 +549,31 @@ namespace ProyectoCore.Controllers
             _TiendaPruebaContext.SaveChanges();
 
             return RedirectToAction("IndexUsuario", "Home");
+        }
+
+        private string HashPassword(string password) // metodo para generar contrasena hash
+        {
+            // Genera un salt aleatorio
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            // Configura el número de iteraciones y el tamaño de hash
+            int iterations = 10000;
+            int hashSize = 256 / 8;
+
+            // Genera el hash de la contraseña usando bcrypt
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: iterations,
+                numBytesRequested: hashSize));
+
+            // Devuelve el hash de la contraseña
+            return hashed;
         }
 
         [HttpGet]
