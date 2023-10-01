@@ -9,6 +9,7 @@ namespace ProyectoCore.Helper
         {
             // Get (de la tabla al dto)
             CreateMap<Producto, ProductoDto>();
+            CreateMap <Reseña, ReseñaDto>();
 
             // Post (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();

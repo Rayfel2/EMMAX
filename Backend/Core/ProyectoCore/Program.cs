@@ -15,6 +15,7 @@ DotEnv.Load();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
 builder.Services.AddCors(options =>
 {
