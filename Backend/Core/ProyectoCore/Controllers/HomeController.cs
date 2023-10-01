@@ -340,8 +340,7 @@ namespace ProyectoCore.Controllers
         {
             if (oReciboVM.oRecibo.IdRecibo == 0)
             {
-                decimal subtotal = (decimal)oReciboVM.oRecibo.oCarrito.CarritoProductos.Sum(cp => cp.Cantidad * cp.Precio);
-                oReciboVM.oRecibo.Subtotal = (double?)subtotal;
+
                 _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
             }
             else
