@@ -112,6 +112,49 @@ namespace ProyectoCore.ControllersApi
                 return BadRequest(ModelState);
             }
         }
+
+        [HttpGet("/reseña")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Categorium>))]
+        public IActionResult Getreseña(int page, int pageSize)
+        {
+            try
+            {
+                // Evitando valores negativos
+                if (page < 1)
+                {
+                    page = 1; // Página mínima
+                }
+
+                if (pageSize < 1)
+                {
+                    pageSize = 10; // Tamaño de página predeterminado
+                }
+
+                // Utilizado para determinar donde comienza cada pagina
+                int startIndex = (page - 1) * pageSize;
+
+
+                var allreseñas = _RepositoryReseña.GetReseñas();
+
+                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
+                // A nivel de rutas seria por ejemplo http://localhost:5230/reseña?page=1&pageSize=10
+                var pagedreseñas = allreseñas.Skip(startIndex).Take(pageSize).ToList();
+                //.skip omite un numero de registro
+                //.Take cantidad elemento que se van a tomar
+
+
+                // Mapeo los empleados paginados en vez de todos
+                var reseñaDtoList = _mapper.Map<List<ReseñaDto>>(pagedreseñas);
+
+
+                return Ok(reseñaDtoList);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
     }
 
 }

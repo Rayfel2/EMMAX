@@ -38,4 +38,48 @@
     font-size: 1rem;
     color: #666;
   }
+
+ 
+
+
+
+  .categorias-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .categoria-card {
+    display: flex;
+    align-items: center;
+    width: 200px; /* Ancho deseado para las tarjetas */
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease; /* Transición de cambio de color */
+  }
+  
+  .categoria-content {
+    flex-grow: 1;
+  }
+  
+  .checkmark {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+  }
+  
+  .checkmark.selected {
+    background-color: #007bff; /* Color de fondo cuando está seleccionado */
+    border-color: #007bff;
+    color: white; /* Color del icono cuando está seleccionado */
+  }
+  
+  
   
