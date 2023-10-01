@@ -340,7 +340,6 @@ namespace ProyectoCore.Controllers
         {
             if (oReciboVM.oRecibo.IdRecibo == 0)
             {
-
                 _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
             }
             else
