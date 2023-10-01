@@ -338,61 +338,24 @@ namespace ProyectoCore.Controllers
         [HttpPost]
         public IActionResult Recibo_Detalle(ReciboVM oReciboVM)
         {
-            if (oReciboVM != null &&
-    oReciboVM.oRecibo != null &&
-    oReciboVM.oRecibo.oCarrito != null &&
-    oReciboVM.oRecibo.oCarrito.CarritoProductos != null)
+            if (oReciboVM.oRecibo.IdRecibo == 0)
             {
-                using (var transaction = _TiendaPruebaContext.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
-                        decimal totalSubtotal = 0;  // Inicializa una variable para el total de los subtotales
-
-                        foreach (var item in oReciboVM.oRecibo.oCarrito.CarritoProductos)
-                        {
-                            var producto = _TiendaPruebaContext.Productos.Find(item.IdProducto);
-
-                            if (producto != null)
-                            {
-                                // Restar la cantidad del carrito del stock del producto
-                                producto.Stock -= item.Cantidad;
-
-                                // Calcular el subtotal para este producto y agregarlo al total
-                                decimal subtotal = (decimal)(item.Cantidad * item.Precio);
-                                totalSubtotal += subtotal;
-                            }
-                            else
-                            {
-                                // Manejar el caso en que el producto no se encuentra
-                                // Puedes lanzar una excepción o tomar la acción apropiada
-                            }
-                        }
-                        // Asignar el total de los subtotales al Recibo
-                        oReciboVM.oRecibo.Subtotal = (double?)totalSubtotal;
-
-                        // Guardar los cambios en la base de datos
-                        _TiendaPruebaContext.SaveChanges();
-
-                        // Confirmar la transacción
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Manejar la excepción, por ejemplo, registrarla o mostrar un mensaje de error al usuario.
-                        // También puedes realizar un rollback de la transacción en caso de error.
-                        transaction.Rollback();
-                    }
-                }
+                decimal subtotal = (decimal)oReciboVM.oRecibo.oCarrito.CarritoProductos.Sum(cp => cp.Cantidad * cp.Precio);
+                oReciboVM.oRecibo.Subtotal = (double?)subtotal;
+                _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
             }
             else
             {
                 _TiendaPruebaContext.Recibos.Update(oReciboVM.oRecibo);
             }
 
+
+            _TiendaPruebaContext.SaveChanges();
+
             return RedirectToAction("IndexRecibo", "Home");
         }
+
+
 
 
 
