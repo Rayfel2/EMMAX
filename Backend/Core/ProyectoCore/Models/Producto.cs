@@ -17,7 +17,7 @@ public partial class Producto
 
     public int? Stock { get; set; }
 
-    public byte[]? Imagen { get; set; }
+    public string? Imagen { get; set; }
 
     public virtual ICollection<CarritoProducto> CarritoProductos { get; set; } = new List<CarritoProducto>();
 

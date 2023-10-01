@@ -9,12 +9,13 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ListComponent } from './pages/list/list.component';
 import { ShopComponent } from './pages/shop/shop.component';
+import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 
 
 const routes: Routes = [
   {path:'', redirectTo: '/inicio', pathMatch:'full'},
   {path:'inicio',component:DashboardComponent},
-  {path:'iniciar-sesion', component:LoginComponent},
+  {path:'iniciar-sesion', component:LoginRegisterComponent},
   {path:'perfil', component:ProfileComponent},
   {path:'registro', component:RegisterComponent},
   {path:'carrito', component:CarComponent},

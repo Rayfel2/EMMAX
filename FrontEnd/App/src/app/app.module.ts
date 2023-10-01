@@ -17,6 +17,7 @@ import { ShopComponent } from './pages/shop/shop.component';
 import { CarComponent } from './pages/car/car.component';
 import { ListComponent } from './pages/list/list.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { RegisterComponent } from './auth/register/register.component';
     CarComponent,
     ListComponent,
     RegisterComponent,
+    LoginRegisterComponent,
   ],
   imports: [
     BrowserModule,
