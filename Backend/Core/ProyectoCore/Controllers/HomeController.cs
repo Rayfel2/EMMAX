@@ -4,6 +4,8 @@ using ProyectoCore.Models.ViewModels;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
 
 namespace ProyectoCore.Controllers
 {
@@ -351,6 +353,10 @@ namespace ProyectoCore.Controllers
             return RedirectToAction("IndexRecibo", "Home");
         }
 
+
+
+
+
         [HttpGet]
         public IActionResult Eliminar_Recibo(int idRecibo)
         {
@@ -463,7 +469,13 @@ namespace ProyectoCore.Controllers
         {
             if (oUsuarioVM.oUsuario.IdUsuario == 0)
             {
-                
+                // Generar un hash de contraseña
+                string contrasena = oUsuarioVM.oUsuario.Contraseña; // Obtén la contraseña sin hash
+                string contrasenaHash = HashPassword(contrasena); // Genera el hash de la contraseña
+
+                // Asignar el hash de la contraseña al usuario
+                oUsuarioVM.oUsuario.ContraseñaHash = contrasenaHash;
+
                 _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
                 Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
                 NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
@@ -498,6 +510,31 @@ namespace ProyectoCore.Controllers
             _TiendaPruebaContext.SaveChanges();
 
             return RedirectToAction("IndexUsuario", "Home");
+        }
+
+        private string HashPassword(string password) // metodo para generar contrasena hash
+        {
+            // Genera un salt aleatorio
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            // Configura el número de iteraciones y el tamaño de hash
+            int iterations = 10000;
+            int hashSize = 256 / 8;
+
+            // Genera el hash de la contraseña usando bcrypt
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: iterations,
+                numBytesRequested: hashSize));
+
+            // Devuelve el hash de la contraseña
+            return hashed;
         }
 
         [HttpGet]
