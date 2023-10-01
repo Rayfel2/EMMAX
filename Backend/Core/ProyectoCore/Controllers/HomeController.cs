@@ -339,6 +339,26 @@ namespace ProyectoCore.Controllers
             if (oReciboVM.oRecibo.IdRecibo == 0)
             {
                 _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
+                _TiendaPruebaContext.SaveChanges(); // esto es parte del codigo no funcional
+
+                // codigo agregado no funciona por el momento----------------------------------------------------------------------------------------------------------------
+                // Recorrer los elementos del carrito y actualizar el stock de los productos
+                foreach (var item in oReciboVM.oRecibo.oCarrito.CarritoProductos)
+                {
+                    var producto = _TiendaPruebaContext.Productos.Find(item.IdProducto);
+
+                    if (producto != null)
+                    {
+                        // Restar la cantidad del carrito del stock del producto
+                        producto.Stock -= item.Cantidad;
+
+                        // Guardar los cambios en el producto
+                        _TiendaPruebaContext.Productos.Update(producto);
+                    }
+                }
+                // hasta aqui--------------------------------------------------------------------------------------------------------------
+
+                _TiendaPruebaContext.SaveChanges();
             }
             else
             {
@@ -479,7 +499,7 @@ namespace ProyectoCore.Controllers
                 RolesUsuario nuevoRolUsuario = new RolesUsuario
                 {
                     IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
-                    IdRoles = 7 // ID del rol que deseas asignar
+                    IdRoles = 1 // ID del rol que deseas asignar
                 };
 
                 _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
