@@ -17,6 +17,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IReseñaRepository, ReseñaRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>(); // agregue esto
+builder.Services.AddScoped<ICarritoProductoRepository, CarritoProductoRepository>(); // agregue esto
 
 builder.Services.AddCors(options =>
 {
