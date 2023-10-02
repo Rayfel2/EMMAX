@@ -1,29 +1,30 @@
-    <div class="flex flex-col text-center w-full mb-12 ">
-    <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 py-5">Contactanos</h1>
+    <div class="flex flex-col text-center py-4">
+    <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 ">Contactanos</h1>
     <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Cualquier sugerencia o duda no dudes en contactar.</p>
     </div>
 
-    <form action="tu_servidor_de_procesamiento.php" method="POST">
-        <div class="input-container">
-            <label for="nombre">Usuario:</label>
-            <input type="text" id="nombre" name="nombre" required>
-        </div>
-        
-        <div class="input-container">
-            <label for="email">Correo electrónico (Gmail):</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        
+    <form>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Usuario:</label>
+            <input type="Usuario" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="formGroupExampleInput2">Gmail:</label>
+            <input type="Gmail" class="form-control">
+          </div>
+        <div class="">
         <label for="comentarios">Comentarios:</label>
-        <textarea id="comentarios" name="comentarios" required></textarea>
+        <textarea type="comentarios"></textarea>
+         </div>
         
-        <h2>Redes Sociales</h2>
         <div class="redes-sociales">
+            <h2>Redes Sociales</h2>
             <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
             <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
         </div>
-        
-        <input type="submit" value="Enviar">
+        <div class="d-grid gap-2 col-6 mx-auto py-3">
+            <button class="btn btn-primary"type="Enviar">Enviar</button>
+        </div>        
     </form>
