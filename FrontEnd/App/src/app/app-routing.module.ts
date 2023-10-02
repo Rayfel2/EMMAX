@@ -10,6 +10,7 @@ import { AboutComponent } from './pages/about/about.component';
 import { ListComponent } from './pages/list/list.component';
 import { ShopComponent } from './pages/shop/shop.component';
 import { LoginRegisterComponent } from './auth/login-register/login-register.component';
+import { ProductCompont } from './pages/product/product.component'; 
 
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path: 'quienes-somos', component:AboutComponent},
   {path:'deseos', component:ListComponent},
   {path: 'tienda', component:ShopComponent},
+  {path: 'product/:idProducto', component:ProductCompont},
 ];
 
 @NgModule({

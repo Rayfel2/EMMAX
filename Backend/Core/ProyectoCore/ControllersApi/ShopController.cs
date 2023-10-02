@@ -5,6 +5,8 @@ using ProyectoCore.Interface;
 using ProyectoCore.Repository;
 using ProyectoCore.Models;
 using ProyectoCore.Dto;
+using System.Collections.Immutable;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -15,10 +17,12 @@ namespace ProyectoCore.ControllersApi
         private readonly IProductoRepository _RepositoryProducto;
         private readonly ICategoriaRepository _RepositoryCategoria;
         private readonly IReseñaRepository _RepositoryReseña;
+        private readonly IUsuarioRepository _RepositoryUsuario;
         private readonly IMapper _mapper;
 
-        public ShopController(IProductoRepository RepositoryProducto, ICategoriaRepository RepositoryCategoria, IReseñaRepository RepositoryReseña, IMapper mapper)
+        public ShopController(IUsuarioRepository RepositoryUsuario, IProductoRepository RepositoryProducto, ICategoriaRepository RepositoryCategoria, IReseñaRepository RepositoryReseña, IMapper mapper)
         {
+            _RepositoryUsuario = RepositoryUsuario;
             _RepositoryCategoria = RepositoryCategoria;
             _RepositoryReseña = RepositoryReseña;
             _RepositoryProducto = RepositoryProducto;
@@ -74,6 +78,31 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
+        [HttpGet("/Producto/{idProducto}")]
+        [ProducesResponseType(200, Type = typeof(Producto))]
+        [ProducesResponseType(404)]
+        public IActionResult GetProductoPorId(int idProducto)
+        {
+            try
+            {
+                var producto = _RepositoryProducto.GetProductos(idProducto);
+
+                if (producto == null)
+                {
+                    return NotFound(); // Producto no encontrado
+                }
+
+                var ProductoDto = _mapper.Map<ProductoDto>(producto);
+
+                return Ok(ProductoDto);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
+
 
 
         [HttpGet("/Categoria")]
@@ -119,9 +148,9 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
-        [HttpGet("/reseña")]
+        [HttpGet("/reseña/{productId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Categorium>))]
-        public IActionResult Getreseña(int page, int pageSize)
+        public IActionResult Getreseña(int page, int pageSize, int productId)
         {
             try
             {
@@ -139,28 +168,34 @@ namespace ProyectoCore.ControllersApi
                 // Utilizado para determinar donde comienza cada pagina
                 int startIndex = (page - 1) * pageSize;
 
+                // Obtener las reseñas filtradas por ID de producto, incluyendo datos de usuario
+                var reseñasFiltradas = _RepositoryReseña
+    .GetReseñas()
+    .Where(r => r.IdProducto == productId)
+    .Skip(startIndex)
+    .Take(pageSize)
+    .ToList();
 
-                var allreseñas = _RepositoryReseña.GetReseñas();
-
-                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/reseña?page=1&pageSize=10
-                var pagedreseñas = allreseñas.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
-
-
-                // Mapeo los empleados paginados en vez de todos
-                var reseñaDtoList = _mapper.Map<List<ReseñaDto>>(pagedreseñas);
-
+                // Mapear las reseñas a objetos ReseñaDto y asignar nombres de usuario
+                var reseñaDtoList = reseñasFiltradas.Select(reseña => new ReseñaDto
+                {
+                    IdReseña = reseña.IdReseña,
+                    Usuario = _RepositoryUsuario.GetUsuario(Convert.ToInt32(reseña.IdUsuario))?.NombreUsuario,
+                    IdProducto = reseña.IdProducto,
+                    ValorReseña = reseña.ValorReseña,
+                    Comentario = reseña.Comentario
+                }).ToList();
 
                 return Ok(reseñaDtoList);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                ModelState.AddModelError("", "Ocurrió un error al obtener las reseñas: " + ex.Message);
                 return BadRequest(ModelState);
             }
         }
+
+
     }
 
 }

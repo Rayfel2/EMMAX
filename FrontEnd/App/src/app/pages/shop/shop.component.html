@@ -18,11 +18,13 @@
       <div class="col-md-9">
         <div class="card-container">
           <div class="card" *ngFor="let item of datos">
+            <a [routerLink]="['/product', item.idProducto]">
             <div class="card-body">
               <h5 class="card-title">{{ item.nombre }}</h5>
               <p class="card-text">Precio: {{ item.precio }}$</p>
             </div>
             <img class="card-img" [src]="item.imagen" alt="Imagen">
+          </a>
           </div>
         </div>
       </div>

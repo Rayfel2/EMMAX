@@ -1,0 +1,43 @@
+/* En styles.css o en un archivo de estilo específico para el componente */
+.product-image {
+    width: 200px; /* Puedes ajustar el tamaño según tus necesidades */
+    height: auto; /* Para mantener la proporción de aspecto original de la imagen */
+  }
+  
+
+  /* Estilos generales para la caja de comentarios */
+/* Estilos generales para la caja de comentarios */
+.review {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+}
+
+/* Estilos para el margen arriba y abajo */
+.review:last-child {
+  margin-bottom: 0; /* Elimina el margen inferior del último comentario */
+}
+
+
+/* Estilos para la información del usuario */
+.user-info {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Estilos para las estrellas de la reseña */
+.stars {
+  color: #f7d342; /* Color de las estrellas */
+  margin-bottom: 5px;
+}
+
+.stars i {
+  font-size: 16px; /* Tamaño de las estrellas */
+  margin-right: 2px; /* Espaciado entre estrellas */
+}
+
+/* Estilos para el comentario */
+.comment {
+  font-size: 14px;
+}
