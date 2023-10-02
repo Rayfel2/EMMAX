@@ -7,6 +7,8 @@ namespace ProyectoCore.Interface
         ICollection<Producto> GetProductos();
         Producto GetProductos(int id);
         bool save();
-        
+        List<int> GetProductoIdsByPartialNames(List<string> partialNames);
+
+
     }
 }

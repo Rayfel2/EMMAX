@@ -21,6 +21,19 @@ namespace ProyectoCore.Repository
             return _context.Productos.Where(e => e.IdProducto == id).FirstOrDefault();
         }
 
+        public List<int> GetProductoIdsByPartialNames(List<string> partialNames)
+        {
+            // Utiliza LINQ para buscar los IDs de empleados cuyos nombres contienen alguna cadena parcial
+            var productoIds = _context.Productos
+                 .AsEnumerable() // Esto carga los datos en memoria (soluciona un error de constains)
+                .Where(producto => partialNames.Any(partialName => producto.Nombre.Contains(partialName)))
+                .Select(producto => producto.IdProducto)
+                .ToList();
+
+            return productoIds;
+
+        }
+
         public bool save()
         {
             var saved = _context.SaveChanges();

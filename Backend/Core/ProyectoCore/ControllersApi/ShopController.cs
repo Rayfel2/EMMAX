@@ -32,7 +32,9 @@ namespace ProyectoCore.ControllersApi
 
         [HttpGet("/Producto")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Producto>))]
-        public IActionResult GetProducto(int page, int pageSize, [FromQuery] List<string> categoryFilter = null)
+        public IActionResult GetProducto(int page, int pageSize, 
+            [FromQuery] List<string> categoryFilter = null,
+            [FromQuery] List<string> productFilter = null)
         {
             try
             {
@@ -59,6 +61,15 @@ namespace ProyectoCore.ControllersApi
 
                     allProductos = allProductos
                         .Where(i => categoriasIds.Contains(Convert.ToInt32(i.IdCategoria)))
+                        .ToList();
+                }
+
+                if (productFilter != null && productFilter.Any())
+                {
+                    var productosIds = _RepositoryProducto.GetProductoIdsByPartialNames(productFilter);
+
+                    allProductos = allProductos
+                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)))
                         .ToList();
                 }
 
