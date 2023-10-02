@@ -25,7 +25,7 @@ namespace ProyectoCore.ControllersApi
             _mapper = mapper;
         }
 
-        [HttpGet("/Usuario")] // no recuerdo si debia ser plural o singular
+        [HttpGet("/Usuario")] // no recuerdo si debia ser plural o singular     
         [ProducesResponseType(200, Type = typeof(IEnumerable<Usuario>))]
         public IActionResult Usuario(int page, int pageSize)
         {
