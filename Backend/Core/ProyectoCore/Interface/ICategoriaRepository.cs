@@ -7,6 +7,6 @@ namespace ProyectoCore.Interface
         ICollection<Categorium> GetCategorias();
         Categorium GetCategorias(int id);
         bool save();
-        
+        List<int> GetCategoriaIdsByPartialNames(List<string> partialNames);
     }
 }

@@ -28,11 +28,11 @@ namespace ProyectoCore.ControllersApi
 
         [HttpGet("/Producto")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Producto>))]
-        public IActionResult GetProducto(int page, int pageSize)
+        public IActionResult GetProducto(int page, int pageSize, [FromQuery] List<string> categoryFilter = null)
         {
             try
             {
-                // Evitando valores negativos
+                // Evitar valores negativos
                 if (page < 1)
                 {
                     page = 1; // Página mínima
@@ -43,31 +43,37 @@ namespace ProyectoCore.ControllersApi
                     pageSize = 10; // Tamaño de página predeterminado
                 }
 
-                // Utilizado para determinar donde comienza cada pagina
+                // Utilizado para determinar dónde comienza cada página
                 int startIndex = (page - 1) * pageSize;
-
 
                 var allProductos = _RepositoryProducto.GetProductos();
 
-                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
+                // Aplicar filtros según los valores proporcionados
+                if (categoryFilter != null && categoryFilter.Any())
+                {
+                    var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(categoryFilter);
+
+                    allProductos = allProductos
+                        .Where(i => categoriasIds.Contains(Convert.ToInt32(i.IdCategoria)))
+                        .ToList();
+                }
+
+                // Aplicar paginación utilizando LINQ para seleccionar los registros apropiados.
+                // A nivel de rutas sería, por ejemplo, http://localhost:5230/Producto?page=1&pageSize=10
                 var pagedProductos = allProductos.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
 
-
-                // Mapeo los empleados paginados en vez de todos
+                // Mapear los productos paginados en lugar de todos
                 var ProductoDtoList = _mapper.Map<List<ProductoDto>>(pagedProductos);
-              
 
                 return Ok(ProductoDtoList);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                ModelState.AddModelError("", "Ocurrió un error al obtener los productos: " + ex.Message);
                 return BadRequest(ModelState);
             }
         }
+
 
 
         [HttpGet("/Categoria")]

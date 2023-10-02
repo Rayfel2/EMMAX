@@ -41,13 +41,14 @@
 
  
 
-
-
   .categorias-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Cambia de columna a fila */
     align-items: center;
+    flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en filas si no caben en una sola fila */
+    justify-content: center;
   }
+  
   
   .categoria-card {
     display: flex;
@@ -80,6 +81,4 @@
     border-color: #007bff;
     color: white; /* Color del icono cuando está seleccionado */
   }
-  
-  
   

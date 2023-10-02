@@ -1,24 +1,35 @@
-<div class="categorias-list">
-    <div class="categoria-card" *ngFor="let categoria of categorias" (click)="onCategoriaChange(categoria.nombre)">
-      <div class="categoria-content">
-        <h5>{{ categoria.nombre }}</h5>
+<div class="container mt-3">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <label for="categoriaSelect">Selecciona una categoría:</label>
+          <select class="form-control" id="categoriaSelect" [(ngModel)]="categoryFilter" (change)="getDataFromApi()">
+            <option value="---" selected>---</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria.nombre">{{ categoria.nombre }}</option>
+          </select>                                
+        </div>
+        <div class="pagination">
+            <button class="btn btn-black" (click)="prevPage()" *ngIf="page > 1">Anterior</button>
+            <button class="btn btn-black" (click)="nextPage()" *ngIf="hasMoreRecords">Siguiente</button>
+          </div>
       </div>
-      <div class="checkmark" [class.selected]="categoria.nombre === filterProducto">
-        <i class="fas fa-check"></i>
+
+
+      <div class="col-md-9">
+        <div class="card-container">
+          <div class="card" *ngFor="let item of datos">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.nombre }}</h5>
+              <p class="card-text">Precio: {{ item.precio }}$</p>
+            </div>
+            <img class="card-img" [src]="item.imagen" alt="Imagen">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  
-  
   
 
-<div class="card-container">
-    <div class="card" *ngFor="let item of datos">
-      <div class="card-body">
-        <h5 class="card-title">{{ item.nombre }}</h5>
-        <p class="card-text">Precio: {{ item.precio }}$</p>
-      </div>
-      <img class="card-img" [src]="item.imagen" alt="Imagen">
-    </div>
-  </div>
+
+  
   

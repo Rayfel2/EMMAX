@@ -12,23 +12,36 @@ import { FormsModule } from '@angular/forms';
 export class ShopComponent {
   datos: any[] = []; // Declaración de la propiedad datos
   categorias: any[] = [];
-  filterProducto: string = 'all'; // Declaración de la constante filterProducto
+  filterProducto: string = '--'; // Declaración de la constante filterProducto
+  page: number = 1; // Página actual
+  pageSize: number = 8; // Tamaño de página
+  categoryFilter: string = '---'; // Filtro de categoría
 
   constructor(private httpClient: HttpClient) { }
-
+  hasMoreRecords: boolean = true; 
   getDataFromApi() {
-    const productoApi = 'http://localhost:5230/Producto';
+    let productoApi: string;
+    if (this.categoryFilter === '---') {
+      productoApi = `http://localhost:5230/Producto?page=${this.page}&pageSize=${this.pageSize}`;
+    } else {
+      productoApi = `http://localhost:5230/Producto?page=${this.page}&pageSize=${this.pageSize}&categoryFilter=${this.categoryFilter}`;
+    }
     const resenaApi = 'http://localhost:5230/Categoria';
 
+
     this.httpClient.get(productoApi)
-      .subscribe((data: any) => {
-        // Maneja los datos recibidos aquí, por ejemplo, asignándolos a la propiedad del componente
-        // data contiene la respuesta de la API
-        console.log(data);
-        this.datos = data;
-      }, (error) => {
-        console.error('Error al obtener datos de la API', error);
-      });
+    .subscribe((data: any) => {
+      if (data.length < this.pageSize) {
+        this.hasMoreRecords = false;
+      } else {
+        this.hasMoreRecords = true;
+      }
+      console.log(data);
+      this.datos = data;
+    }, (error) => {
+      console.error('Error al obtener datos de la API', error);
+    });
+
 
     this.httpClient.get(resenaApi)
       .subscribe((data: any) => {
@@ -42,13 +55,25 @@ export class ShopComponent {
   }
 
   // Función para manejar el cambio en la selección
-  onCategoriaChange(selectedCategoria: string) {
-    // Almacena la opción seleccionada en la constante filterProducto
-    this.filterProducto = selectedCategoria;
+  onCategoriaChange(event: any) {
+    this.filterProducto = event.target.value;
     console.log('Opción seleccionada:', this.filterProducto);
-
     // Aquí puedes realizar la lógica para filtrar los productos según la categoría seleccionada
   }
+  
+  nextPage() {
+    this.page++;
+    this.getDataFromApi();
+  }
+  
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+      this.getDataFromApi();
+    }
+  }
+  
+  
 
   ngOnInit() {
     this.getDataFromApi();
