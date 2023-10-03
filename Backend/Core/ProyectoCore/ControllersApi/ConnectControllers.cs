@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -20,16 +21,22 @@ namespace ProyectoCore.ControllersApi
 
         private readonly IUsuarioRepository _RepositoryUsuario;
         private readonly ICarritoProductoRepository _RepositoryCarritoProducto;
-        private readonly string _jwtSecret;
+        private readonly ICarritoRepository _RepositoryCarrito;
+        
         private readonly IMapper _mapper;
 
-        public ConnectControllers(IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, IMapper mapper, string jwtSecret)
+        private readonly string _jwtSecret;
+
+        public ConnectControllers(IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, ICarritoRepository RepositoryCarrito, IMapper mapper, string jwtSecret)
         {
+            _RepositoryCarrito = RepositoryCarrito;
             _RepositoryUsuario = RepositoryUsuario;
             _RepositoryCarritoProducto = RepositoryCarritoProducto;
             _jwtSecret = jwtSecret;
             _mapper = mapper;
         }
+
+
 
         [HttpPost("/login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginRequest)
@@ -141,20 +148,20 @@ namespace ProyectoCore.ControllersApi
 
                 // Filtra los productos del carrito para el usuario autenticado
 
-                //var userCarritoProducto = allCarritoProducto.Where(cp => cp.IdUsuario == int.Parse(userId));
+                var userCarritoProducto = _RepositoryCarrito.GetCarrito(int.Parse(userId));
+                var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
 
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
                 // A nivel de rutas sería por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
 
-                //var pagedCarritoProducto = userCarritoProducto.Skip(startIndex).Take(pageSize).ToList();
+                var pagedCarritoProducto = CarritoProducto.Skip(startIndex).Take(pageSize).ToList();
 
                 // Mapeo los elementos del carrito paginados en vez de todos
 
 
-                //var CarritoProductoDtoList = _mapper.Map<List<CarritoProductoDto>>(pagedCarritoProducto);
+                var CarritoProductoDtoList = _mapper.Map<List<CarritoProductoDto>>(pagedCarritoProducto);
 
-                // return Ok(CarritoProductoDtoList);
-                return Ok(1);
+                 return Ok(CarritoProductoDtoList);
             }
             catch (Exception ex)
             {
@@ -163,6 +170,35 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
+
+        [HttpPost("/Registrar")]
+        [Consumes("application/json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult Post([FromBody] UsuarioPostDto UsuarioPostDTO)
+        {
+            // por si el DTO es null
+            if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
+
+            if (_RepositoryUsuario.UsuarioExist(UsuarioPostDTO.IdUsuario))
+            {
+                return StatusCode(666, "Usuario ya existe");
+            }
+
+            var Usuario = _mapper.Map<Usuario>(UsuarioPostDTO);
+            Usuario.ContraseñaHash = _RepositoryUsuario.HashPassword(Usuario.Contraseña);
+            if (!_RepositoryUsuario.CreateUsuario(Usuario))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            else
+            {
+                return Ok("Se ha registrado");
+            }
+
+        }
 
     }
 }

@@ -1,3 +1,4 @@
+using ProyectoCore.ControllersApi; 
 using Microsoft.EntityFrameworkCore;
 using ProyectoCore.Models;
 using ProyectoCore.Repository;
@@ -19,13 +20,15 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IReseñaRepository, ReseñaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>(); // agregue esto
 builder.Services.AddScoped<ICarritoProductoRepository, CarritoProductoRepository>(); // agregue esto
+builder.Services.AddScoped<ICarritoRepository, CarritoRepository>();
+builder.Services.AddScoped<IListaRepository, ListaRepository>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200") // Reemplaza con la URL de tu aplicación Angular
+            builder.WithOrigins("http://localhost:4200") 
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -36,14 +39,16 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllersWithViews();
 var env = Environment.GetEnvironmentVariable("ConnectionStrings__cadenaSQL"); //esta usa el connectionstring de la variable de entorno
 var appsettings = builder.Configuration.GetConnectionString("cadenaSQL"); // esta usa el connectionstring del que esta en el app setting
-
-
+var jwtSecret = "Aguacate";
+builder.Services.AddSingleton(jwtSecret);
 builder.Services.AddDbContext<TiendaPruebaContext>(options =>
     options.UseSqlServer(env) // en este caso usamos la varaibles de entorno
 );
 
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

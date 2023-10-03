@@ -17,7 +17,7 @@ namespace ProyectoCore.Repository
 
         public Carrito GetCarrito(int id)
         {
-            return _context.Carritos.Where(e => e.IdCarrito == id).FirstOrDefault();
+            return _context.Carritos.Where(e => e.IdUsuario == id).FirstOrDefault();
         }
 
         public bool save()

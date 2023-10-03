@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.EntityFrameworkCore;
 using ProyectoCore.Interface;
 using ProyectoCore.Models;
 using System.Security.Cryptography;
@@ -12,6 +13,18 @@ namespace ProyectoCore.Repository
         public UsuarioRepository(TiendaPruebaContext context)
         {
             _context = context;
+        }
+
+        public bool CreateUsuario(Usuario Usuario)
+        {
+            _context.Add(Usuario);
+            return save();
+        }
+
+        public bool UsuarioExist(int idUsuario)
+        {
+            return _context.Usuarios.Any(p => p.IdUsuario == idUsuario);
+
         }
         public ICollection<Usuario> GetUsuarios()
         {
@@ -60,22 +73,32 @@ namespace ProyectoCore.Repository
                 return false; // Contraseña o hash almacenados son inválidos
             }
 
-            // Calcula el hash de la contraseña proporcionada
-            using (var hmac = new HMACSHA512())
+            using (var sha256 = SHA256.Create())
             {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                // Calcula el hash de la contraseña proporcionada
+                var computedHashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var computedHashString = BitConverter.ToString(computedHashBytes).Replace("-", "").ToLower();
 
                 // Compara el hash calculado con el hash almacenado
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != storedHash[i])
-                    {
-                        return false; // La contraseña no coincide
-                    }
-                }
+                return string.Equals(computedHashString, storedHash, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public string HashPassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("La contraseña no puede estar vacía o ser nula.", nameof(password));
             }
 
-            return true; // La contraseña coincide
+            using (var sha256 = SHA256.Create())
+            {
+                // Calcula el hash de la contraseña como una cadena hexadecimal
+                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+                return hashString;
+            }
         }
     }
 }

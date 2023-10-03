@@ -25,5 +25,15 @@ namespace ProyectoCore.Repository
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
+
+        ICollection<ListaProducto> IListaRepository.GetLista()
+        {
+            throw new NotImplementedException();
+        }
+
+        Carrito IListaRepository.GetLista(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

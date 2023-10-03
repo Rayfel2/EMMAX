@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-register',
@@ -14,7 +15,24 @@ export class LoginRegisterComponent implements OnInit {
   caja_trasera_login: any;
   caja_trasera_register: any;
 
-  constructor(private elementRef: ElementRef) { }
+  mostrarFormularioLogin = true;
+  mostrarFormularioRegistro = false;
+  loginRequest = {
+    email: '',
+    contraseña: ''
+  };
+  registroRequest = {
+    nombre: '',
+    apellido: '',
+    dirección: '',
+    teléfono: '',
+    email: '',
+    nombreUsuario: '',
+    fechaNacimiento: '',
+    contraseña: ''
+  };
+
+  constructor(private elementRef: ElementRef, private http: HttpClient) { }
   
   ngOnInit() {
       // Obtener elementos después de que el componente haya sido renderizado
@@ -89,5 +107,34 @@ export class LoginRegisterComponent implements OnInit {
       this.caja_trasera_login.style.display = "block";
       this.caja_trasera_login.style.opacity = "1";
     }
+  }
+  // Función para realizar el inicio de sesión
+  login() {
+    // Realizar la solicitud HTTP para iniciar sesión utilizando this.loginRequest
+    this.http.post('/login', this.loginRequest).subscribe(
+      (response: any) => {
+        // Manejar la respuesta del servidor, por ejemplo, guardar el token en el almacenamiento local.
+        console.log('Login exitoso');
+        localStorage.setItem('token', response.Token);
+        // Redireccionar a la página principal o realizar otras acciones necesarias.
+      },
+      (error) => {
+        // Manejar errores, mostrar mensajes de error, etc.
+      }
+    );
+  }
+
+  // Función para realizar el registro
+  registrar() {
+    // Realizar la solicitud HTTP para registrarse utilizando this.registroRequest
+    this.http.post('/registro', this.registroRequest).subscribe(
+      (response: any) => {
+        // Manejar la respuesta del servidor, por ejemplo, mostrar un mensaje de éxito.
+        console.log('Registro exitoso');
+      },
+      (error) => {
+        // Manejar errores, mostrar mensajes de error, etc.
+      }
+    );
   }
 }
