@@ -127,6 +127,9 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                // Obtén el ID del usuario autenticado
+                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+
                 // Evitando valores negativos
                 if (page < 1)
                 {
@@ -141,21 +144,24 @@ namespace ProyectoCore.ControllersApi
                 // Utilizado para determinar donde comienza cada pagina
                 int startIndex = (page - 1) * pageSize;
 
-
                 var allCarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto();
 
+                // Filtra los productos del carrito para el usuario autenticado
+
+                var userCarritoProducto = _RepositoryCarrito.GetCarrito(int.Parse(userId));
+                var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
+
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
-                var pagedCarritoProducto = allCarritoProducto.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
+                // A nivel de rutas sería por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
+
+                var pagedCarritoProducto = CarritoProducto.Skip(startIndex).Take(pageSize).ToList();
+
+                // Mapeo los elementos del carrito paginados en vez de todos
 
 
-                // Mapeo los empleados paginados en vez de todos
                 var CarritoProductoDtoList = _mapper.Map<List<CarritoProductoDto>>(pagedCarritoProducto);
 
-
-                return Ok(CarritoProductoDtoList);
+                 return Ok(CarritoProductoDtoList);
             }
             catch (Exception ex)
             {
