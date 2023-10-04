@@ -16,15 +16,20 @@ namespace ProyectoCore.Repository
             return _context.CarritoProductos.OrderBy(H => H.IdCarrito).ToList();
         }
 
-        public ICollection<CarritoProducto> GetCarritoProducto(int id)
+        public CarritoProducto GetCarritoProducto(int id)
         {
-            return _context.CarritoProductos.Where(e => e.IdCarrito == id).ToList();
+            return _context.CarritoProductos.Where(e => e.IdCarrito == id).FirstOrDefault();
         }
 
         public bool save()
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        Producto ICarritoProductoRepository.GetCarritoProducto(int id) // esto se agrego solo
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace ProyectoCore.Interface
     public interface ICarritoProductoRepository
     {
         ICollection<CarritoProducto> GetCarritoProducto();
-        ICollection<CarritoProducto> GetCarritoProducto(int id);
+        Producto GetCarritoProducto(int id);
         bool save();
     }
 }
