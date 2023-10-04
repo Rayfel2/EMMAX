@@ -38,7 +38,7 @@ namespace ProyectoCore.ControllersApi
 
 
 
-        [HttpPost("/login")]
+        [HttpPost("/login")]      // ss
         public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginRequest)
         {
             try
