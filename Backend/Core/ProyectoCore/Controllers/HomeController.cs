@@ -12,6 +12,8 @@ namespace ProyectoCore.Controllers
     public class HomeController : Controller
     {
         private readonly TiendaPruebaContext _TiendaPruebaContext;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public HomeController(TiendaPruebaContext context)
         {
@@ -22,6 +24,7 @@ namespace ProyectoCore.Controllers
 
         public IActionResult Index()
         {
+            log.Info("se inicio el index");
             List<Producto> lista = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).ToList(); // poner todos los productos en una lista, inclutendo categoria
             return View(lista);
         }
@@ -31,58 +34,103 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Producto_Detalle(int idProducto)
         {
-            ProductoVM oProductoVM = new ProductoVM() { 
-                oProducto = new Producto(),
-                oListaCategoria = _TiendaPruebaContext.Categoria.Select(categoria => new SelectListItem() {
-                    Text = categoria.Nombre,
-                    Value = categoria.IdCategoria.ToString()
-                }).ToList(),
-            
-            };
-
-            if (idProducto != 0)
+            try
             {
-                oProductoVM.oProducto = _TiendaPruebaContext.Productos.Find(idProducto);
+                log.Info("se inicio el get de producto detalle");
+                ProductoVM oProductoVM = new ProductoVM()
+                {
+                    oProducto = new Producto(),
+                    oListaCategoria = _TiendaPruebaContext.Categoria.Select(categoria => new SelectListItem()
+                    {
+                        Text = categoria.Nombre,
+                        Value = categoria.IdCategoria.ToString()
+                    }).ToList(),
+
+                };
+
+                if (idProducto != 0)
+                {
+                    oProductoVM.oProducto = _TiendaPruebaContext.Productos.Find(idProducto);
+
+                }
+
+                return View(oProductoVM);
+            }
+            catch (Exception ex) 
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al traer los productos " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oProductoVM);
         }
 
         [HttpPost]
         public IActionResult Producto_Detalle(ProductoVM oProductoVM)
         {
-          if(oProductoVM.oProducto.IdProducto == 0)
+            try
             {
-                _TiendaPruebaContext.Productos.Add(oProductoVM.oProducto);
+                log.Info("se inicio el post de producto detalle");
+                if (oProductoVM.oProducto.IdProducto == 0)
+                {
+                    _TiendaPruebaContext.Productos.Add(oProductoVM.oProducto);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Productos.Update(oProductoVM.oProducto);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("Index", "Home");
             }
-          else
+            catch(Exception ex) 
             {
-                _TiendaPruebaContext.Productos.Update(oProductoVM.oProducto);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al guardar los productos " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-          _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar(int idProducto)
         {
-          Producto oProducto = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).Where(e => e.IdProducto == idProducto).FirstOrDefault();
+            try
+            {
+                log.Info("se inicio el get para eliminar el producto");
+                Producto oProducto = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).Where(e => e.IdProducto == idProducto).FirstOrDefault();
+                log.Info("guardado con exito");
+                return View(oProducto);
+            }
+            catch(Exception ex) 
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar los productos " + ex.Message);
+                return BadRequest(ModelState);
 
-            return View(oProducto);
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar(Producto oProducto)
         {
-            _TiendaPruebaContext.Productos.Remove(oProducto);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Productos.Remove(oProducto);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oProducto);
+                return View(oProducto);
+            }
+            catch (Exception ex) 
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar los productos  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 

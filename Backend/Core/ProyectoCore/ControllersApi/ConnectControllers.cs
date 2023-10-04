@@ -11,14 +11,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace ProyectoCore.ControllersApi
 {
+
     [ApiController]
     [Route("[controller]")]
     public class ConnectControllers : Controller
     {
-
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IUsuarioRepository _RepositoryUsuario;
         private readonly ICarritoProductoRepository _RepositoryCarritoProducto;
         private readonly ICarritoRepository _RepositoryCarrito;
@@ -34,6 +36,7 @@ namespace ProyectoCore.ControllersApi
             _RepositoryCarritoProducto = RepositoryCarritoProducto;
             _jwtSecret = jwtSecret;
             _mapper = mapper;
+       
         }
 
 
@@ -43,6 +46,8 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+
+                log.Info("se inicio (httpPostlogin)");
                 // Verificar si el correo electrónico es válido
                 var usuario = _RepositoryUsuario.GetUsuarioByEmailAndPassword(loginRequest.Email, loginRequest.Contraseña);
 
@@ -71,8 +76,10 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al iniciar sesión: " + ex.Message);
                 return BadRequest(ModelState);
+                
             }
         }
 
@@ -83,6 +90,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("se inicio (httpGetUsuario)");
                 // Evitando valores negativos
                 if (page < 1)
                 {
@@ -110,11 +118,13 @@ namespace ProyectoCore.ControllersApi
                 // Mapeo los empleados paginados en vez de todos
                 var UsuarioDtoList = _mapper.Map<List<UsuarioDto>>(pagedUsuario);
 
-
+                log.Info("se completo el get de usuario");
                 return Ok(UsuarioDtoList);
+               
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los Usuarios: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -125,8 +135,10 @@ namespace ProyectoCore.ControllersApi
         [ProducesResponseType(200, Type = typeof(IEnumerable<CarritoProducto>))]
         public IActionResult GetCarritoProducto(int page, int pageSize)
         {
+
             try
             {
+                log.Info("se inicio httpGet CarritoProducto");
                 // Obtén el ID del usuario autenticado
                 var userId = User.FindFirst(ClaimTypes.Name)?.Value;
 
@@ -160,11 +172,12 @@ namespace ProyectoCore.ControllersApi
 
 
                 var CarritoProductoDtoList = _mapper.Map<List<CarritoProductoDto>>(pagedCarritoProducto);
-
+                log.Info("se completo el get de CarritoProducto");
                  return Ok(CarritoProductoDtoList);
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los CarritoProducto: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -177,25 +190,38 @@ namespace ProyectoCore.ControllersApi
         [ProducesResponseType(400)]
         public IActionResult Post([FromBody] UsuarioPostDto UsuarioPostDTO)
         {
-            // por si el DTO es null
-            if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
-
-            if (_RepositoryUsuario.UsuarioExist(UsuarioPostDTO.IdUsuario))
+            try
             {
-                return StatusCode(666, "Usuario ya existe");
+                log.Info("comenzo el intento de crear usuario");
+                // por si el DTO es null
+                if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
+
+                if (_RepositoryUsuario.UsuarioExist(UsuarioPostDTO.IdUsuario))
+                {
+                    log.Info("error el usuario ya existia");
+                    return StatusCode(666, "Usuario ya existe");
+                }
+
+                var Usuario = _mapper.Map<Usuario>(UsuarioPostDTO);
+                Usuario.ContraseñaHash = _RepositoryUsuario.HashPassword(Usuario.Contraseña);
+                if (!_RepositoryUsuario.CreateUsuario(Usuario))
+                {
+                    ModelState.AddModelError("", "Something went wrong while saving");
+                    return StatusCode(500, ModelState);
+                }
+
+                else
+                {
+                    log.Info("se registro el usuario con exito");
+                    return Ok("Se ha registrado");
+                }
             }
-
-            var Usuario = _mapper.Map<Usuario>(UsuarioPostDTO);
-            Usuario.ContraseñaHash = _RepositoryUsuario.HashPassword(Usuario.Contraseña);
-            if (!_RepositoryUsuario.CreateUsuario(Usuario))
+            catch (Exception ex) 
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-            }
+                log.Error("hubo un problema a la hora de " + ex);
+                ModelState.AddModelError("", "Ocurrió un error al obtener los CarritoProducto: " + ex.Message);
+                return BadRequest(ModelState);
 
-            else
-            {
-                return Ok("Se ha registrado");
             }
 
         }

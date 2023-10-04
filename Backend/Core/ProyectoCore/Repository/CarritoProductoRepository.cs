@@ -11,6 +11,12 @@ namespace ProyectoCore.Repository
         {
             _context = context;
         }
+
+        public bool CreateCarritoProducto(CarritoProducto CarritoProducto)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICollection<CarritoProducto> GetCarritoProducto()
         {
             return _context.CarritoProductos.OrderBy(H => H.IdCarrito).ToList();

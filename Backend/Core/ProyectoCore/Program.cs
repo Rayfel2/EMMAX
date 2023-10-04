@@ -5,11 +5,14 @@ using ProyectoCore.Repository;
 using ProyectoCore.Interface;
 using dotenv.net;
 using System.Configuration;
+using log4net;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 DotEnv.Load();
+
 
 
 // para el api
@@ -53,6 +56,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+
     app.UseExceptionHandler("/Home/Error");
 }
 
