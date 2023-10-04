@@ -9,5 +9,9 @@
         public int? Cantidad { get; set; }
 
         public double? Precio { get; set; }
+
+        public virtual CarritoDto? IdCarritoNavigation { get; set; }
+
+        public virtual ProductoDto? IdProductoNavigation { get; set; }
     }
 }

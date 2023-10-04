@@ -18,6 +18,7 @@ namespace ProyectoCore.Helper
             // Post (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();
             CreateMap<UsuarioPostDto, Usuario>();
+            CreateMap<CarritoProductoDto, CarritoProducto>();
 
             //put (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();
