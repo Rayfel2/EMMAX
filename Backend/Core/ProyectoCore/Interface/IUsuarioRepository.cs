@@ -13,5 +13,6 @@ namespace ProyectoCore.Interface
 
         bool UsuarioExist(int idUsuario);
         bool CreateUsuario(Usuario Usuario);
+        int GetUsuarioIds(string partialNames);
     }
 }

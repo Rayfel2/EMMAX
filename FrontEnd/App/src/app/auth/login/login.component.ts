@@ -24,7 +24,7 @@ password: ['', [Validators.required]],
   get password(){
     return this.loginForm.controls.password;
   }
-
+/*
   login(){
     if (this.loginForm.valid){
       this.LoginService.login(this.loginForm.value as LoginRequest).subscribe({
@@ -48,6 +48,6 @@ password: ['', [Validators.required]],
     }
 
   }
-  
+  */
 }
 

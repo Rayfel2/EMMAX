@@ -1,13 +1,16 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { LoginService } from 'src/app/services/auth/login.service';
 
 @Component({
   selector: 'app-login-register',
   templateUrl: './login-register.component.html',
   styleUrls: ['./login-register.component.css']
 })
+
 export class LoginRegisterComponent implements OnInit {
 
+  
   // Declarando variables
   formulario_login: any;
   formulario_register: any;
@@ -18,21 +21,21 @@ export class LoginRegisterComponent implements OnInit {
   mostrarFormularioLogin = true;
   mostrarFormularioRegistro = false;
   loginRequest = {
-    email: '',
-    contraseña: ''
+    Email: '',
+    Contraseña: ''
   };
   registroRequest = {
-    nombre: '',
-    apellido: '',
-    dirección: '',
-    teléfono: '',
-    email: '',
-    nombreUsuario: '',
-    fechaNacimiento: '',
-    contraseña: ''
+    Nombre: '',
+    Apellido: '',
+    Dirección: '',
+    Teléfono: '',
+    Email: '',
+    NombreUsuario: '',
+    FechaNacimiento: '',
+    Contraseña: ''
   };
 
-  constructor(private elementRef: ElementRef, private http: HttpClient) { }
+  constructor(private elementRef: ElementRef, private http: HttpClient, private loginService: LoginService) { }
   
   ngOnInit() {
       // Obtener elementos después de que el componente haya sido renderizado
@@ -111,15 +114,18 @@ export class LoginRegisterComponent implements OnInit {
   // Función para realizar el inicio de sesión
   login() {
     // Realizar la solicitud HTTP para iniciar sesión utilizando this.loginRequest
-    this.http.post('/login', this.loginRequest).subscribe(
+    this.http.post('http://localhost:5230/login', this.loginRequest).subscribe(
       (response: any) => {
         // Manejar la respuesta del servidor, por ejemplo, guardar el token en el almacenamiento local.
         console.log('Login exitoso');
-        localStorage.setItem('token', response.Token);
+        localStorage.setItem('token', response.token);
+        console.log(response.token);
+        this.loginService.setUserLoginOn(true);
         // Redireccionar a la página principal o realizar otras acciones necesarias.
       },
       (error) => {
-        // Manejar errores, mostrar mensajes de error, etc.
+        console.log(this.loginRequest);
+        console.error('Error al obtener datos de la API', error);
       }
     );
   }
@@ -127,13 +133,14 @@ export class LoginRegisterComponent implements OnInit {
   // Función para realizar el registro
   registrar() {
     // Realizar la solicitud HTTP para registrarse utilizando this.registroRequest
-    this.http.post('/registro', this.registroRequest).subscribe(
+    this.http.post('http://localhost:5230/Registrar', this.registroRequest).subscribe(
       (response: any) => {
-        // Manejar la respuesta del servidor, por ejemplo, mostrar un mensaje de éxito.
         console.log('Registro exitoso');
       },
       (error) => {
-        // Manejar errores, mostrar mensajes de error, etc.
+        
+          // El registro se realizó con éxito (estado 200)
+        console.error('Error al obtener datos de la API', error);
       }
     );
   }

@@ -4,7 +4,7 @@ namespace ProyectoCore.Interface
     public interface IListaProductoRepository
     {
         ICollection<ListaProducto> GetListaProducto();
-        ListaProducto GetListaProducto(int id);
+        ICollection<ListaProducto> GetListaProductos(int id);
         bool save();
     }
 }

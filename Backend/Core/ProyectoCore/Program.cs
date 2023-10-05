@@ -5,7 +5,9 @@ using ProyectoCore.Repository;
 using ProyectoCore.Interface;
 using dotenv.net;
 using System.Configuration;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ DotEnv.Load();
 // para el api
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IReseñaRepository, ReseñaRepository>();
@@ -22,6 +25,7 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>(); // agregue 
 builder.Services.AddScoped<ICarritoProductoRepository, CarritoProductoRepository>(); // agregue esto
 builder.Services.AddScoped<ICarritoRepository, CarritoRepository>();
 builder.Services.AddScoped<IListaRepository, ListaRepository>();
+builder.Services.AddScoped <IListaProductoRepository, ListaProductoRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -39,8 +43,38 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllersWithViews();
 var env = Environment.GetEnvironmentVariable("ConnectionStrings__cadenaSQL"); //esta usa el connectionstring de la variable de entorno
 var appsettings = builder.Configuration.GetConnectionString("cadenaSQL"); // esta usa el connectionstring del que esta en el app setting
-var jwtSecret = "Aguacate";
+//var jwtSecret = "Aguacate"; 
+var jwtSecret = "AguacateMiClaveMuyLargaQueCumpleConLosRequisitosDelAlgoritmoHMACSHA256123";
 builder.Services.AddSingleton(jwtSecret);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "http://localhost:5230/", 
+            ValidAudience = "http://localhost:5230/", 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+        };
+    });
+/*builder.Services.AddAuthorization(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt: Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration("Jwt:Key")))
+    }
+}*/
+
 builder.Services.AddDbContext<TiendaPruebaContext>(options =>
     options.UseSqlServer(env) // en este caso usamos la varaibles de entorno
 );
@@ -64,6 +98,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("AllowSpecificOrigin");
@@ -91,9 +126,11 @@ if (api.Environment.IsDevelopment())
     api.UseSwaggerUI();
 }
 
-api.UseAuthorization();
 
 api.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 api.UseCors("AllowSpecificOrigin");
 

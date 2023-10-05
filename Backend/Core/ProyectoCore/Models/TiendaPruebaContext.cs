@@ -118,7 +118,7 @@ public partial class TiendaPruebaContext : DbContext
                     j =>
                     {
                         j.HasKey("IdLista", "IdProductos").HasName("PK__Lista_Pr__7B37C322EAD40186");
-                        j.ToTable("Lista_Productos");
+                        j.ToTable("Lista_Producto");
                         j.IndexerProperty<int>("IdLista")
                             .ValueGeneratedOnAdd()
                             .HasColumnName("Id_Lista");
@@ -258,7 +258,7 @@ public partial class TiendaPruebaContext : DbContext
         {
             entity.HasKey(e => new { e.IDListaProducto, e.IdProducto }).HasName("PK__ListaProducto___1882BA4FA452C27B");
 
-            entity.ToTable("Lista_Producto");
+            entity.ToTable("Lista_Productos");
 
             entity.Property(e => e.IDListaProducto)
                 //.ValueGeneratedOnAdd()

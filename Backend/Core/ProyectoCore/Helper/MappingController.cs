@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ProyectoCore.Dto;
 using ProyectoCore.Models;
+
 namespace ProyectoCore.Helper
 {
     public class MappingController : Profile
@@ -9,11 +10,30 @@ namespace ProyectoCore.Helper
         {
             // Get (de la tabla al dto)
             CreateMap<Producto, ProductoDto>();
-            CreateMap <Categorium, CategoriaDto>();
-            CreateMap < Reseña, ReseñaDto>();
-            CreateMap <Usuario, UsuarioDto>();
-            CreateMap <CarritoProducto, CarritoProductoDto>();
-            CreateMap <ListaProducto, ListaProductoDto>();
+            CreateMap<Categorium, CategoriaDto>();
+            CreateMap<Reseña, ReseñaDto>();
+            CreateMap<Usuario, UsuarioDto>();
+            CreateMap<ListaDeseo, ListaDto>();
+
+            CreateMap<CarritoProducto, CarritoProductoDto>()
+                .ForMember(
+                    dest => dest.Producto,
+                    opt => opt.MapFrom(src => src.oProducto)
+                );
+
+            CreateMap<ListaProducto, ListaProductoDto>()
+                .ForMember(
+                    dest => dest.Producto,
+                    opt => opt.MapFrom(src => src.oProducto)
+                );
+            /*
+             * dest => dest.Producto,
+        opt => opt.MapFrom(src => new ProductoDto
+        {
+            Nombre = src.oProducto.Nombre,
+        })
+             */
+
 
             // Post (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();
@@ -24,3 +44,4 @@ namespace ProyectoCore.Helper
         }
     }
 }
+

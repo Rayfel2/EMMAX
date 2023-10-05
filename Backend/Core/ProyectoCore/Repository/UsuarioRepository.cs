@@ -100,5 +100,16 @@ namespace ProyectoCore.Repository
                 return hashString;
             }
         }
+        public int GetUsuarioIds(string partialNames)
+        {
+            var UsuarioId = _context.Usuarios
+    .Where(Usuario => Usuario.NombreUsuario == partialNames)
+    .Select(Usuario => Usuario.IdUsuario)
+    .FirstOrDefault();
+
+
+            return UsuarioId;
+
+        }
     }
 }

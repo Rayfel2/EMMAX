@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -21,21 +22,26 @@ namespace ProyectoCore.ControllersApi
 
         private readonly IUsuarioRepository _RepositoryUsuario;
         private readonly ICarritoProductoRepository _RepositoryCarritoProducto;
+        private readonly IListaProductoRepository _RepositoryListaProducto;
         private readonly ICarritoRepository _RepositoryCarrito;
-        
+        private readonly IListaRepository _RepositoryLista;
+        private readonly IProductoRepository _RepositoryProducto;
+
         private readonly IMapper _mapper;
 
         private readonly string _jwtSecret;
 
-        public ConnectControllers(IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, ICarritoRepository RepositoryCarrito, IMapper mapper, string jwtSecret)
+        public ConnectControllers(IListaRepository RepositoryLista, IListaProductoRepository RepositoryListaProducto, IProductoRepository RepositoryProducto, IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, ICarritoRepository RepositoryCarrito, IMapper mapper, string jwtSecret)
         {
             _RepositoryCarrito = RepositoryCarrito;
             _RepositoryUsuario = RepositoryUsuario;
             _RepositoryCarritoProducto = RepositoryCarritoProducto;
             _jwtSecret = jwtSecret;
             _mapper = mapper;
+            _RepositoryProducto = RepositoryProducto;
+            _RepositoryListaProducto = RepositoryListaProducto;
+            _RepositoryLista = RepositoryLista;
         }
-
 
 
         [HttpPost("/login")]
@@ -45,26 +51,26 @@ namespace ProyectoCore.ControllersApi
             {
                 // Verificar si el correo electrónico es válido
                 var usuario = _RepositoryUsuario.GetUsuarioByEmailAndPassword(loginRequest.Email, loginRequest.Contraseña);
+                if (usuario == null) { return NotFound(); }
 
-     
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, usuario.IdUsuario.ToString()), // ID del usuario como claim
+            new Claim("Email", usuario.Email), // Agregar el email como claim personalizado
+        };
 
-                // Generar un token JWT con el ID del usuario como claim
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                new Claim(ClaimTypes.Name, usuario.IdUsuario.ToString()) // ID del usuario como claim
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(1), // Duración del token (1 hora)
-                    SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSecret)),
-                        SecurityAlgorithms.HmacSha256Signature
-                    )
-                };
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                var token = new JwtSecurityToken(
+                    issuer: "http://localhost:5230/", // Cambia esto a tu emisor JWT
+                    audience: "http://localhost:5230/", // Cambia esto a tu audiencia JWT
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1), // Duración del token (1 hora)
+                    signingCredentials: credentials
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
                 // Devolver el token JWT en la respuesta
                 return Ok(new { Token = tokenString });
@@ -75,6 +81,8 @@ namespace ProyectoCore.ControllersApi
                 return BadRequest(ModelState);
             }
         }
+
+
 
 
         [HttpGet("/Usuario")] // no recuerdo si debia ser plural o singular
@@ -120,7 +128,7 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
-        [Authorize] // Añade este atributo para requerir autenticación
+       [Authorize]
         [HttpGet("/CarritoProducto")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<CarritoProducto>))]
         public IActionResult GetCarritoProducto(int page, int pageSize)
@@ -128,7 +136,20 @@ namespace ProyectoCore.ControllersApi
             try
             {
                 // Obtén el ID del usuario autenticado
-                var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+                if (userIdClaim == null)
+                {
+                    // El claim "Name" no se encontró en el token
+                    return BadRequest("No se encontró el claim 'Name' en el token.");
+                }
+
+                if (!int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    // No se pudo convertir el valor del claim "Name" a un entero
+                    return BadRequest("No se pudo convertir 'userId' a un entero.");
+                }
 
                 // Evitando valores negativos
                 if (page < 1)
@@ -141,15 +162,29 @@ namespace ProyectoCore.ControllersApi
                     pageSize = 10; // Tamaño de página predeterminado
                 }
 
-                // Utilizado para determinar donde comienza cada pagina
+                // Utilizado para determinar donde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
                 var allCarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto();
 
                 // Filtra los productos del carrito para el usuario autenticado
 
-                var userCarritoProducto = _RepositoryCarrito.GetCarrito(int.Parse(userId));
-                var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
+                var userCarritoProducto = _RepositoryCarrito.GetCarrito(userId);
+                if (userCarritoProducto == null)
+                {
+                    return NotFound();
+                }
+                //   var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
+
+                var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito)
+            .Join(
+                _RepositoryProducto.GetProductos(),
+                cp => cp.IdProducto,
+                p => p.IdProducto,
+                (cp, p) => new { CarritoProducto = cp, Producto = p }
+            )
+            .Select(result => _mapper.Map<CarritoProductoDto>(result.CarritoProducto))
+            .ToList();
 
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
                 // A nivel de rutas sería por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
@@ -158,10 +193,9 @@ namespace ProyectoCore.ControllersApi
 
                 // Mapeo los elementos del carrito paginados en vez de todos
 
-
                 var CarritoProductoDtoList = _mapper.Map<List<CarritoProductoDto>>(pagedCarritoProducto);
 
-                 return Ok(CarritoProductoDtoList);
+                return Ok(CarritoProductoDtoList);
             }
             catch (Exception ex)
             {
@@ -170,9 +204,86 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
+        [Authorize]
+        [HttpGet("/ListaProducto")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ListaProducto>))]
+        public IActionResult GetListaProducto(int page, int pageSize)
+        {
+            try
+            {
+                // Obtén el ID del usuario autenticado
+
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+                if (userIdClaim == null)
+                {
+                    // El claim "Name" no se encontró en el token
+                    return BadRequest("No se encontró el claim 'Name' en el token.");
+                }
+
+                if (!int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    // No se pudo convertir el valor del claim "Name" a un entero
+                    return BadRequest("No se pudo convertir 'userId' a un entero.");
+                }
+
+                // Evitando valores negativos
+                if (page < 1)
+                {
+                    page = 1; // Página mínima
+                }
+
+                if (pageSize < 1)
+                {
+                    pageSize = 10; // Tamaño de página predeterminado
+                }
+
+                // Utilizado para determinar donde comienza cada página
+                int startIndex = (page - 1) * pageSize;
+
+                var alllistaproducto = _RepositoryListaProducto.GetListaProducto();
+
+                // Filtra los productos del carrito para el usuario autenticado
+
+                var userlistaproducto = _RepositoryLista.GetLista(userId);
+                if (userlistaproducto == null)
+                {
+                    return NotFound();
+                }
+                //   var listaproducto = _Repositorylistaproducto.Getlistaproducto(userlistaproducto.IdCarrito);
+
+                var listaproducto = _RepositoryListaProducto.GetListaProductos(userlistaproducto.IdLista)
+            .Join(
+                _RepositoryProducto.GetProductos(),
+                cp => cp.IdProducto,
+                p => p.IdProducto,
+                (cp, p) => new { listaproducto = cp, Producto = p }
+            )
+            .Select(result => _mapper.Map<ListaProductoDto>(result.listaproducto))
+            .ToList();
+
+                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
+                // A nivel de rutas sería por ejemplo http://localhost:5230/Producto?page=1&pageSize=10
+
+                var pagedlistaproducto = listaproducto.Skip(startIndex).Take(pageSize).ToList();
+
+                // Mapeo los elementos del carrito paginados en vez de todos
+
+                var listaproductoDtoList = _mapper.Map<List<ListaProductoDto>>(pagedlistaproducto);
+
+                return Ok(listaproductoDtoList);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener los listaproductoDto: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
+
+
 
         [HttpPost("/Registrar")]
-        [Consumes("application/json")]
+       [Consumes("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public IActionResult Post([FromBody] UsuarioPostDto UsuarioPostDTO)
@@ -180,7 +291,8 @@ namespace ProyectoCore.ControllersApi
             // por si el DTO es null
             if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
-            if (_RepositoryUsuario.UsuarioExist(UsuarioPostDTO.IdUsuario))
+            int IdUsuario = _RepositoryUsuario.GetUsuarioIds(UsuarioPostDTO.NombreUsuario);
+            if (_RepositoryUsuario.UsuarioExist(IdUsuario))
             {
                 return StatusCode(666, "Usuario ya existe");
             }
@@ -195,7 +307,7 @@ namespace ProyectoCore.ControllersApi
 
             else
             {
-                return Ok("Se ha registrado");
+                return Ok();
             }
 
         }

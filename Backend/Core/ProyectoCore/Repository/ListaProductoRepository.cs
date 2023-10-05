@@ -16,10 +16,7 @@ namespace ProyectoCore.Repository
             return _context.ListaProducto.OrderBy(H => H.IDListaProducto).ToList();
         }
 
-        public ListaProducto GetListaProducto(int id)
-        {
-            return _context.ListaProducto.Where(e => e.IDListaProducto == id).FirstOrDefault();
-        }
+
 
         public bool save()
         {
@@ -27,9 +24,10 @@ namespace ProyectoCore.Repository
             return saved > 0 ? true : false;
         }
 
-        ListaProducto IListaProductoRepository.GetListaProducto(int id) // esto se agrego solo
+        public ICollection<ListaProducto> GetListaProductos(int id) // esto se agrego solo
         {
-            throw new NotImplementedException();
+            
+            return _context.ListaProducto.Where(e => e.IDListaProducto == id).ToList();
         }
     }
 }

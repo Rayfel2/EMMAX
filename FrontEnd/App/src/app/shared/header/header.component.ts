@@ -8,41 +8,22 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  userLoginOn: boolean=false;
+  userLoginOn: boolean = false;
 
-  isLoginModalOpen = false;
+  constructor(private router: Router, private loginService: LoginService) {}
 
-  // Método para abrir la ventana emergente
-  openLoginModal() {
-    this.isLoginModalOpen = true;
-  }
-
-  // Método para cerrar la ventana emergente
-  closeLoginModal() {
-    this.isLoginModalOpen = false;
-  }
-  
-  
-  constructor(private loginService:LoginService, private router: Router) {}
   logout() {
-   this.loginService.logout();
-   this.router.navigateByUrl('/inicio');
-   // Puedes agregar cualquier redirección o lógica adicional aquí después de cerrar sesión.
- }
- 
-  ngOnDestroy(): void {
-   this.loginService.currentUserData.unsubscribe();
-   this.loginService.currentUserLoginOn.unsubscribe();  
- }
- 
-  ngOnInit(): void {
-    this.loginService.currentUserLoginOn.subscribe({
-     next:(userLoginOn) =>{
-       this.userLoginOn= userLoginOn;
-     }
-   });
- 
+    localStorage.removeItem('token');
+    this.loginService.setUserLoginOn(false);
+    this.router.navigateByUrl('/inicio');
   }
-  
-}
 
+  ngOnDestroy(): void {
+  }
+
+  ngOnInit(): void {
+    this.loginService.userLoginOn$.subscribe((userLoginOn) => {
+      this.userLoginOn = userLoginOn; // Actualiza userLoginOn cuando cambie el estado de inicio de sesión
+  }
+)};
+}

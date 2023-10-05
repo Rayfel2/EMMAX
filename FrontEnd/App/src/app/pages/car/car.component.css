@@ -1,0 +1,54 @@
+/* Estilos para la tarjeta */
+/* Estilos para la tarjeta */
+.tarjeta {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+
+/* Estilos para la imagen */
+.imagen img {
+    width: 100px; /* Tamaño de la imagen */
+    height: 100px; /* Tamaño de la imagen */
+    object-fit: cover; /* Ajustar la imagen al cuadro */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Estilos para los detalles */
+.detalles {
+    flex-grow: 1;
+}
+
+/* Estilos para los botones */
+.botones {
+    display: flex;
+    margin-top: 10px;
+}
+
+.botones button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 5px;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+}
+
+/* Estilos para el botón de eliminar */
+.eliminar {
+    color: red;
+}
+
+/* Estilos para el botón de agregar a favoritos */
+.agregar {
+    color: #ff69b4;
+}

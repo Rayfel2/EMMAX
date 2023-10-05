@@ -31,9 +31,6 @@ namespace ProyectoCore.Repository
             throw new NotImplementedException();
         }
 
-        Carrito IListaRepository.GetLista(int id)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
