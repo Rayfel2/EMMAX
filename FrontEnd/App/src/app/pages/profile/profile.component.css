@@ -1,4 +1,66 @@
-/* div{
-    margin: 5%;
-    background-color: aliceblue;
-} */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-header i {
+    font-size: 48px;
+    margin-right: 10px;
+  }
+  
+  .profile-header h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .profile-details form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .profile-details .form-group {
+    flex-basis: calc(50% - 10px);
+    margin-bottom: 10px;
+  }
+  
+  .profile-details label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  .profile-details input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+    cursor: not-allowed;
+  }
+  
+  .profile-details input[type="text"],
+  .profile-details input[type="email"],
+  .profile-details input[type="tel"],
+  .profile-details input[type="date"] {
+    cursor: not-allowed;
+  }
+  
+  .profile-details input[type="button"],
+  .profile-details input[type="submit"],
+  .profile-details button {
+    display: none;
+  }
+  
+  /* Estilos adicionales según tus necesidades */
+  

@@ -17,7 +17,7 @@ namespace ProyectoCore.Repository
 
         public ListaDeseo GetLista(int id)
         {
-            return _context.ListaDeseos.Where(e => e.IdLista == id).FirstOrDefault();
+            return _context.ListaDeseos.Where(e => e.IdUsuario == id).FirstOrDefault();
         }
 
         public bool save()

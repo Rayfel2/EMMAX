@@ -1,0 +1,41 @@
+<div class="profile-container">
+    <div class="profile-header">
+      <i class="fas fa-user"></i> <!-- Ícono de usuario -->
+      <h1>Mi Perfil</h1>
+    </div>
+    <div class="profile-details">
+      <form>
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" [(ngModel)]="usuario.nombre" disabled>
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido:</label>
+          <input type="text" id="apellido" name="apellido" [(ngModel)]="usuario.apellido" disabled>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" [(ngModel)]="usuario.email" disabled>
+        </div>
+        <div class="form-group">
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion" [(ngModel)]="usuario.direccion" disabled>
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label>
+          <input type="tel" id="telefono" name="telefono" [(ngModel)]="usuario.telefono" disabled>
+        </div>
+        <div class="form-group">
+          <label for="nombreUsuario">Nombre de Usuario:</label>
+          <input type="text" id="nombreUsuario" name="nombreUsuario" [(ngModel)]="usuario.nombreUsuario" disabled>
+        </div>
+        <div class="form-group">
+          <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+          <input type="text" id="fechaNacimiento" name="fechaNacimiento" [(ngModel)]="usuario.fechaNacimiento" disabled>
+        </div>
+        <!-- Puedes agregar más campos según sea necesario -->
+      </form>
+    </div>
+  </div>
+  
+  

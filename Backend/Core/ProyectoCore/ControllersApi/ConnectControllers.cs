@@ -84,13 +84,27 @@ namespace ProyectoCore.ControllersApi
 
 
 
-
-        [HttpGet("/Usuario")] // no recuerdo si debia ser plural o singular
+        [Authorize]
+        [HttpGet("/Usuario")] 
         [ProducesResponseType(200, Type = typeof(IEnumerable<Usuario>))]
-        public IActionResult Usuario(int page, int pageSize)
+        public IActionResult Usuario(/*int page, int pageSize*/)
         {
             try
             {
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+                if (userIdClaim == null)
+                {
+                    // El claim "Name" no se encontró en el token
+                    return BadRequest("No se encontró el claim 'Name' en el token.");
+                }
+
+                if (!int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    // No se pudo convertir el valor del claim "Name" a un entero
+                    return BadRequest("No se pudo convertir 'userId' a un entero.");
+                }
+                /*
                 // Evitando valores negativos
                 if (page < 1)
                 {
@@ -104,22 +118,22 @@ namespace ProyectoCore.ControllersApi
 
                 // Utilizado para determinar donde comienza cada pagina
                 int startIndex = (page - 1) * pageSize;
+                */
 
-
-                var allUsuarios = _RepositoryUsuario.GetUsuarios();
+                var allUsuarios = _RepositoryUsuario.GetUsuario(userId);
 
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
                 // A nivel de rutas seria por ejemplo http://localhost:5230/categoria?page=1&pageSize=10
-                var pagedUsuario = allUsuarios.Skip(startIndex).Take(pageSize).ToList();
+                //var pagedUsuario = allUsuarios.Skip(startIndex).Take(pageSize).ToList();
                 //.skip omite un numero de registro
                 //.Take cantidad elemento que se van a tomar
 
 
                 // Mapeo los empleados paginados en vez de todos
-                var UsuarioDtoList = _mapper.Map<List<UsuarioDto>>(pagedUsuario);
+               // var UsuarioDtoList = _mapper.Map<List<UsuarioDto>>(allUsuarios);
 
 
-                return Ok(UsuarioDtoList);
+                return Ok(allUsuarios);
             }
             catch (Exception ex)
             {
@@ -291,11 +305,12 @@ namespace ProyectoCore.ControllersApi
             // por si el DTO es null
             if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
-            int IdUsuario = _RepositoryUsuario.GetUsuarioIds(UsuarioPostDTO.NombreUsuario);
+            int IdUsuario = _RepositoryUsuario.GetUsuarioIds(UsuarioPostDTO.Email);
             if (_RepositoryUsuario.UsuarioExist(IdUsuario))
             {
                 return StatusCode(666, "Usuario ya existe");
             }
+
 
             var Usuario = _mapper.Map<Usuario>(UsuarioPostDTO);
             Usuario.ContraseñaHash = _RepositoryUsuario.HashPassword(Usuario.Contraseña);

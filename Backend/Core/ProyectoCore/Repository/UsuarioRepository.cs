@@ -103,7 +103,7 @@ namespace ProyectoCore.Repository
         public int GetUsuarioIds(string partialNames)
         {
             var UsuarioId = _context.Usuarios
-    .Where(Usuario => Usuario.NombreUsuario == partialNames)
+    .Where(Usuario => Usuario.Email == partialNames)
     .Select(Usuario => Usuario.IdUsuario)
     .FirstOrDefault();
 
