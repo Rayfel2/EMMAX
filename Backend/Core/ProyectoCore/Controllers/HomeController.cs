@@ -12,16 +12,19 @@ namespace ProyectoCore.Controllers
     public class HomeController : Controller
     {
         private readonly TiendaPruebaContext _TiendaPruebaContext;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public HomeController(TiendaPruebaContext context)
         {
             _TiendaPruebaContext = context;
         }
 
-       
+
 
         public IActionResult Index()
         {
+            log.Info("se inicio el index");
             List<Producto> lista = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).ToList(); // poner todos los productos en una lista, inclutendo categoria
             return View(lista);
         }
@@ -31,58 +34,103 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Producto_Detalle(int idProducto)
         {
-            ProductoVM oProductoVM = new ProductoVM() { 
-                oProducto = new Producto(),
-                oListaCategoria = _TiendaPruebaContext.Categoria.Select(categoria => new SelectListItem() {
-                    Text = categoria.Nombre,
-                    Value = categoria.IdCategoria.ToString()
-                }).ToList(),
-            
-            };
-
-            if (idProducto != 0)
+            try
             {
-                oProductoVM.oProducto = _TiendaPruebaContext.Productos.Find(idProducto);
+                log.Info("se inicio el get de producto detalle");
+                ProductoVM oProductoVM = new ProductoVM()
+                {
+                    oProducto = new Producto(),
+                    oListaCategoria = _TiendaPruebaContext.Categoria.Select(categoria => new SelectListItem()
+                    {
+                        Text = categoria.Nombre,
+                        Value = categoria.IdCategoria.ToString()
+                    }).ToList(),
+
+                };
+
+                if (idProducto != 0)
+                {
+                    oProductoVM.oProducto = _TiendaPruebaContext.Productos.Find(idProducto);
+
+                }
+
+                return View(oProductoVM);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al traer los productos " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oProductoVM);
         }
 
         [HttpPost]
         public IActionResult Producto_Detalle(ProductoVM oProductoVM)
         {
-          if(oProductoVM.oProducto.IdProducto == 0)
+            try
             {
-                _TiendaPruebaContext.Productos.Add(oProductoVM.oProducto);
+                log.Info("se inicio el post de producto detalle");
+                if (oProductoVM.oProducto.IdProducto == 0)
+                {
+                    _TiendaPruebaContext.Productos.Add(oProductoVM.oProducto);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Productos.Update(oProductoVM.oProducto);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("Index", "Home");
             }
-          else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Productos.Update(oProductoVM.oProducto);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al guardar los productos " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-          _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar(int idProducto)
         {
-          Producto oProducto = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).Where(e => e.IdProducto == idProducto).FirstOrDefault();
+            try
+            {
+                log.Info("se inicio el get para eliminar el producto");
+                Producto oProducto = _TiendaPruebaContext.Productos.Include(c => c.oCategorium).Where(e => e.IdProducto == idProducto).FirstOrDefault();
+                log.Info("guardado con exito");
+                return View(oProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar los productos " + ex.Message);
+                return BadRequest(ModelState);
 
-            return View(oProducto);
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar(Producto oProducto)
         {
-            _TiendaPruebaContext.Productos.Remove(oProducto);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Productos.Remove(oProducto);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oProducto);
+                return View(oProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar los productos  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -90,216 +138,377 @@ namespace ProyectoCore.Controllers
 
         public IActionResult IndexCategoria()
         {
-            List<Categorium> lista = _TiendaPruebaContext.Categoria.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
-            return View(lista);
+            try
+            {
+                List<Categorium> lista = _TiendaPruebaContext.Categoria.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de Categoria  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpGet]
         public IActionResult Categoria_Detalle(int idCategoria)
         {
-            CategoriaVM oCategoriaVM = new CategoriaVM()
+            try
             {
-                oCategoria = new Categorium()
-
-            };
-
-            if (idCategoria != 0)
-            {
-                oCategoriaVM.oCategoria = _TiendaPruebaContext.Categoria.Find(idCategoria);
-
-                if (oCategoriaVM.oCategoria == null) // if para validar que esxista             
+                CategoriaVM oCategoriaVM = new CategoriaVM()
                 {
-                    return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+                    oCategoria = new Categorium()
+
+                };
+
+                if (idCategoria != 0)
+                {
+                    oCategoriaVM.oCategoria = _TiendaPruebaContext.Categoria.Find(idCategoria);
+
+                    if (oCategoriaVM.oCategoria == null) // if para validar que esxista             
+                    {
+                        return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+                    }
+
                 }
 
+                return View(oCategoriaVM);
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de categoria  " + ex.Message);
+                return BadRequest(ModelState);
 
-            return View(oCategoriaVM);
+            }
         }
 
         [HttpPost]
         public IActionResult Categoria_Detalle(CategoriaVM oCategoriaVM)
         {
-            if (oCategoriaVM.oCategoria.IdCategoria == 0)
+            try
             {
-                _TiendaPruebaContext.Categoria.Add(oCategoriaVM.oCategoria);
+                if (oCategoriaVM.oCategoria.IdCategoria == 0)
+                {
+                    _TiendaPruebaContext.Categoria.Add(oCategoriaVM.oCategoria);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Categoria.Update(oCategoriaVM.oCategoria);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexCategoria", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Categoria.Update(oCategoriaVM.oCategoria);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de categoria  " + ex.Message);
+                return BadRequest(ModelState);
+
             }
 
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexCategoria", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_Categoria(int idCategoria)
         {
-            Categorium oCategoria = _TiendaPruebaContext.Categoria.Where(e => e.IdCategoria == idCategoria).FirstOrDefault();
-            
-            if (oCategoria == null)
+            try
             {
-                return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
-            }
+                Categorium oCategoria = _TiendaPruebaContext.Categoria.Where(e => e.IdCategoria == idCategoria).FirstOrDefault();
 
-            return View(oCategoria);
+                if (oCategoria == null)
+                {
+                    return NotFound(); // Devuelve una respuesta 404 si la categoría no se encuentra.
+                }
+
+                return View(oCategoria);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar categoria  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Categoria(Categorium oCategoria)
         {
-            _TiendaPruebaContext.Categoria.Remove(oCategoria);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Categoria.Remove(oCategoria);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oCategoria);
+                return View(oCategoria);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la categoria  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //resena--------------------------------------------------------------------------------
 
         public IActionResult IndexResena()
         {
-            List<Reseña> lista = _TiendaPruebaContext.Reseñas.Include(c => c.oUsuario).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
-            return View(lista);
+            try
+            {
+                List<Reseña> lista = _TiendaPruebaContext.Reseñas.Include(c => c.oUsuario).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de resena  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
-           // a
+
 
 
         [HttpGet]
         public IActionResult Resena_Detalle(int idResena)
         {
-            ResenaVM oResenaVM = new ResenaVM()
+            try
             {
-                oResena = new Reseña(),
-                oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                ResenaVM oResenaVM = new ResenaVM()
                 {
-                    Text = Usuario.NombreUsuario,
-                    Value = Usuario.IdUsuario.ToString()
-                }).ToList(),
+                    oResena = new Reseña(),
+                    oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                    {
+                        Text = Usuario.NombreUsuario,
+                        Value = Usuario.IdUsuario.ToString()
+                    }).ToList(),
 
-                oListaProducto = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    oListaProducto = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    {
+                        Text = Producto.Nombre,
+                        Value = Producto.IdProducto.ToString()
+                    }).ToList(),
+
+                };
+
+                if (idResena != 0)
                 {
-                    Text = Producto.Nombre,
-                    Value = Producto.IdProducto.ToString()
-                }).ToList(),
+                    oResenaVM.oResena = _TiendaPruebaContext.Reseñas.Find(idResena);
 
-            };
+                }
 
-            if (idResena != 0)
+                return View(oResenaVM);
+            }
+            catch (Exception ex)
             {
-                oResenaVM.oResena = _TiendaPruebaContext.Reseñas.Find(idResena);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de resena " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oResenaVM);
         }
 
         [HttpPost]
         public IActionResult Resena_Detalle(ResenaVM oResenaVM)
         {
-            if (oResenaVM.oResena.IdReseña == 0)
+            try
             {
-                _TiendaPruebaContext.Reseñas.Add(oResenaVM.oResena);
+                if (oResenaVM.oResena.IdReseña == 0)
+                {
+                    _TiendaPruebaContext.Reseñas.Add(oResenaVM.oResena);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Reseñas.Update(oResenaVM.oResena);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexResena", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Reseñas.Update(oResenaVM.oResena);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de resena detalle  " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexResena", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_Resena(int idResena)
         {
-            Reseña oResena = _TiendaPruebaContext.Reseñas.Include(c => c.oUsuario).Include(c => c.oProducto).Where(e => e.IdReseña == idResena).FirstOrDefault();
+            try
+            {
+                Reseña oResena = _TiendaPruebaContext.Reseñas.Include(c => c.oUsuario).Include(c => c.oProducto).Where(e => e.IdReseña == idResena).FirstOrDefault();
 
-            return View(oResena);
+                return View(oResena);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la resena  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Resena(Reseña oReseña)
         {
-            _TiendaPruebaContext.Reseñas.Remove(oReseña);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Reseñas.Remove(oReseña);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oReseña);
+                return View(oReseña);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la resena  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //MetodoPago----------------------------------------------------------------------
 
         public IActionResult IndexMetodoPago()
         {
-            List<MetodoPago> lista = _TiendaPruebaContext.MetodoPagos.ToList(); 
-            return View(lista);
+            try
+            {
+                List<MetodoPago> lista = _TiendaPruebaContext.MetodoPagos.ToList();
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index metodo de pago " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpGet]
         public IActionResult MetodoPago_Detalle(int idMetodoPago)
         {
-            MetodoPagoVM oMetodoPagoVM = new MetodoPagoVM()
+            try
             {
-                oMetodoPago = new MetodoPago()
+                MetodoPagoVM oMetodoPagoVM = new MetodoPagoVM()
+                {
+                    oMetodoPago = new MetodoPago()
 
-            };
+                };
 
-            if (idMetodoPago != 0)
+                if (idMetodoPago != 0)
+                {
+                    oMetodoPagoVM.oMetodoPago = _TiendaPruebaContext.MetodoPagos.Find(idMetodoPago);
+
+                }
+
+                return View(oMetodoPagoVM);
+            }
+            catch (Exception ex)
             {
-                oMetodoPagoVM.oMetodoPago = _TiendaPruebaContext.MetodoPagos.Find(idMetodoPago);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get metodo pago  " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oMetodoPagoVM);
         }
 
         [HttpPost]
         public IActionResult MetodoPago_Detalle(MetodoPagoVM oMetodoPagoVM)
         {
-            if (oMetodoPagoVM.oMetodoPago.IdMetodo == 0)
+            try
             {
-                _TiendaPruebaContext.MetodoPagos.Add(oMetodoPagoVM.oMetodoPago);
+                if (oMetodoPagoVM.oMetodoPago.IdMetodo == 0)
+                {
+                    _TiendaPruebaContext.MetodoPagos.Add(oMetodoPagoVM.oMetodoPago);
+                }
+                else
+                {
+                    _TiendaPruebaContext.MetodoPagos.Update(oMetodoPagoVM.oMetodoPago);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexMetodoPago", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.MetodoPagos.Update(oMetodoPagoVM.oMetodoPago);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post metodo de pago  " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexMetodoPago", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_MetodoPago(int idMetodoPago)
         {
-            MetodoPago oMetodoPago = _TiendaPruebaContext.MetodoPagos.Where(e => e.IdMetodo == idMetodoPago).FirstOrDefault();
+            try
+            {
+                MetodoPago oMetodoPago = _TiendaPruebaContext.MetodoPagos.Where(e => e.IdMetodo == idMetodoPago).FirstOrDefault();
 
-            return View(oMetodoPago);
+                return View(oMetodoPago);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar metodopago " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_MetodoPago(MetodoPago oMetodoPago)
         {
-            _TiendaPruebaContext.MetodoPagos.Remove(oMetodoPago);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.MetodoPagos.Remove(oMetodoPago);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oMetodoPago);
+                return View(oMetodoPago);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el metodo de pago " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //recibo---------------------------------------------------------------------------------------
         public IActionResult IndexRecibo()
         {
-            List<Recibo> lista = _TiendaPruebaContext.Recibos.Include(c => c.oCarrito).Include(c => c.oMetodoPago).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
-            return View(lista);
+            try
+            {
+                List<Recibo> lista = _TiendaPruebaContext.Recibos.Include(c => c.oCarrito).Include(c => c.oMetodoPago).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en le index de recibo " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -309,48 +518,68 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Recibo_Detalle(int idRecibo)
         {
-            ReciboVM oReciboVM = new ReciboVM()
+            try
             {
-                oRecibo = new Recibo(),
-                oListaCarrito = _TiendaPruebaContext.Carritos.Select(Carrito => new SelectListItem()
+                ReciboVM oReciboVM = new ReciboVM()
                 {
-                    Text = Carrito.IdCarrito.ToString(),
-                    Value = Carrito.IdCarrito.ToString()
-                }).ToList(),
+                    oRecibo = new Recibo(),
+                    oListaCarrito = _TiendaPruebaContext.Carritos.Select(Carrito => new SelectListItem()
+                    {
+                        Text = Carrito.IdCarrito.ToString(),
+                        Value = Carrito.IdCarrito.ToString()
+                    }).ToList(),
 
-                oListaMetodoPago = _TiendaPruebaContext.MetodoPagos.Select(MetodoPago => new SelectListItem()
+                    oListaMetodoPago = _TiendaPruebaContext.MetodoPagos.Select(MetodoPago => new SelectListItem()
+                    {
+                        Text = MetodoPago.TipoMetodo,
+                        Value = MetodoPago.IdMetodo.ToString()
+                    }).ToList(),
+
+                };
+
+                if (idRecibo != 0)
                 {
-                    Text = MetodoPago.TipoMetodo,
-                    Value = MetodoPago.IdMetodo.ToString()
-                }).ToList(),
+                    oReciboVM.oRecibo = _TiendaPruebaContext.Recibos.Find(idRecibo);
 
-            };
+                }
 
-            if (idRecibo != 0)
+                return View(oReciboVM);
+            }
+            catch (Exception ex)
             {
-                oReciboVM.oRecibo = _TiendaPruebaContext.Recibos.Find(idRecibo);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de recibo  " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oReciboVM);
         }
 
         [HttpPost]
         public IActionResult Recibo_Detalle(ReciboVM oReciboVM)
         {
-            if (oReciboVM.oRecibo.IdRecibo == 0)
+            try
             {
-                _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
+                if (oReciboVM.oRecibo.IdRecibo == 0)
+                {
+                    _TiendaPruebaContext.Recibos.Add(oReciboVM.oRecibo);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Recibos.Update(oReciboVM.oRecibo);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexRecibo", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Recibos.Update(oReciboVM.oRecibo);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de recibo " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexRecibo", "Home");
         }
 
 
@@ -360,81 +589,151 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Eliminar_Recibo(int idRecibo)
         {
-            Recibo oRecibo = _TiendaPruebaContext.Recibos.Include(c => c.oCarrito).Include(c => c.oMetodoPago).Where(e => e.IdRecibo == idRecibo).FirstOrDefault();
+            try
+            {
+                Recibo oRecibo = _TiendaPruebaContext.Recibos.Include(c => c.oCarrito).Include(c => c.oMetodoPago).Where(e => e.IdRecibo == idRecibo).FirstOrDefault();
 
-            return View(oRecibo);
+                return View(oRecibo);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el recibo  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Recibo(Recibo oRecibo)
         {
-            _TiendaPruebaContext.Recibos.Remove(oRecibo);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Recibos.Remove(oRecibo);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oRecibo);
+                return View(oRecibo);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el recibo " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //Role----------------------------------------------------------------------------------------------------
 
         public IActionResult IndexRole()
         {
-            List<Role> lista = _TiendaPruebaContext.Roles.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
-            return View(lista);
+            try
+            {
+                List<Role> lista = _TiendaPruebaContext.Roles.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de rol " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpGet]
         public IActionResult Role_Detalle(int idRole)
         {
-            RoleVM oRoleVM = new RoleVM()
+            try
             {
-                oRole = new Role()
+                RoleVM oRoleVM = new RoleVM()
+                {
+                    oRole = new Role()
 
-            };
+                };
 
-            if (idRole != 0)
+                if (idRole != 0)
+                {
+                    oRoleVM.oRole = _TiendaPruebaContext.Roles.Find(idRole);
+
+                }
+
+                return View(oRoleVM);
+            }
+            catch (Exception ex)
             {
-                oRoleVM.oRole = _TiendaPruebaContext.Roles.Find(idRole);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de rol " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oRoleVM);
         }
 
         [HttpPost]
         public IActionResult Role_Detalle(RoleVM oRoleVM)
         {
-            if (oRoleVM.oRole.IdRoles == 0)
+            try
             {
-                _TiendaPruebaContext.Roles.Add(oRoleVM.oRole);
+                if (oRoleVM.oRole.IdRoles == 0)
+                {
+                    _TiendaPruebaContext.Roles.Add(oRoleVM.oRole);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Roles.Update(oRoleVM.oRole);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexRole", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Roles.Update(oRoleVM.oRole);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de rol " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexRole", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_Role(int idRole)
         {
-            Role oRole = _TiendaPruebaContext.Roles.Where(e => e.IdRoles == idRole).FirstOrDefault();
+            try
+            {
+                Role oRole = _TiendaPruebaContext.Roles.Where(e => e.IdRoles == idRole).FirstOrDefault();
 
-            return View(oRole);
+                return View(oRole);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar rol " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Role(Role oRole)
         {
-            _TiendaPruebaContext.Roles.Remove(oRole);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Roles.Remove(oRole);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oRole);
+                return View(oRole);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el eliminar rol " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -442,78 +741,109 @@ namespace ProyectoCore.Controllers
 
         public IActionResult IndexUsuario()
         {
-            List<Usuario> lista = _TiendaPruebaContext.Usuarios.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
-            return View(lista);
+            try
+            {
+                List<Usuario> lista = _TiendaPruebaContext.Usuarios.ToList(); // poner todas las categorias en una lista, sin incluir otro atributo
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index usuario " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpGet]
         public IActionResult Usuario_Detalle(int idUsuario)
         {
-            UsuarioVM oUsuarioVM = new UsuarioVM()
+            try
             {
-                oUsuario = new Usuario()
+                UsuarioVM oUsuarioVM = new UsuarioVM()
+                {
+                    oUsuario = new Usuario()
 
-            };
+                };
 
-            if (idUsuario != 0)
+                if (idUsuario != 0)
+                {
+                    oUsuarioVM.oUsuario = _TiendaPruebaContext.Usuarios.Find(idUsuario);
+
+                }
+
+                return View(oUsuarioVM);
+            }
+            catch (Exception ex)
             {
-                oUsuarioVM.oUsuario = _TiendaPruebaContext.Usuarios.Find(idUsuario);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de usuario " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oUsuarioVM);
         }
 
         [HttpPost]
         public IActionResult Usuario_Detalle(UsuarioVM oUsuarioVM)
         {
-            if (oUsuarioVM.oUsuario.IdUsuario == 0)
+            try
             {
-                // Generar un hash de contraseña
-                string contrasena = oUsuarioVM.oUsuario.Contraseña; // Obtén la contraseña sin hash
-                string contrasenaHash = HashPassword(contrasena); // Genera el hash de la contraseña
-
-                // Asignar el hash de la contraseña al usuario
-                oUsuarioVM.oUsuario.ContraseñaHash = contrasenaHash;
-
-                _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
-                Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
-                NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
-                _TiendaPruebaContext.Carritos.Add(NuevoCarrito); // se agrega el carro a la base de datos
-
-                ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
-                listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
-                _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
-                //---------------------------------
-                _TiendaPruebaContext.SaveChanges(); // Guardar cambios para obtener el ID del usuario asignado
-
-                // Crear un nuevo registro en la tabla RolesUsuario para asignar el rol con ID 7
-                RolesUsuario nuevoRolUsuario = new RolesUsuario
+                if (oUsuarioVM.oUsuario.IdUsuario == 0)
                 {
-                    IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
-                    IdRoles = 7 // ID del rol que deseas asignar
-                };
+                    // Generar un hash de contraseña
+                    string contrasena = oUsuarioVM.oUsuario.Contraseña; // Obtén la contraseña sin hash
+                    string contrasenaHash = HashPassword(contrasena); // Genera el hash de la contraseña
 
-                _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
+                    // Asignar el hash de la contraseña al usuario
+                    oUsuarioVM.oUsuario.ContraseñaHash = contrasenaHash;
+
+                    _TiendaPruebaContext.Usuarios.Add(oUsuarioVM.oUsuario);
+                    Carrito NuevoCarrito = new Carrito(); // creamos un nuevo carrito
+                    NuevoCarrito.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla carrito, le colocamos el usuario
+                    _TiendaPruebaContext.Carritos.Add(NuevoCarrito); // se agrega el carro a la base de datos
+
+                    ListaDeseo listaDeseoNueva = new ListaDeseo(); // creamos una nueva lista
+                    listaDeseoNueva.oUsuario = oUsuarioVM.oUsuario; // al atributo usuario de la tabla lista, le colocamos el usuario
+                    _TiendaPruebaContext.ListaDeseos.Add(listaDeseoNueva); // se agrega la lista a la base de datos
+                                                                           //---------------------------------
+                    _TiendaPruebaContext.SaveChanges(); // Guardar cambios para obtener el ID del usuario asignado
+
+                    // Crear un nuevo registro en la tabla RolesUsuario para asignar el rol con ID 7
+                    RolesUsuario nuevoRolUsuario = new RolesUsuario
+                    {
+                        IdUsuario = oUsuarioVM.oUsuario.IdUsuario, // Obtener el ID del usuario recién creado
+                        IdRoles = 7 // ID del rol que deseas asignar
+                    };
+
+                    _TiendaPruebaContext.RolesUsuario.Add(nuevoRolUsuario);
+                    _TiendaPruebaContext.SaveChanges();
+
+
+
+                    //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Usuarios.Update(oUsuarioVM.oUsuario);
+                }
+
+
                 _TiendaPruebaContext.SaveChanges();
 
-
-
-                //_TiendaPruebaContext.Carritos.Add(oUsuarioVM.oUsuario.Carritos);
+                return RedirectToAction("IndexUsuario", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Usuarios.Update(oUsuarioVM.oUsuario);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de usuario  " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexUsuario", "Home");
         }
 
         private string HashPassword(string password) // metodo para generar contrasena hash
         {
+
             // Genera un salt aleatorio
             byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
@@ -540,27 +870,57 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Eliminar_Usuario(int idUsuario)
         {
-            Usuario oUsuario = _TiendaPruebaContext.Usuarios.Where(e => e.IdUsuario == idUsuario).FirstOrDefault();
+            try
+            {
+                Usuario oUsuario = _TiendaPruebaContext.Usuarios.Where(e => e.IdUsuario == idUsuario).FirstOrDefault();
 
-            return View(oUsuario);
+                return View(oUsuario);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el eliminar usuario" + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Usuario(Usuario oUsuario)
         {
-            _TiendaPruebaContext.Usuarios.Remove(oUsuario);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Usuarios.Remove(oUsuario);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oUsuario);
+                return View(oUsuario);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el usuario  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //CarritoProducto-----------------------------------------------------------------------------------------
 
         public IActionResult IndexCarritoProducto()
         {
-            List<CarritoProducto> lista = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
-            return View(lista);
+            try
+            {
+                List<CarritoProducto> lista = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de carito producto " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -568,111 +928,162 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult CarritoProducto_Detalle(int idCarrito, int idProducto)
         {
-            CarritoProductoVM oCarritoProductoVM = new CarritoProductoVM()
+            try
             {
-                oCarritoProducto = new CarritoProducto(),
-                oListaCarrito = _TiendaPruebaContext.Carritos.Select(Carrito => new SelectListItem()
+                CarritoProductoVM oCarritoProductoVM = new CarritoProductoVM()
                 {
-                    Text = Carrito.IdCarrito.ToString(),
-                    Value = Carrito.IdCarrito.ToString()
-                }).ToList(),
+                    oCarritoProducto = new CarritoProducto(),
+                    oListaCarrito = _TiendaPruebaContext.Carritos.Select(Carrito => new SelectListItem()
+                    {
+                        Text = Carrito.IdCarrito.ToString(),
+                        Value = Carrito.IdCarrito.ToString()
+                    }).ToList(),
 
-                oListaProducto = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    oListaProducto = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    {
+                        Text = Producto.IdProducto.ToString(),
+                        Value = Producto.IdProducto.ToString()
+                    }).ToList(),
+
+                };
+                var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+            .FirstOrDefault(cp => cp.IdCarrito == idCarrito
+                                && cp.IdProducto == idProducto);
+                ViewBag.ExistingCarritoProducto = existingCarritoProducto;
+                if (idCarrito != 0 && idProducto != 0)
                 {
-                    Text = Producto.IdProducto.ToString(),
-                    Value = Producto.IdProducto.ToString()
-                }).ToList(),
 
-            };     
-            var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
-        .FirstOrDefault(cp => cp.IdCarrito == idCarrito
-                            && cp.IdProducto == idProducto);
-            ViewBag.ExistingCarritoProducto = existingCarritoProducto;
-            if (idCarrito != 0 && idProducto != 0 )
+                    oCarritoProductoVM.oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Find(idCarrito, idProducto);
+
+                }
+
+                return View(oCarritoProductoVM);
+            }
+            catch (Exception ex)
             {
-                
-                oCarritoProductoVM.oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Find(idCarrito, idProducto);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de carrito producto " + ex.Message);
+                return BadRequest(ModelState);
+
 
             }
-
-            return View(oCarritoProductoVM);
         }
 
-        
+
         [HttpPost]
         public IActionResult CarritoProducto_Detalle(CarritoProductoVM oCarritoProductoVM)
         {
-            var carrito = oCarritoProductoVM.oCarritoProducto.IdCarrito;
-            var producto = oCarritoProductoVM.oCarritoProducto.IdProducto;
-
-            // Obtener el producto seleccionado desde la base de datos
-            var selectedProduct = _TiendaPruebaContext.Productos.FirstOrDefault(p => p.IdProducto == producto);
-
-            if (selectedProduct != null)
+            try
             {
-                // Establecer el precio del CarritoProducto igual al precio del Producto
-                oCarritoProductoVM.oCarritoProducto.Precio = selectedProduct.Precio;
+                var carrito = oCarritoProductoVM.oCarritoProducto.IdCarrito;
+                var producto = oCarritoProductoVM.oCarritoProducto.IdProducto;
 
-                // Comprobar si el CarritoProducto ya existe en la base de datos
-                var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
-                    .FirstOrDefault(cp => cp.IdCarrito == carrito && cp.IdProducto == producto);
+                // Obtener el producto seleccionado desde la base de datos
+                var selectedProduct = _TiendaPruebaContext.Productos.FirstOrDefault(p => p.IdProducto == producto);
 
-                if (existingCarritoProducto == null)
+                if (selectedProduct != null)
                 {
-                    // Si no existe, agregar el nuevo CarritoProducto
-                    if (oCarritoProductoVM.oCarritoProducto.Cantidad > selectedProduct.Stock)
+                    // Establecer el precio del CarritoProducto igual al precio del Producto
+                    oCarritoProductoVM.oCarritoProducto.Precio = selectedProduct.Precio;
+
+                    // Comprobar si el CarritoProducto ya existe en la base de datos
+                    var existingCarritoProducto = _TiendaPruebaContext.CarritoProductos
+                        .FirstOrDefault(cp => cp.IdCarrito == carrito && cp.IdProducto == producto);
+
+                    if (existingCarritoProducto == null)
                     {
-                        // Lanzar una excepción
-                        return NotFound("la cantidad no puede ser mayor al stock");
-                        //throw new Exception("La cantidad no puede ser mayor que el stock");
+                        // Si no existe, agregar el nuevo CarritoProducto
+                        if (oCarritoProductoVM.oCarritoProducto.Cantidad > selectedProduct.Stock)
+                        {
+                            // Lanzar una excepción
+                            return NotFound("la cantidad no puede ser mayor al stock");
+                            //throw new Exception("La cantidad no puede ser mayor que el stock");
+                        }
+
+                        _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
+                    }
+                    else
+                    {
+                        // Si existe, actualizar el CarritoProducto existente con el nuevo precio
+                        existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio;
+                        existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
+
+                        // Actualizar otras propiedades según sea necesario
+                        _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto);
                     }
 
-                    _TiendaPruebaContext.CarritoProductos.Add(oCarritoProductoVM.oCarritoProducto);
-                }
-                else
-                {
-                    // Si existe, actualizar el CarritoProducto existente con el nuevo precio
-                    existingCarritoProducto.Precio = oCarritoProductoVM.oCarritoProducto.Precio;
-                    existingCarritoProducto.Cantidad = oCarritoProductoVM.oCarritoProducto.Cantidad;
-
-                    // Actualizar otras propiedades según sea necesario
-                    _TiendaPruebaContext.CarritoProductos.Update(existingCarritoProducto);
+                    // Guardar cambios en la base de datos
+                    _TiendaPruebaContext.SaveChanges();
                 }
 
-                // Guardar cambios en la base de datos
-                _TiendaPruebaContext.SaveChanges();
+                return RedirectToAction("IndexCarritoProducto", "Home");
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de CarritoProducto " + ex.Message);
+                return BadRequest(ModelState);
 
-            return RedirectToAction("IndexCarritoProducto", "Home");
+            }
         }
 
 
         [HttpGet]
         public IActionResult Eliminar_CarritoProducto(int idCarrito, int idProducto)
         {
+            try
+            {
 
-  
-            CarritoProducto oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).Where(e => e.IdCarrito == idCarrito && e.IdProducto == idProducto ).FirstOrDefault();
-            
-            return View(oCarritoProducto);
+
+                CarritoProducto oCarritoProducto = _TiendaPruebaContext.CarritoProductos.Include(c => c.oCarrito).Include(c => c.oProducto).Where(e => e.IdCarrito == idCarrito && e.IdProducto == idProducto).FirstOrDefault();
+
+                return View(oCarritoProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar los CarritoProducto  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_CarritoProducto(CarritoProducto oCarritoProducto)
         {
-            _TiendaPruebaContext.CarritoProductos.Remove(oCarritoProducto);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.CarritoProductos.Remove(oCarritoProducto);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oCarritoProducto);
+                return View(oCarritoProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el CarritoProducto " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //Carrito----------------------------------------------------------------------------------------------
 
         public IActionResult IndexCarrito()
         {
-            List<Carrito> lista = _TiendaPruebaContext.Carritos.Include(c => c.oUsuario).ToList(); // poner todos los productos en una lista, inclutendo categoria
-            return View(lista);
+            try
+            {
+                List<Carrito> lista = _TiendaPruebaContext.Carritos.Include(c => c.oUsuario).ToList(); // poner todos los productos en una lista, inclutendo categoria
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de carrito " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -680,68 +1091,118 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult Carrito_Detalle(int idCarrito)
         {
-            CarritoVM oCarritoVM = new CarritoVM()
+            try
             {
-                oCarrito = new Carrito(),
-                oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                CarritoVM oCarritoVM = new CarritoVM()
                 {
-                    Text = Usuario.NombreUsuario,
-                    Value = Usuario.IdUsuario.ToString()
-                }).ToList(),
+                    oCarrito = new Carrito(),
+                    oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                    {
+                        Text = Usuario.NombreUsuario,
+                        Value = Usuario.IdUsuario.ToString()
+                    }).ToList(),
 
-            };
+                };
 
-            if (idCarrito != 0)
+                if (idCarrito != 0)
+                {
+                    oCarritoVM.oCarrito = _TiendaPruebaContext.Carritos.Find(idCarrito);
+
+                }
+
+                return View(oCarritoVM);
+            }
+            catch (Exception ex)
             {
-                oCarritoVM.oCarrito = _TiendaPruebaContext.Carritos.Find(idCarrito);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de carrito " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oCarritoVM);
         }
 
         [HttpPost]
         public IActionResult Carrito_Detalle(CarritoVM oCarritoVM)
         {
-            if (oCarritoVM.oCarrito.IdCarrito == 0)
+            try
             {
-                _TiendaPruebaContext.Carritos.Add(oCarritoVM.oCarrito);
+                if (oCarritoVM.oCarrito.IdCarrito == 0)
+                {
+                    _TiendaPruebaContext.Carritos.Add(oCarritoVM.oCarrito);
+                }
+                else
+                {
+                    _TiendaPruebaContext.Carritos.Update(oCarritoVM.oCarrito);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexCarrito", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.Carritos.Update(oCarritoVM.oCarrito);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de carrito " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexCarrito", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_Carrito(int idCarrito)
         {
-            Carrito oCarrito = _TiendaPruebaContext.Carritos.Include(c => c.oUsuario).Where(e => e.IdCarrito == idCarrito).FirstOrDefault();
+            try
+            {
+                Carrito oCarrito = _TiendaPruebaContext.Carritos.Include(c => c.oUsuario).Where(e => e.IdCarrito == idCarrito).FirstOrDefault();
 
-            return View(oCarrito);
+                return View(oCarrito);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el carrito " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_Carrito(Carrito oCarrito)
         {
-            _TiendaPruebaContext.Carritos.Remove(oCarrito);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.Carritos.Remove(oCarrito);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oCarrito);
+                return View(oCarrito);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el carrito  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //ListaDeseo---------------------------------------------------------------------------------------------------------------------------------
 
         public IActionResult IndexListaDeseo()
         {
-            List<ListaDeseo> lista = _TiendaPruebaContext.ListaDeseos.Include(c => c.oUsuario).ToList(); // poner todos los productos en una lista, inclutendo categoria
-            return View(lista);
+            try
+            {
+                List<ListaDeseo> lista = _TiendaPruebaContext.ListaDeseos.Include(c => c.oUsuario).ToList(); // poner todos los productos en una lista, inclutendo categoria
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de listadeseo " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -749,67 +1210,117 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult ListaDeseo_Detalle(int idListaDeseo)
         {
-            ListaDeseoVM oListaDeseoVM = new ListaDeseoVM()
+            try
             {
-                oListaDeseo = new ListaDeseo(),
-                oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                ListaDeseoVM oListaDeseoVM = new ListaDeseoVM()
                 {
-                    Text = Usuario.NombreUsuario,
-                    Value = Usuario.IdUsuario.ToString()
-                }).ToList(),
+                    oListaDeseo = new ListaDeseo(),
+                    oListaUsuario = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                    {
+                        Text = Usuario.NombreUsuario,
+                        Value = Usuario.IdUsuario.ToString()
+                    }).ToList(),
 
-            };
+                };
 
-            if (idListaDeseo != 0)
+                if (idListaDeseo != 0)
+                {
+                    oListaDeseoVM.oListaDeseo = _TiendaPruebaContext.ListaDeseos.Find(idListaDeseo);
+
+                }
+
+                return View(oListaDeseoVM);
+            }
+            catch (Exception ex)
             {
-                oListaDeseoVM.oListaDeseo = _TiendaPruebaContext.ListaDeseos.Find(idListaDeseo);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de listadeseo " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oListaDeseoVM);
         }
 
         [HttpPost]
         public IActionResult ListaDeseo_Detalle(ListaDeseoVM oListaDeseoVM)
         {
-            if (oListaDeseoVM.oListaDeseo.IdLista == 0)
+            try
             {
-                _TiendaPruebaContext.ListaDeseos.Add(oListaDeseoVM.oListaDeseo);
+                if (oListaDeseoVM.oListaDeseo.IdLista == 0)
+                {
+                    _TiendaPruebaContext.ListaDeseos.Add(oListaDeseoVM.oListaDeseo);
+                }
+                else
+                {
+                    _TiendaPruebaContext.ListaDeseos.Update(oListaDeseoVM.oListaDeseo);
+                }
+
+
+                _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexListaDeseo", "Home");
             }
-            else
+            catch (Exception ex)
             {
-                _TiendaPruebaContext.ListaDeseos.Update(oListaDeseoVM.oListaDeseo);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de lista deseo  " + ex.Message);
+                return BadRequest(ModelState);
+
             }
-
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexListaDeseo", "Home");
         }
 
         [HttpGet]
         public IActionResult Eliminar_ListaDeseo(int idListaDeseo)
         {
-            ListaDeseo oListaDeseo = _TiendaPruebaContext.ListaDeseos.Include(c => c.oUsuario).Where(e => e.IdLista == idListaDeseo).FirstOrDefault();
+            try
+            {
+                ListaDeseo oListaDeseo = _TiendaPruebaContext.ListaDeseos.Include(c => c.oUsuario).Where(e => e.IdLista == idListaDeseo).FirstOrDefault();
 
-            return View(oListaDeseo);
+                return View(oListaDeseo);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la listadeseo  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_ListaDeseo(ListaDeseo oListaDeseo)
         {
-            _TiendaPruebaContext.ListaDeseos.Remove(oListaDeseo);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.ListaDeseos.Remove(oListaDeseo);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oListaDeseo);
+                return View(oListaDeseo);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la lista deseo  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //ListaProductoControllers--------------------------------------------------------------------------------
         public IActionResult IndexListaProducto()
         {
-            List<ListaProducto> lista = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
-            return View(lista);
+            try
+            {
+                List<ListaProducto> lista = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el index ListaProducto  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -817,91 +1328,141 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult ListaProducto_Detalle(int idListaProducto, int idProducto)
         {
-            ListaProductoVM oListaProductoVM = new ListaProductoVM()
+            try
             {
-                oListaProducto = new ListaProducto(),
-                oListaDeListas = _TiendaPruebaContext.ListaDeseos.Select(ListaDeseo => new SelectListItem()
+                ListaProductoVM oListaProductoVM = new ListaProductoVM()
                 {
-                    Text = ListaDeseo.IdLista.ToString(),
-                    Value = ListaDeseo.IdLista.ToString()
-                }).ToList(),
+                    oListaProducto = new ListaProducto(),
+                    oListaDeListas = _TiendaPruebaContext.ListaDeseos.Select(ListaDeseo => new SelectListItem()
+                    {
+                        Text = ListaDeseo.IdLista.ToString(),
+                        Value = ListaDeseo.IdLista.ToString()
+                    }).ToList(),
 
-                oListaProductoProductos = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    oListaProductoProductos = _TiendaPruebaContext.Productos.Select(Producto => new SelectListItem()
+                    {
+                        Text = Producto.IdProducto.ToString(),
+                        Value = Producto.IdProducto.ToString()
+                    }).ToList(),
+
+                };
+                var existingListaProducto = _TiendaPruebaContext.ListaProducto
+            .FirstOrDefault(cp => cp.IDListaProducto == idListaProducto
+                                && cp.IdProducto == idProducto);
+                ViewBag.ExistingListaProducto = existingListaProducto;
+                if (idListaProducto != 0 && idProducto != 0)
                 {
-                    Text = Producto.IdProducto.ToString(),
-                    Value = Producto.IdProducto.ToString()
-                }).ToList(),
 
-            };
-            var existingListaProducto = _TiendaPruebaContext.ListaProducto
-        .FirstOrDefault(cp => cp.IDListaProducto == idListaProducto
-                            && cp.IdProducto == idProducto);
-            ViewBag.ExistingListaProducto = existingListaProducto;
-            if (idListaProducto != 0 && idProducto != 0)
+                    oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProducto.Find(idListaProducto, idProducto);
+
+                }
+
+                return View(oListaProductoVM);
+            }
+            catch (Exception ex)
             {
-
-                oListaProductoVM.oListaProducto = _TiendaPruebaContext.ListaProducto.Find(idListaProducto, idProducto);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de ListaProducto " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oListaProductoVM);
         }
 
         [HttpPost]
         public IActionResult ListaProducto_Detalle(ListaProductoVM oListaProductoVM)
         {
-            var ListaProducto = oListaProductoVM.oListaProducto.IDListaProducto;
-            var producto = oListaProductoVM.oListaProducto.IdProducto;
-
-            var existingListaProducto = _TiendaPruebaContext.ListaProducto
-        .FirstOrDefault(cp => cp.IDListaProducto == ListaProducto
-                            && cp.IdProducto == producto);
-
-            if (existingListaProducto == null)
+            try
             {
+                var ListaProducto = oListaProductoVM.oListaProducto.IDListaProducto;
+                var producto = oListaProductoVM.oListaProducto.IdProducto;
 
-                _TiendaPruebaContext.ListaProducto.Add(oListaProductoVM.oListaProducto);
+                var existingListaProducto = _TiendaPruebaContext.ListaProducto
+            .FirstOrDefault(cp => cp.IDListaProducto == ListaProducto
+                                && cp.IdProducto == producto);
 
-            }
-            else
-            {
-                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
-                // Actualiza otras propiedades según sea necesario
-                _TiendaPruebaContext.ListaProducto.Update(existingListaProducto); // Importante: Actualiza la entidad existente
+                if (existingListaProducto == null)
+                {
+
+                    _TiendaPruebaContext.ListaProducto.Add(oListaProductoVM.oListaProducto);
+
+                }
+                else
+                {
+                    //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                    // Actualiza otras propiedades según sea necesario
+                    _TiendaPruebaContext.ListaProducto.Update(existingListaProducto); // Importante: Actualiza la entidad existente
+                    _TiendaPruebaContext.SaveChanges();
+                }
+
+
                 _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexListaProducto", "Home");
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de ListaProducto  " + ex.Message);
+                return BadRequest(ModelState);
 
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexListaProducto", "Home");
+            }
         }
 
         [HttpGet]
         public IActionResult Eliminar_ListaProducto(int idListaProducto, int idProducto)
         {
+            try
+            {
 
 
-            ListaProducto oListaProducto = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
+                ListaProducto oListaProducto = _TiendaPruebaContext.ListaProducto.Include(c => c.oListaDeseo).Include(c => c.oProducto).Where(e => e.IDListaProducto == idListaProducto && e.IdProducto == idProducto).FirstOrDefault();
 
-            return View(oListaProducto);
+                return View(oListaProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la ListaProducto  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_ListaProducto(ListaProducto oListaProducto)
         {
-            _TiendaPruebaContext.ListaProducto.Remove(oListaProducto);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.ListaProducto.Remove(oListaProducto);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oListaProducto);
+                return View(oListaProducto);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar la ListProducto  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         //RolesUsuario----------------------------------------------------------------------------------------------------------
         public IActionResult IndexRolesUsuario()
         {
-            List<RolesUsuario> lista = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
-            return View(lista);
+            try
+            {
+                List<RolesUsuario> lista = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
+                return View(lista);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el index de RolUsuario" + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
@@ -909,84 +1470,124 @@ namespace ProyectoCore.Controllers
         [HttpGet]
         public IActionResult RolesUsuario_Detalle(int idRoles, int idUsuario)
         {
-            RolesUsuarioVM oRolesUsuarioVM = new RolesUsuarioVM()
+            try
             {
-                oRolesUsuario = new RolesUsuario(),
-                oListaRoles = _TiendaPruebaContext.Roles.Select(Role => new SelectListItem()
+                RolesUsuarioVM oRolesUsuarioVM = new RolesUsuarioVM()
                 {
-                    Text = Role.IdRoles.ToString(),
-                    Value = Role.IdRoles.ToString()
-                }).ToList(),
+                    oRolesUsuario = new RolesUsuario(),
+                    oListaRoles = _TiendaPruebaContext.Roles.Select(Role => new SelectListItem()
+                    {
+                        Text = Role.IdRoles.ToString(),
+                        Value = Role.IdRoles.ToString()
+                    }).ToList(),
 
-                oListaUsuarios = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                    oListaUsuarios = _TiendaPruebaContext.Usuarios.Select(Usuario => new SelectListItem()
+                    {
+                        Text = Usuario.IdUsuario.ToString(),
+                        Value = Usuario.IdUsuario.ToString()
+                    }).ToList(),
+
+                };
+                var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+            .FirstOrDefault(cp => cp.IdRoles == idRoles
+                                && cp.IdUsuario == idUsuario);
+                ViewBag.existingRolesUsuario = existingRolesUsuario;
+                if (idRoles != 0 && idUsuario != 0)
                 {
-                    Text = Usuario.IdUsuario.ToString(),
-                    Value = Usuario.IdUsuario.ToString()
-                }).ToList(),
 
-            };
-            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
-        .FirstOrDefault(cp => cp.IdRoles == idRoles
-                            && cp.IdUsuario == idUsuario);
-            ViewBag.existingRolesUsuario = existingRolesUsuario;
-            if (idRoles != 0 && idUsuario != 0)
+                    oRolesUsuarioVM.oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Find(idRoles, idUsuario);
+
+                }
+
+                return View(oRolesUsuarioVM);
+            }
+            catch (Exception ex)
             {
-
-                oRolesUsuarioVM.oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Find(idRoles, idUsuario);
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el get de RolUsuario " + ex.Message);
+                return BadRequest(ModelState);
 
             }
-
-            return View(oRolesUsuarioVM);
         }
 
         [HttpPost]
         public IActionResult RolesUsuario_Detalle(RolesUsuarioVM oRolesUsuarioVM)
         {
-            var Roles = oRolesUsuarioVM.oRolesUsuario.IdRoles;
-            var Usuario = oRolesUsuarioVM.oRolesUsuario.IdUsuario;
-
-            var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
-        .FirstOrDefault(cp => cp.IdRoles == Roles
-                            && cp.IdUsuario == Usuario);
-
-            if (existingRolesUsuario == null)
+            try
             {
+                var Roles = oRolesUsuarioVM.oRolesUsuario.IdRoles;
+                var Usuario = oRolesUsuarioVM.oRolesUsuario.IdUsuario;
 
-                _TiendaPruebaContext.RolesUsuario.Add(oRolesUsuarioVM.oRolesUsuario);
+                var existingRolesUsuario = _TiendaPruebaContext.RolesUsuario
+            .FirstOrDefault(cp => cp.IdRoles == Roles
+                                && cp.IdUsuario == Usuario);
 
-            }
-            else
-            {
-                //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
-                // Actualiza otras propiedades según sea necesario
-                _TiendaPruebaContext.RolesUsuario.Update(existingRolesUsuario); // Importante: Actualiza la entidad existente
+                if (existingRolesUsuario == null)
+                {
+
+                    _TiendaPruebaContext.RolesUsuario.Add(oRolesUsuarioVM.oRolesUsuario);
+
+                }
+                else
+                {
+                    //_TiendaPruebaContext.CarritoProductos.Update(oCarritoProductoVM.oCarritoProducto);
+                    // Actualiza otras propiedades según sea necesario
+                    _TiendaPruebaContext.RolesUsuario.Update(existingRolesUsuario); // Importante: Actualiza la entidad existente
+                    _TiendaPruebaContext.SaveChanges();
+                }
+
+
                 _TiendaPruebaContext.SaveChanges();
+
+                return RedirectToAction("IndexRolesUsuario", "Home");
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error en el post de RolUsuario " + ex.Message);
+                return BadRequest(ModelState);
 
-
-            _TiendaPruebaContext.SaveChanges();
-
-            return RedirectToAction("IndexRolesUsuario", "Home");
+            }
         }
 
         [HttpGet]
         public IActionResult Eliminar_RolesUsuario(int idRoles, int idUsuario)
         {
+            try
+            {
 
 
-            RolesUsuario oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).Where(e => e.IdRoles == idRoles && e.IdUsuario == idUsuario).FirstOrDefault();
+                RolesUsuario oRolesUsuario = _TiendaPruebaContext.RolesUsuario.Include(c => c.oRole).Include(c => c.oUsuario).Where(e => e.IdRoles == idRoles && e.IdUsuario == idUsuario).FirstOrDefault();
 
-            return View(oRolesUsuario);
+                return View(oRolesUsuario);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el RolUsuario  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
         [HttpPost]
         public IActionResult Eliminar_RolesUsuario(RolesUsuario oRolesUsuario)
         {
-            _TiendaPruebaContext.RolesUsuario.Remove(oRolesUsuario);
-            _TiendaPruebaContext.SaveChanges();
+            try
+            {
+                _TiendaPruebaContext.RolesUsuario.Remove(oRolesUsuario);
+                _TiendaPruebaContext.SaveChanges();
 
 
-            return View(oRolesUsuario);
+                return View(oRolesUsuario);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                ModelState.AddModelError("", "Ocurrió un error al eliminar el Rol Usuario  " + ex.Message);
+                return BadRequest(ModelState);
+
+            }
         }
 
 
