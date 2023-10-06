@@ -165,7 +165,7 @@ namespace ProyectoCore.Controllers
             List<Reseña> lista = _TiendaPruebaContext.Reseñas.Include(c => c.oUsuario).Include(c => c.oProducto).ToList(); // poner todas las resenas en una lista, incluyendo usuario y producto
             return View(lista);
         }
-
+           // a
 
 
         [HttpGet]
