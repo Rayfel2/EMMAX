@@ -8,6 +8,6 @@
 
         public virtual ListaDeseo oListaDeseo { get; set; } = null!;
 
-        public virtual Producto oProducto { get; set; } = null!;
+        public virtual Producto oProducto { get; set; } = null!;                      //s
     }
 }
