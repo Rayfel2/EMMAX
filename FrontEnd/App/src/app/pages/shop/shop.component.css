@@ -1,3 +1,15 @@
+
+a {
+  color: inherit; /* Utiliza el color heredado del texto */
+  text-decoration: none; /* Quitar la subrayación */
+}
+
+/* Estilo para los enlaces cuando están en estado 'hover' (al pasar el mouse sobre ellos) */
+a:hover {
+  text-decoration: underline; /* Opcional: puedes agregar subrayación al pasar el mouse si lo deseas */
+}
+
+
 .card-container {
     display: flex;
     flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en filas de 4 */
@@ -38,8 +50,6 @@
     font-size: 1rem;
     color: #666;
   }
-
- 
 
   .categorias-list {
     display: flex;

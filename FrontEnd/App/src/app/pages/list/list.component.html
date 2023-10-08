@@ -2,19 +2,21 @@
 <div *ngFor="let producto of listaProductos">  
   <div class="tarjeta">
     <div class="imagen">
-        <img class="card-img" [src]="producto.producto.imagen" alt="Producto" />
+        <img class="card-img" [src]="producto.producto.imagen? producto.producto.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Producto" />
     </div>
     <div class="detalles">
         <h3>{{ producto.producto.nombre}}</h3>
         <h6>{{ producto.producto.descripcion}}</h6>
         <h6>Precio: {{ producto.producto.precio}}$</h6>
         <h6>Stock: {{ producto.producto.stock}}</h6>
+        <input type="number" [(ngModel)]="producto.cantidad" placeholder="Cantidad"
+        min="1" max="{{ producto.producto.stock }}" />
         <!-- Botón para eliminar con un ícono de "X" y color rojo -->
-        <button class="btn btn-outline-danger">
+        <button class="btn btn-outline-danger" (click)="eliminarProductoDeLista(producto.producto.idProducto)">
           <i class="fas fa-times"></i>
         </button>
         <!-- Botón para agregar a favoritos con un ícono de corazón y color negro -->
-        <button class="btn btn-outline-dark">
+        <button class="btn btn-outline-dark" (click)="carrito(producto.producto.idProducto, producto.producto.precio, producto.producto.stock, producto.cantidad)">
           <i class="fas fa-shopping-cart"></i>
         </button>
     </div>

@@ -22,8 +22,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loginService.userLoginOn$.subscribe((userLoginOn) => {
+
+   this.loginService.userLoginOn$.subscribe((userLoginOn) => {
       this.userLoginOn = userLoginOn; // Actualiza userLoginOn cuando cambie el estado de inicio de sesión
   }
-)};
+)
+const token = localStorage.getItem('token');
+if (token) {
+  // Si hay un token, establece userLoginOn en true
+  this.userLoginOn = true;
+}
+};
+
 }

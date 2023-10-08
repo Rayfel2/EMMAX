@@ -2,7 +2,7 @@
 <div *ngFor="let producto of carritoProductos">  
   <div class="tarjeta">
     <div class="imagen">
-        <img class="card-img" [src]="producto.producto.imagen" alt="Producto" />
+        <img class="card-img" [src]="producto.producto.imagen? producto.producto.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Producto" />
     </div>
     <div class="detalles">
         <h3>{{ producto.producto.nombre}}</h3>
@@ -11,11 +11,11 @@
         <p>Precio: {{ producto.precio}}$</p>
         <p>SubTotal: {{ producto.cantidad * producto.precio }}$</p>
         <!-- Botón para eliminar con un ícono de "X" y color rojo -->
-        <button class="btn btn-outline-danger">
+        <button class="btn btn-outline-danger" (click)="eliminarProductoDelCarrito( producto.producto.idProducto)">
           <i class="fas fa-times"></i>
         </button>
         <!-- Botón para agregar a favoritos con un ícono de corazón y color negro -->
-        <button class="btn btn-outline-dark">
+        <button class="btn btn-outline-dark" (click)="lista(producto.producto.idProducto)">
           <i class="far fa-heart"></i>
         </button>
     </div>

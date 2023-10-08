@@ -23,7 +23,7 @@
               <h5 class="card-title">{{ item.nombre }}</h5>
               <p class="card-text">Precio: {{ item.precio }}$</p>
             </div>
-            <img class="card-img" [src]="item.imagen" alt="Imagen">
+            <img class="card-img" [src]="item.imagen? item.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Imagen">
           </a>
           </div>
         </div>

@@ -15,9 +15,10 @@ namespace ProyectoCore.Repository
         {
             return _context.ListaProducto.OrderBy(H => H.IDListaProducto).ToList();
         }
-
-
-
+        public bool ListaProductoExist(int idLista, int idProducto)
+        {
+            return _context.ListaProducto.Any(cp => cp.IDListaProducto == idLista && cp.IdProducto == idProducto);
+        }
         public bool save()
         {
             var saved = _context.SaveChanges();
@@ -28,6 +29,23 @@ namespace ProyectoCore.Repository
         {
             
             return _context.ListaProducto.Where(e => e.IDListaProducto == id).ToList();
+        }
+        public bool CreateListaProducto(ListaProducto listaProducto)
+        {
+            _context.Add(listaProducto);
+            return save();
+        }
+        public bool DeleteListaProducto(ListaProducto listaProducto)
+        {
+            _context.Remove(listaProducto);
+            return save();
+        }
+
+        public ListaProducto GetListasProductos(int IdListas, int IdProductos)
+        {
+            return _context.ListaProducto
+                .Where(e => e.IDListaProducto == IdListas && e.IdProducto == IdProductos)
+                .FirstOrDefault();
         }
     }
 }

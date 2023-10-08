@@ -6,6 +6,7 @@ namespace ProyectoCore.Interface
     {
         ICollection<Reseña> GetReseñas();
         Reseña GetReseñas(int id);
+        bool CreateReseña(Reseña reseña);
         bool save();
         
     }

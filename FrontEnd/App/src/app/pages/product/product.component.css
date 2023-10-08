@@ -41,3 +41,10 @@
 .comment {
   font-size: 14px;
 }
+
+.selected {
+  color: #f7d342; /*Cambia el color de las estrellas a amarillo */
+  cursor: pointer; /* Cambia el cursor a una mano para indicar que se puede hacer clic */
+  opacity: 1;
+}
+

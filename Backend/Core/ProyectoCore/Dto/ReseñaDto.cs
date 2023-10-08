@@ -17,4 +17,17 @@ namespace ProyectoCore.Dto
         public string? Comentario { get; set; }
        
     }
+
+    public class ReseñaPostDto
+    {
+
+        public int? IdUsuario { get; set; }
+
+        public int? IdProducto { get; set; }
+
+        public int? ValorReseña { get; set; }
+
+        public string? Comentario { get; set; }
+
+    }
 }

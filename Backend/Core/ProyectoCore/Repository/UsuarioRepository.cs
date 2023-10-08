@@ -24,7 +24,6 @@ namespace ProyectoCore.Repository
         public bool UsuarioExist(int idUsuario)
         {
             return _context.Usuarios.Any(p => p.IdUsuario == idUsuario);
-
         }
         public ICollection<Usuario> GetUsuarios()
         {
@@ -111,5 +110,6 @@ namespace ProyectoCore.Repository
             return UsuarioId;
 
         }
+
     }
 }
