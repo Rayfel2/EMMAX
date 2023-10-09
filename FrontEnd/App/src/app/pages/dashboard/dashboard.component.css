@@ -15,11 +15,11 @@
     transition: 400ms;
   }
 .cards .card p.tip {
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: 500;
 }
 .cards .card p.second-text {
-    font-size: 1.5em;
+    font-size: 1.0em;
   }
 .cards .card:hover{
     transform: scale(0.9, 0.9);
@@ -30,6 +30,6 @@
 }
 
 .mi-imagen {
-    inline-size: 1000px;
-    block-size: 1000px;
+    inline-size: 500px;
+    block-size:500px;
   }
