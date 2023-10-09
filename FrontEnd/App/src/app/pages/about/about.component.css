@@ -1,9 +1,23 @@
 .contenedor {
-    display: flex; /* Utilizamos flexbox para alinear elementos en línea */
-    align-items: center; /* Alineamos verticalmente */
+    display: flex;
+    align-items: center;
+    flex-direction: row; /* Cambiamos la dirección a columna en pantallas pequeñas */
+    text-align: center; /* Centramos el texto en pantallas pequeñas */
+    padding: 20px; /* Añadimos espaciado alrededor del contenedor */
 }
 
 .titulo {
     font-size: 24px;
     font-weight: bold;
+}
+
+/* Media query para pantallas pequeñas (por ejemplo, dispositivos móviles) */
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 10px; /* Reduce el espaciado en pantallas pequeñas */
+    }
+
+    .titulo {
+        font-size: 20px; /* Reduce el tamaño del título en pantallas pequeñas */
+    }
 }
