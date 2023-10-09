@@ -10,6 +10,8 @@ namespace ProyectoCore.Interface
         bool CarritoProductoExist(int idCarrito, int idProducto);
         bool DeleteCarritoProducto(CarritoProducto carritoProducto);
         CarritoProducto GetCarritosProductos(int IdCarritos, int IdProductos);
+        
+        bool UpdateCarritoProducto(CarritoProducto carritoProducto);
         bool save();
     }
 }

@@ -4,10 +4,6 @@ a {
   text-decoration: none; /* Quitar la subrayación */
 }
 
-/* Estilo para los enlaces cuando están en estado 'hover' (al pasar el mouse sobre ellos) */
-a:hover {
-  text-decoration: underline; /* Opcional: puedes agregar subrayación al pasar el mouse si lo deseas */
-}
 
 
 .card-container {

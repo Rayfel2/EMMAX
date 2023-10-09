@@ -90,11 +90,10 @@ export class ProductCompont implements OnInit {
     if (this.cantidadProducto <= 0) {
       alert('La cantidad debe ser mayor que cero.');
       return; 
-    } else if (this.cantidadProducto <= this.productDetails.stock){
+    } else if (this.cantidadProducto > this.productDetails.stock){
       alert('La cantidad debe ser menor o igual al stock');
       return;
-    }
-
+    } 
   
     // Define el objeto carritoRequest con los datos necesarios
     this.carritoRequest = {

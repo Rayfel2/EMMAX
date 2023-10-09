@@ -45,12 +45,21 @@ namespace ProyectoCore.Repository
             return save();
         }
 
+        public bool UpdateCarritoProducto(CarritoProducto carritoProducto)
+        {
+            _context.Update(carritoProducto);
+            return save();
+        }
+
         public CarritoProducto GetCarritosProductos(int IdCarritos, int IdProductos)
         {
             return _context.CarritoProductos
                 .Where(e => e.IdCarrito == IdCarritos && e.IdProducto == IdProductos)
                 .FirstOrDefault();
         }
+
+
+
 
     }
 }

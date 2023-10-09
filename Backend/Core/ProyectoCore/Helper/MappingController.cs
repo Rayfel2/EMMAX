@@ -16,6 +16,8 @@ namespace ProyectoCore.Helper
             CreateMap<ListaDeseo, ListaDto>();
             CreateMap<ListaProducto, ListaProductoDto>();
             CreateMap<CarritoProducto, CarritoProductoDto>();
+            CreateMap<Recibo, ReciboDto>();
+            CreateMap<MetodoPago, MetodoDto>();
 
             CreateMap<CarritoProducto, CarritoProductoDto>()
                 .ForMember(
@@ -42,7 +44,8 @@ namespace ProyectoCore.Helper
             CreateMap<UsuarioPostDto, Usuario>();
             CreateMap<CarritoProductoPostDto, CarritoProducto>();
             CreateMap<ListaProductoPostDto, ListaProducto>();
-            CreateMap<ReseñaPostDto, Reseña>();
+            CreateMap<ReseñaPostDto, Reseña>(); 
+            CreateMap<ReciboPostDto, Recibo>();
 
             //put (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();

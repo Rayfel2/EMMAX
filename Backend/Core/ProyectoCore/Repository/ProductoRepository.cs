@@ -11,9 +11,32 @@ namespace ProyectoCore.Repository
         {
             _context = context;
         }
+
+        public bool UpdateProducto(Producto Producto)
+        {
+            _context.Update(Producto);
+            return save();
+        }
+
         public ICollection<Producto> GetProductos()
         {
             return _context.Productos.OrderBy(H => H.IdProducto).ToList();
+        }
+
+        public ICollection<Producto> GetProductosDescending()
+        {
+            return _context.Productos.OrderByDescending(H => H.IdProducto).ToList();
+        }
+
+
+        public List<Producto> GetProductoCategoria()
+        {
+            var productosPorCategoria = _context.Productos
+                .GroupBy(p => p.IdCategoria) // Agrupa los productos por IdCategoria
+                .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
+                .ToList();
+
+            return productosPorCategoria;
         }
 
         public Producto GetProductos(int id)

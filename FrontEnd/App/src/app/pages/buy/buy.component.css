@@ -1,0 +1,74 @@
+/* Estilos para el contenedor principal */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilos para el botón */
+  button.btn-primary {
+    margin-bottom: 10px; /* Espacio entre el botón y la sección de detalles */
+  }
+  
+  /* Estilos para el contenedor de detalles */
+  .scroll-container {
+    max-height: 200px; /* Altura máxima del contenedor para habilitar la barra de desplazamiento */
+    overflow-y: auto; /* Habilita la barra de desplazamiento vertical */
+    border: 1px solid #ddd; /* Borde alrededor del contenedor de detalles */
+    border-radius: 5px;
+    padding: 10px; /* Espacio alrededor del contenedor de detalles */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Sombra para el contenedor de detalles */
+    background-color: #f0f0f0b5;
+    max-width: 400px; /* Ancho máximo del formulario */
+    width: 100%; /* Ancho completo */
+  }
+  
+  /* Estilos para cada tarjeta de detalles */
+  .tarjeta {
+    margin-bottom: 10px; /* Espacio entre las tarjetas de detalles */
+    border: 1px solid #ccc; /* Borde alrededor de cada tarjeta de detalles */
+    border-radius: 5px;
+    padding: 10px; /* Espacio alrededor de cada tarjeta de detalles */
+  }
+  
+  /* Estilos para los elementos dentro de las tarjetas de detalles */
+  .tarjeta h3 {
+    margin: 0; /* Elimina el margen superior e inferior del título */
+  }
+  .tarjeta p {
+    margin: 0; /* Elimina el margen superior e inferior del título */
+  }
+  
+  /* Estilos para el formulario */
+  .form-container {
+    border: 1px solid #ddd; /* Borde alrededor del formulario */
+    border-radius: 5px;
+    padding: 20px; /* Espacio alrededor del formulario */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para el formulario */
+    max-width: 400px; /* Ancho máximo del formulario */
+    width: 100%; /* Ancho completo */
+    text-align: center; /* Centrar el contenido del formulario */
+  }
+  
+  /* Estilos para los elementos dentro del formulario */
+  .form-group {
+    margin-bottom: 20px; /* Espacio entre los elementos del formulario */
+  }
+  
+  /* Estilos para las etiquetas de los campos del formulario */
+  .form-group label {
+    font-weight: bold;
+  }
+  
+  /* Estilos para los campos de entrada del formulario */
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group select {
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Espaciado dentro de los campos */
+    border: 1px solid #ccc; /* Borde alrededor de los campos */
+    border-radius: 5px;
+  }
+  
+  

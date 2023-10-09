@@ -7,6 +7,8 @@ using ProyectoCore.Models;
 using ProyectoCore.Dto;
 using System.Collections.Immutable;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Packaging;
+using Microsoft.CodeAnalysis;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -18,15 +20,17 @@ namespace ProyectoCore.ControllersApi
         private readonly ICategoriaRepository _RepositoryCategoria;
         private readonly IReseñaRepository _RepositoryReseña;
         private readonly IUsuarioRepository _RepositoryUsuario;
+        private readonly IMetodoRepository _RepositoryMetodo;
         private readonly IMapper _mapper;
 
-        public ShopController(IUsuarioRepository RepositoryUsuario, IProductoRepository RepositoryProducto, ICategoriaRepository RepositoryCategoria, IReseñaRepository RepositoryReseña, IMapper mapper)
+        public ShopController(IMetodoRepository RepositoryMetodo, IUsuarioRepository RepositoryUsuario, IProductoRepository RepositoryProducto, ICategoriaRepository RepositoryCategoria, IReseñaRepository RepositoryReseña, IMapper mapper)
         {
             _RepositoryUsuario = RepositoryUsuario;
             _RepositoryCategoria = RepositoryCategoria;
             _RepositoryReseña = RepositoryReseña;
             _RepositoryProducto = RepositoryProducto;
             _mapper = mapper;
+            _RepositoryMetodo = RepositoryMetodo;
         }
 
 
@@ -34,7 +38,10 @@ namespace ProyectoCore.ControllersApi
         [ProducesResponseType(200, Type = typeof(IEnumerable<Producto>))]
         public IActionResult GetProducto(int page, int pageSize, 
             [FromQuery] List<string> categoryFilter = null,
-            [FromQuery] List<string> productFilter = null)
+            [FromQuery] List<string> productFilter = null,
+            [FromQuery] bool recentProduct = false,
+             [FromQuery] bool categoryProduct = false,
+             [FromQuery] bool reviewProduct = false)
         {
             try
             {
@@ -69,9 +76,49 @@ namespace ProyectoCore.ControllersApi
                     var productosIds = _RepositoryProducto.GetProductoIdsByPartialNames(productFilter);
 
                     allProductos = allProductos
-                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)))
+                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || productosIds.Contains(Convert.ToInt32(i.IdCategoria)))
                         .ToList();
+
                 }
+
+                if (recentProduct)
+                {
+                    allProductos = _RepositoryProducto.GetProductosDescending();
+                }
+
+                if (categoryProduct)
+                {
+                    allProductos = _RepositoryProducto.GetProductoCategoria();
+   
+                }
+
+                if (reviewProduct)
+                {
+                    foreach (var producto in allProductos)
+                    {
+                        // Obtener las reseñas filtradas por ID de producto, incluyendo datos de usuario
+                        var reseñasFiltradas = _RepositoryReseña
+                            .GetReseñas()
+                            .Where(r => r.IdProducto == producto.IdProducto)
+                            .ToList();
+
+                        // Inicializar una variable para almacenar la suma de valor reseña
+                        int sumaValorReseña = 0;
+
+                        // Recorrer todas las reseñas del producto y sumar sus valores
+                        foreach (var reseña in reseñasFiltradas)
+                        {
+                            sumaValorReseña += Convert.ToInt32(reseña.ValorReseña);
+                        }
+                        producto.Stock = sumaValorReseña;
+                    }
+
+                    // Ordenar los productos en función del campo Stock de manera descendente
+                    allProductos = allProductos.OrderByDescending(p => p.Stock).ToList();
+                }
+
+
+
 
                 // Aplicar paginación utilizando LINQ para seleccionar los registros apropiados.
                 // A nivel de rutas sería, por ejemplo, http://localhost:5230/Producto?page=1&pageSize=10
@@ -207,6 +254,48 @@ namespace ProyectoCore.ControllersApi
         }
 
 
+        [HttpGet("/Metodo")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<MetodoPago>))]
+        public IActionResult GetMetodo(int page, int pageSize)
+        {
+            try
+            {
+                // Evitando valores negativos
+                if (page < 1)
+                {
+                    page = 1; // Página mínima
+                }
+
+                if (pageSize < 1)
+                {
+                    pageSize = 10; // Tamaño de página predeterminado
+                }
+
+                // Utilizado para determinar donde comienza cada pagina
+                int startIndex = (page - 1) * pageSize;
+
+
+                var allmetodos = _RepositoryMetodo.GetMetodo();
+
+                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
+                // A nivel de rutas seria por ejemplo http://localhost:5230/categoria?page=1&pageSize=10
+                var pagedmetodos = allmetodos.Skip(startIndex).Take(pageSize).ToList();
+                //.skip omite un numero de registro
+                //.Take cantidad elemento que se van a tomar
+
+
+                // Mapeo los empleados paginados en vez de todos
+                var metodoDtoList = _mapper.Map<List<MetodoDto>>(pagedmetodos);
+
+
+                return Ok(metodoDtoList);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
     }
 
 }

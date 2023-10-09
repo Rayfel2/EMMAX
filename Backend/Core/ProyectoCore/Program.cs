@@ -26,6 +26,8 @@ builder.Services.AddScoped<ICarritoProductoRepository, CarritoProductoRepository
 builder.Services.AddScoped<ICarritoRepository, CarritoRepository>();
 builder.Services.AddScoped<IListaRepository, ListaRepository>();
 builder.Services.AddScoped <IListaProductoRepository, ListaProductoRepository>();
+builder.Services.AddScoped<IReciboRepository, ReciboRepository>();
+builder.Services.AddScoped<IMetodoRepository, MetodoRepository>();
 
 builder.Services.AddCors(options =>
 {

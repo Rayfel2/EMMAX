@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using ProyectoCore.Models.ViewModels;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -27,12 +28,14 @@ namespace ProyectoCore.ControllersApi
         private readonly IListaRepository _RepositoryLista;
         private readonly IProductoRepository _RepositoryProducto;
         private readonly IReseñaRepository _RepositoryReseña;
+        private readonly IReciboRepository _RepositoryRecibo;
+        
 
         private readonly IMapper _mapper;
 
         private readonly string _jwtSecret;
 
-        public ConnectControllers(IReseñaRepository RepositoryReseña, IListaRepository RepositoryLista, IListaProductoRepository RepositoryListaProducto, IProductoRepository RepositoryProducto, IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, ICarritoRepository RepositoryCarrito, IMapper mapper, string jwtSecret)
+        public ConnectControllers(IReciboRepository RepositoryRecibo, IReseñaRepository RepositoryReseña, IListaRepository RepositoryLista, IListaProductoRepository RepositoryListaProducto, IProductoRepository RepositoryProducto, IUsuarioRepository RepositoryUsuario, ICarritoProductoRepository RepositoryCarritoProducto, ICarritoRepository RepositoryCarrito, IMapper mapper, string jwtSecret)
         {
             _RepositoryCarrito = RepositoryCarrito;
             _RepositoryUsuario = RepositoryUsuario;
@@ -43,6 +46,7 @@ namespace ProyectoCore.ControllersApi
             _RepositoryListaProducto = RepositoryListaProducto;
             _RepositoryLista = RepositoryLista;
             _RepositoryReseña = RepositoryReseña;
+            _RepositoryRecibo = RepositoryRecibo;
         }
 
 
@@ -89,7 +93,7 @@ namespace ProyectoCore.ControllersApi
         [Authorize]
         [HttpGet("/Usuario")] 
         [ProducesResponseType(200, Type = typeof(IEnumerable<Usuario>))]
-        public IActionResult Usuario(/*int page, int pageSize*/)
+        public IActionResult Usuario()
         {
             try
             {
@@ -123,17 +127,6 @@ namespace ProyectoCore.ControllersApi
                 */
 
                 var allUsuarios = _RepositoryUsuario.GetUsuario(userId);
-
-                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/categoria?page=1&pageSize=10
-                //var pagedUsuario = allUsuarios.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
-
-
-                // Mapeo los empleados paginados en vez de todos
-               // var UsuarioDtoList = _mapper.Map<List<UsuarioDto>>(allUsuarios);
-
 
                 return Ok(allUsuarios);
             }
@@ -366,10 +359,17 @@ namespace ProyectoCore.ControllersApi
             {
                 return NotFound();
             }
+            var allCarritoProducto = _RepositoryCarritoProducto.GetCarritosProductos(userCarritoProducto.IdCarrito, productoCarritoProducto.IdProducto);
+            int cantidad = Convert.ToInt32(CarritoProductoPostDTO.Cantidad);
 
             if (_RepositoryCarritoProducto.CarritoProductoExist(userCarritoProducto.IdCarrito, productoCarritoProducto.IdProducto))
             {
-                return StatusCode(666, "Ya esta añadido");
+                if (allCarritoProducto.Cantidad != cantidad) { 
+                    ActualizarCantidad(productoCarritoProducto.IdProducto, cantidad);
+                    return Ok();
+                }
+                else { return StatusCode(666, "Ya esta añadido"); }
+                
             }
 
             //   var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
@@ -594,6 +594,152 @@ namespace ProyectoCore.ControllersApi
             else
             {
                 return Ok();
+            }
+        }
+
+        [HttpPost("/Comprar")]
+        [Consumes("application/json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult PostRecibo([FromBody] ReciboPostDto ReciboPostDTO)
+        {
+            // por si el DTO es null
+            if (ReciboPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+            if (userIdClaim == null)
+            {
+                // El claim "Name" no se encontró en el token
+                return BadRequest("No se encontró el claim 'Name' en el token.");
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+            {
+                // No se pudo convertir el valor del claim "Name" a un entero
+                return BadRequest("No se pudo convertir 'userId' a un entero.");
+            }
+            
+            var carrito = _RepositoryCarrito.GetCarrito(userId);
+            if (carrito == null)
+            {
+                return NotFound();
+            }
+           
+
+            var allCarritoProductos = _RepositoryCarritoProducto.GetCarritoProducto(carrito.IdCarrito);
+            if (allCarritoProductos == null || !allCarritoProductos.Any())
+            {
+                return NotFound("No hay productos en el carrito");
+            }
+            double sumaValorTotal = 0;
+            
+            foreach (var allCarritoProducto in allCarritoProductos)
+            {
+   
+                double valorTotal = Convert.ToDouble(allCarritoProducto.Cantidad * allCarritoProducto.Precio);
+                sumaValorTotal += valorTotal;
+            }
+            
+
+            var reciboProducto = _mapper.Map<Recibo>(ReciboPostDTO);
+            reciboProducto.IdCarrito = carrito.IdCarrito;
+            reciboProducto.Subtotal = sumaValorTotal;
+            if (reciboProducto.Impuestos == null) reciboProducto.Impuestos = 1;
+
+            if (!_RepositoryRecibo.CreateRecibo(reciboProducto))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            else
+            {
+                foreach (var allCarritoProducto in allCarritoProductos)
+                {
+                    PatchProductoPorId(allCarritoProducto.IdProducto, Convert.ToInt32(allCarritoProducto.Cantidad));
+                    DeleteCarrito(allCarritoProducto.IdProducto);
+                }
+                return Ok();
+            }
+        }
+
+        [HttpPatch("/Producto/{idProducto}")]
+        [ProducesResponseType(200, Type = typeof(Producto))]
+        [ProducesResponseType(404)]
+        public IActionResult PatchProductoPorId(int idProducto, int cantidad)
+        {
+            try
+            {
+                var producto = _RepositoryProducto.GetProductos(idProducto);
+                if (producto == null)
+                {
+                    return NotFound("Producto no encontrado"); // Producto no encontrado
+                }
+
+                var Producto = _mapper.Map<Producto>(producto);
+                Producto.Stock = producto.Stock - cantidad;
+                if (!_RepositoryProducto.UpdateProducto(Producto))
+                {
+                    ModelState.AddModelError("", "Something went wrong while saving");
+                    return StatusCode(500, ModelState);
+                } else { return Ok(); }
+                }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPatch("/CarritoProducto/{idProducto}/{cantidad}")]
+        [ProducesResponseType(200, Type = typeof(Producto))]
+        [ProducesResponseType(404)]
+        public IActionResult ActualizarCantidad(int idProducto, int cantidad)
+        {
+            try
+            {
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+                if (userIdClaim == null)
+                {
+                    // El claim "Name" no se encontró en el token
+                    return BadRequest("No se encontró el claim 'Name' en el token.");
+                }
+
+                if (!int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    // No se pudo convertir el valor del claim "Name" a un entero
+                    return BadRequest("No se pudo convertir 'userId' a un entero.");
+                }
+
+                var allCarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto();
+
+                // Filtra los productos del carrito para el usuario autenticado
+
+                var userCarritoProducto = _RepositoryCarrito.GetCarrito(userId);
+                if (userCarritoProducto == null)
+                {
+                    return NotFound();
+                }
+
+                //   var CarritoProducto = _RepositoryCarritoProducto.GetCarritoProducto(userCarritoProducto.IdCarrito);
+                var CarritoProducto = _RepositoryCarritoProducto.GetCarritosProductos(userCarritoProducto.IdCarrito, idProducto);
+
+                var CarritoProductoList = _mapper.Map<CarritoProducto>(CarritoProducto);
+                CarritoProductoList.Cantidad = cantidad; 
+                if (!_RepositoryCarritoProducto.UpdateCarritoProducto(CarritoProductoList))
+                {
+                    ModelState.AddModelError("", "Something went wrong while saving");
+                    return StatusCode(500, ModelState);
+                }
+                else { return Ok(); }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
+                return BadRequest(ModelState);
             }
         }
     }

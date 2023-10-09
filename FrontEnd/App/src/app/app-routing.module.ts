@@ -11,6 +11,7 @@ import { ListComponent } from './pages/list/list.component';
 import { ShopComponent } from './pages/shop/shop.component';
 import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 import { ProductCompont } from './pages/product/product.component'; 
+import { BuyComponent } from './pages/buy/buy.component'; 
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
   {path: 'quienes-somos', component:AboutComponent},
   {path:'deseos', component:ListComponent},
   {path: 'tienda', component:ShopComponent},
+  {path: 'compra', component:BuyComponent},
   {path: 'product/:idProducto', component:ProductCompont},
 ];
 

@@ -1,0 +1,52 @@
+<div class="container">
+    <button class="btn btn-primary" (click)="mostrarDetalles = !mostrarDetalles">
+      {{ mostrarDetalles ? 'Ocultar Detalles de la compra' : 'Mostrar Detalles de la compra' }}
+    </button>
+  
+    <div *ngIf="mostrarDetalles" class="scroll-container">
+      <div *ngFor="let producto of carritoProductos" class="tarjeta">
+        <h3>{{ producto.producto.nombre }}</h3>
+        <div class="detalles">
+          <p>Cantidad: {{ producto.cantidad }}</p>
+          <p>Precio: {{ producto.precio }}$</p>
+          <p>SubTotal: {{ producto.cantidad * producto.precio }}$</p>
+        </div>
+      </div>
+    </div>
+  
+    <form (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-group">
+        <label for="metodoPago">Seleccione un Método de Pago:</label>
+        <select id="metodoPago" name="IdMetodoPago" [(ngModel)]="reciboData.IdMetodoPago" class="form-control">
+          <option value="" disabled selected>Seleccionar Método de Pago</option>
+          <option *ngFor="let metodo of metodosDePago" [value]="metodo.idMetodo">{{ metodo.tipoMetodo }}</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="subtotal">Subotal</label>
+        <input type="number" class="form-control" id="subtotal" [(ngModel)]="reciboData.Subtotal" name="subtotal" disabled>
+      </div>
+      <div class="form-group">
+        <label for="impuestos">Impuestos</label>
+        <input type="text" class="form-control" id="impuestos" [(ngModel)]="formattedImpuestos" name="impuestos" [ngModelOptions]="{ standalone: true }" disabled>
+      </div>
+
+
+  
+      <div class="form-group" *ngIf="reciboData.IdMetodoPago == 2">
+        <label for="campo">Numero de tarjeta</label>
+        <input  type="text" class="form-control" id="campo" [(ngModel)]="reciboData.Campo" name="campo" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subtotal">Total</label>
+        <input type="number" class="form-control" id="subtotal" [(ngModel)]="total" name="total" disabled>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Enviar</button>
+
+      
+    </form>
+  </div>
+  

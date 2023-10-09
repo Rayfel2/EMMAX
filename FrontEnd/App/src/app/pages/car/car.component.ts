@@ -41,6 +41,20 @@ export class CarComponent implements OnInit {
     );
   }
 
+  actualizarCantidad(idProducto: number, cantidad: number) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
+    this.http.patch(`http://localhost:5230/CarritoProducto/${idProducto}/${cantidad}`, null, { headers }).subscribe(
+      (response: any) => {
+        alert('Cantidad actualizada');
+        this.getCarritoProductos(1, 8);
+      },
+      (error) => {
+        console.error('Error al actualizar cantidad del producto en el carrito', error);
+      }
+    );
+  }
   
   eliminarProductoDelCarrito(index: number) {
     const idProductoAEliminar = index;

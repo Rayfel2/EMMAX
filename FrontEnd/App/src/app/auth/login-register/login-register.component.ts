@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginService } from 'src/app/services/auth/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-register',
@@ -35,7 +36,7 @@ export class LoginRegisterComponent implements OnInit {
     Contraseña: ''
   };
 
-  constructor(private elementRef: ElementRef, private http: HttpClient, private loginService: LoginService) { }
+  constructor(private elementRef: ElementRef, private http: HttpClient, private loginService: LoginService, private router: Router) { }
   
   ngOnInit() {
       // Obtener elementos después de que el componente haya sido renderizado
@@ -119,8 +120,8 @@ export class LoginRegisterComponent implements OnInit {
         // Manejar la respuesta del servidor, por ejemplo, guardar el token en el almacenamiento local.
         console.log('Login exitoso');
         localStorage.setItem('token', response.token);
-        console.log(response.token);
         this.loginService.setUserLoginOn(true);
+        this.router.navigateByUrl('/inicio');
         // Redireccionar a la página principal o realizar otras acciones necesarias.
       },
       (error) => {
