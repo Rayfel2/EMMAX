@@ -3,7 +3,7 @@
       <div class="col-md-3">
         <div class="form-group">
           <label for="categoriaSelect">Selecciona una categoría:</label>
-          <select class="form-control" id="categoriaSelect" [(ngModel)]="categoryFilter" (change)="getDataFromApi()">
+          <select class="form-control" id="categoriaSelect" [(ngModel)]="categoryFilter" (change)="onCategoriaChange($event)">
             <option value="---" selected>---</option>
             <option *ngFor="let categoria of categorias" [value]="categoria.nombre">{{ categoria.nombre }}</option>
           </select>                                

@@ -1,15 +1,19 @@
 <h1>Mi carrito</h1>
 <div *ngFor="let producto of carritoProductos">  
   <div class="tarjeta">
+    <a [routerLink]="['/product', producto.producto.idProducto]">
     <div class="imagen">
         <img class="card-img" [src]="producto.producto.imagen? producto.producto.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Producto" />
     </div>
+    </a>
+    
     <div class="detalles">
         <h3>{{ producto.producto.nombre}}</h3>
         <h6>{{ producto.producto.descripcion}}</h6>
         <p>Cantidad: <input type="number" [(ngModel)]="producto.cantidad"></p>
         <p>Precio: {{ producto.precio}}$</p>
         <p>SubTotal: {{ producto.cantidad * producto.precio }}$</p>
+    
         <!-- Botón para eliminar con un ícono de "X" y color rojo -->
         <button class="btn btn-outline-danger" (click)="eliminarProductoDelCarrito(producto.producto.idProducto)">
           <i class="fas fa-times"></i>
