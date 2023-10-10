@@ -74,9 +74,10 @@ namespace ProyectoCore.ControllersApi
                 if (productFilter != null && productFilter.Any())
                 {
                     var productosIds = _RepositoryProducto.GetProductoIdsByPartialNames(productFilter);
+                    var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(productFilter);
 
                     allProductos = allProductos
-                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || productosIds.Contains(Convert.ToInt32(i.IdCategoria)))
+                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || categoriasIds.Contains(Convert.ToInt32(i.IdCategoria)))
                         .ToList();
 
                 }

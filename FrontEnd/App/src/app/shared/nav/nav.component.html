@@ -22,12 +22,13 @@
 </nav>
 -->
 <div class="input-group mx-5 py-3">
-  <input type="text" class="form-control" placeholder="Buscar">
+  <input type="text" class="form-control" placeholder="Buscar" [(ngModel)]="searchText">
   <div class="input-group-append">
-    <button class="btn btn-outline-secondary" type="button">
+    <button class="btn btn-outline-secondary" type="button" (click)="searchProducts()">
       <i class="fas fa-search"></i>
     </button>
   </div>
+
 
 
 
