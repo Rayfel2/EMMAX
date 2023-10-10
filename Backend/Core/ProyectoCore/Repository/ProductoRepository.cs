@@ -31,13 +31,15 @@ namespace ProyectoCore.Repository
 
         public List<Producto> GetProductoCategoria()
         {
-            var productosPorCategoria = _context.Productos
+            var productosConCategoria = _context.Productos
+                .Where(p => p.IdCategoria != null) // Filtrar productos con categoría
                 .GroupBy(p => p.IdCategoria) // Agrupa los productos por IdCategoria
                 .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
                 .ToList();
 
-            return productosPorCategoria;
+            return productosConCategoria;
         }
+
 
         public Producto GetProductos(int id)
         {

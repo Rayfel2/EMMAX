@@ -7,5 +7,6 @@ namespace ProyectoCore.Interface
         ICollection<Carrito> GetCarrito();
         Carrito GetCarrito(int id);
         bool save();
+        bool CreateCarrito(Carrito carrito);
     }
 }

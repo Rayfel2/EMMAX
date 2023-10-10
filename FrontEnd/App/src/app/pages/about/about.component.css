@@ -2,7 +2,6 @@
     display: flex;
     align-items: center;
     flex-direction: row; /* Cambiamos la dirección a columna en pantallas pequeñas */
-    text-align: center; /* Centramos el texto en pantallas pequeñas */
     padding: 20px; /* Añadimos espaciado alrededor del contenedor */
 }
 

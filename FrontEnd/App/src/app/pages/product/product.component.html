@@ -1,7 +1,7 @@
 <div *ngIf="productDetails" class="row">
   <!-- Columna izquierda para la imagen del producto -->
   <div class="col-md-2 text-center">
-    <img [src]="productDetails.imagen" alt="{{ productDetails.nombre }}" class="img-fluid product-image" style="max-height: 200px;" />
+    <img [src]="productDetails.imagen? productDetails.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="{{ productDetails.nombre }}" class="img-fluid product-image" style="max-height: 200px;" />
   </div>
 
   <!-- Columna derecha para la información del producto -->

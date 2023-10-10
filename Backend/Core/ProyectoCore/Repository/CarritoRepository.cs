@@ -10,6 +10,13 @@ namespace ProyectoCore.Repository
         {
             _context = context;
         }
+
+        public bool CreateCarrito(Carrito carrito)
+        {
+            _context.Add(carrito);
+            return save();
+        }
+
         public ICollection<Carrito> GetCarrito()
         {
             return _context.Carritos.OrderBy(H => H.IdCarrito).ToList();

@@ -18,6 +18,7 @@ const routes: Routes = [
   {path:'', redirectTo: '/inicio', pathMatch:'full'},
   {path:'inicio',component:DashboardComponent},
   {path:'iniciar-sesion', component:LoginRegisterComponent},
+  {path:'login', component:LoginComponent},
   {path:'perfil', component:ProfileComponent},
   {path:'registro', component:RegisterComponent},
   {path:'carrito', component:CarComponent},
