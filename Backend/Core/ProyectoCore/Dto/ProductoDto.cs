@@ -4,7 +4,8 @@
     {
         public int IdProducto { get; set; }
 
-        public int? IdCategoria { get; set; }
+        //  public int? IdCategoria { get; set; }
+        public CategoriaDto Categoria { get; set; }
 
         public string? Nombre { get; set; }
 

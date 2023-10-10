@@ -7,5 +7,6 @@ namespace ProyectoCore.Interface
         ICollection<ListaProducto> GetLista();
         ListaDeseo GetLista(int id);
         bool save();
+        bool CreateLista(ListaDeseo lista);
     }
 }

@@ -305,19 +305,45 @@ namespace ProyectoCore.ControllersApi
             {
                 return StatusCode(666, "Usuario ya existe");
             }
-
+            CarritoPostDto carritoPostDTO = new CarritoPostDto();
+            ListaPostDto listaPostDTO = new ListaPostDto();
 
             var Usuario = _mapper.Map<Usuario>(UsuarioPostDTO);
+            var Carrito = _mapper.Map<Carrito>(carritoPostDTO);
+            var Lista = _mapper.Map<ListaDeseo>(listaPostDTO);
             Usuario.ContraseñaHash = _RepositoryUsuario.HashPassword(Usuario.Contraseña);
+
+            
+          
+
             if (!_RepositoryUsuario.CreateUsuario(Usuario))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
             }
-
             else
             {
-                return Ok();
+                var UltimoUsuario = _RepositoryUsuario.GetUltimoUsuarioAgregado();
+                Carrito.IdUsuario = UltimoUsuario.IdUsuario;
+                Lista.IdUsuario = UltimoUsuario.IdUsuario;
+
+                if (!_RepositoryCarrito.CreateCarrito(Carrito))
+                {
+                    ModelState.AddModelError("", "Something went wrong while saving");
+                    return StatusCode(500, ModelState);
+                } else
+                { 
+                    if (!_RepositoryLista.CreateLista(Lista))
+                    {
+                        ModelState.AddModelError("", "Something went wrong while saving");
+                        return StatusCode(500, ModelState);
+                    }
+                    else
+                    {
+                        return Ok();
+                    }
+                    
+                }
             }
 
         }

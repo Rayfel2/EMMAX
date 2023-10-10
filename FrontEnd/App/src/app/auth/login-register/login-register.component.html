@@ -15,26 +15,54 @@
     <!-- Formulario de Login y registro -->
     <div class="contenedor__login-register">
         <!-- Login -->
-        <form action="" class="formulario__login">
+        <form action="" class="formulario__login" [formGroup]="loginForm">
             <h2>Iniciar Sesión</h2>
-            <input type="text" placeholder="Correo Electrónico" [(ngModel)]="loginRequest.Email" name="Email">
-            <input type="password" placeholder="Contraseña" [(ngModel)]="loginRequest['Contraseña']" name="Contraseña">
-            <button (click)="login()">Entrar</button>
+            <div class="mb-3 input-group">
+            <input   class="form-control input" formControlName="email" type="email" placeholder="Correo Electrónico" [(ngModel)]="loginRequest.Email" name="Email" required>
+        </div>
+            <div *ngIf="email.invalid && (email.dirty || email.touched)"
+            class="text-danger">
+          <div *ngIf="email.errors?.['email']">
+            Email debe tener un formato valido
+          </div>
+        </div>
+
+            <input  class="form-control input"  formControlName="password" type="password" placeholder="Contraseña" [(ngModel)]="loginRequest['Contraseña']" name="Contraseña" required>
+
+            <button (click)="login()" [disabled]="!loginForm.valid">Entrar</button>
+            <div *ngIf="loginForm.invalid && (loginForm.dirty || loginForm.touched)" class="text-danger">
+                <div *ngIf="loginForm.errors">
+                  Por favor, completa el formulario correctamente.
+                </div>
+              </div>
         </form>
 
         <!-- Registro -->
-        <form action="" class="formulario__register">
+        <form action="" class="formulario__register" [formGroup]="registerForm">
               
             <h2>Registrarse</h2>
-            <input type="text" placeholder="Nombre" [(ngModel)]="registroRequest.Nombre" name="Nombre">
-            <input type="text" placeholder="Apellido" [(ngModel)]="registroRequest.Apellido" name="Apellido">
-            <input type="text" placeholder="Dirección" [(ngModel)]="registroRequest['Dirección']" name="Dirección">
-            <input type="text" placeholder="Teléfono" [(ngModel)]="registroRequest['Teléfono']" name="Teléfono">
-            <input type="text" placeholder="Correo Electrónico" [(ngModel)]="registroRequest.Email" name="Email">
-            <input type="text" placeholder="Nombre de Usuario" [(ngModel)]="registroRequest.NombreUsuario" name="NombreUsuario">
-            <input type="date" placeholder="Fecha de Nacimiento" [(ngModel)]="registroRequest.FechaNacimiento" name="FechaNacimiento">
-            <input type="password" placeholder="Contraseña" [(ngModel)]="registroRequest['Contraseña']" name="Contraseña">
-            <button (click)="registrar()">Registrarse</button>
+            <input class="form-control input" formControlName="nombre" type="text" placeholder="Nombre" [(ngModel)]="registroRequest.Nombre" name="Nombre" required>
+            <input class="form-control input" formControlName="apellido" type="text" placeholder="Apellido" [(ngModel)]="registroRequest.Apellido" name="Apellido" required>
+            <input class="form-control input" formControlName="direccion" type="text" placeholder="Dirección" [(ngModel)]="registroRequest['Dirección']" name="Dirección" required>
+            <input class="form-control input" formControlName="telefono" type="text" placeholder="Teléfono" [(ngModel)]="registroRequest['Teléfono']" name="Teléfono" required>
+            <input class="form-control input" type="email" formControlName="correo" placeholder="Correo Electrónico" [(ngModel)]="registroRequest.Email" name="Correo" required>
+            
+            <div *ngIf="correo.invalid && (correo.dirty || correo.touched)"
+            class="text-danger">
+          <div *ngIf="correo.errors?.['correo']">
+            Email debe tener un formato valido
+          </div>
+        </div>
+
+            <input class="form-control input" type="text" formControlName="nombreUsuario" placeholder="Nombre de Usuario" [(ngModel)]="registroRequest.NombreUsuario" name="NombreUsuario" required>
+            <input class="form-control input" type="date" formControlName="fechaNacimiento" placeholder="Fecha de Nacimiento" [(ngModel)]="registroRequest.FechaNacimiento" name="FechaNacimiento" required>
+            <input class="form-control input" type="password" formControlName="contraseña" placeholder="Contraseña" [(ngModel)]="registroRequest['Contraseña']" name="Contraseña" required>
+            <button (click)="registrar()" [disabled]="!registerForm.valid">Registrarse</button>
+            <div *ngIf="registerForm.invalid && (registerForm.dirty || registerForm.touched)" class="text-danger">
+                <div *ngIf="registerForm.errors">
+                  Por favor, completa el formulario correctamente.
+                </div>
+              </div>
         </form>
     </div>
 </div>

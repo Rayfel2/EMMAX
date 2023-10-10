@@ -59,7 +59,15 @@ namespace ProyectoCore.ControllersApi
                 // Utilizado para determinar dónde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
-                var allProductos = _RepositoryProducto.GetProductos();
+                var allProductos = _RepositoryProducto.GetProductos()
+                  .Join(
+                _RepositoryCategoria.GetCategorias(),
+                cp => cp.IdCategoria,
+                p => p.IdCategoria,
+                (cp, p) => new { Producto = cp, Categoria = p }
+            )
+            .Select(result => _mapper.Map<ProductoDto>(result.Producto))
+            .ToList();
 
                 // Aplicar filtros según los valores proporcionados
                 if (categoryFilter != null && categoryFilter.Any())
@@ -67,7 +75,7 @@ namespace ProyectoCore.ControllersApi
                     var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(categoryFilter);
 
                     allProductos = allProductos
-                        .Where(i => categoriasIds.Contains(Convert.ToInt32(i.IdCategoria)))
+                        .Where(i => categoriasIds.Contains(Convert.ToInt32(i.Categoria.IdCategoria)))
                         .ToList();
                 }
 
@@ -77,20 +85,23 @@ namespace ProyectoCore.ControllersApi
                     var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(productFilter);
 
                     allProductos = allProductos
-                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || categoriasIds.Contains(Convert.ToInt32(i.IdCategoria)))
+                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || categoriasIds.Contains(Convert.ToInt32(i.Categoria.IdCategoria)))
                         .ToList();
 
                 }
 
                 if (recentProduct)
                 {
-                    allProductos = _RepositoryProducto.GetProductosDescending();
+                    allProductos = allProductos.OrderByDescending(H => H.IdProducto).ToList();
                 }
 
                 if (categoryProduct)
                 {
-                    allProductos = _RepositoryProducto.GetProductoCategoria();
-   
+                    allProductos = allProductos.Where(p => p.Categoria.IdCategoria != null) // Filtrar productos con categoría
+                .GroupBy(p => p.Categoria.IdCategoria) // Agrupa los productos por IdCategoria
+                .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
+                .ToList();
+
                 }
 
                 if (reviewProduct)
@@ -118,7 +129,7 @@ namespace ProyectoCore.ControllersApi
                     allProductos = allProductos.OrderByDescending(p => p.Stock).ToList();
                 }
 
-
+               
 
 
                 // Aplicar paginación utilizando LINQ para seleccionar los registros apropiados.

@@ -17,7 +17,7 @@
     <form (ngSubmit)="onSubmit()" class="form-container">
       <div class="form-group">
         <label for="metodoPago">Seleccione un Método de Pago:</label>
-        <select id="metodoPago" name="IdMetodoPago" [(ngModel)]="reciboData.IdMetodoPago" class="form-control">
+        <select id="metodoPago" name="IdMetodoPago" [(ngModel)]="reciboData.IdMetodoPago" class="form-control" required>
           <option value="" disabled selected>Seleccionar Método de Pago</option>
           <option *ngFor="let metodo of metodosDePago" [value]="metodo.idMetodo">{{ metodo.tipoMetodo }}</option>
         </select>

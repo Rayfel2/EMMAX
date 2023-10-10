@@ -9,7 +9,11 @@ namespace ProyectoCore.Helper
         public MappingController()
         {
             // Get (de la tabla al dto)
-            CreateMap<Producto, ProductoDto>();
+            CreateMap<Producto, ProductoDto>()
+                            .ForMember(
+                    dest => dest.Categoria,
+                    opt => opt.MapFrom(src => src.oCategorium)
+                );
             CreateMap<Categorium, CategoriaDto>();
             CreateMap<Reseña, ReseñaDto>();
             CreateMap<Usuario, UsuarioDto>();
@@ -18,6 +22,7 @@ namespace ProyectoCore.Helper
             CreateMap<CarritoProducto, CarritoProductoDto>();
             CreateMap<Recibo, ReciboDto>();
             CreateMap<MetodoPago, MetodoDto>();
+
 
             CreateMap<CarritoProducto, CarritoProductoDto>()
                 .ForMember(
@@ -46,6 +51,8 @@ namespace ProyectoCore.Helper
             CreateMap<ListaProductoPostDto, ListaProducto>();
             CreateMap<ReseñaPostDto, Reseña>(); 
             CreateMap<ReciboPostDto, Recibo>();
+            CreateMap<ListaPostDto, ListaDeseo>();
+            CreateMap<CarritoPostDto, Carrito>();
 
             //put (del dto a la tabla)
             CreateMap<ProductoDto, Producto>();

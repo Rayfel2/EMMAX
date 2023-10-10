@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginService } from 'src/app/services/auth/login.service';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -36,8 +37,34 @@ export class LoginRegisterComponent implements OnInit {
     Contraseña: ''
   };
 
-  constructor(private elementRef: ElementRef, private http: HttpClient, private loginService: LoginService, private router: Router) { }
+  loginForm=this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+      })
+
+      registerForm=this.fb.group({
+        nombre: ['', [Validators.required]],
+        apellido: ['', [Validators.required]],
+        direccion: ['', [Validators.required]],
+        telefono: ['',[Validators.required]],
+        correo: ['', [Validators.required, Validators.email]],
+        nombreUsuario: ['', [Validators.required]],
+        fechaNacimiento: ['', [Validators.required]],
+        contraseña: ['', [Validators.required]],
+          })
+    
+
+      loginError: string = "";
+
+  constructor(private router: Router, private elementRef: ElementRef, private http: HttpClient, private loginService: LoginService, private fb: FormBuilder) { }
   
+  get email(){
+    return this.loginForm.controls.email;
+  }
+  get correo(){
+    return this.registerForm.controls.correo;
+  }
+
   ngOnInit() {
       // Obtener elementos después de que el componente haya sido renderizado
       this.formulario_login = this.elementRef.nativeElement.querySelector(".formulario__login");
@@ -93,6 +120,8 @@ export class LoginRegisterComponent implements OnInit {
       this.caja_trasera_register.style.display = "block";
       this.caja_trasera_login.style.display = "none";
     }
+    this.registerForm.reset();
+    this.loginForm.reset();
   }
 
   // Función para mostrar el formulario de registro
@@ -111,16 +140,22 @@ export class LoginRegisterComponent implements OnInit {
       this.caja_trasera_login.style.display = "block";
       this.caja_trasera_login.style.opacity = "1";
     }
+    this.registerForm.reset();
+    this.loginForm.reset();
   }
   // Función para realizar el inicio de sesión
-  login() {
-    // Realizar la solicitud HTTP para iniciar sesión utilizando this.loginRequest
+login() {
+  if (this.loginForm.valid) {
+    // Realizar la solicitud HTTP solo si el formulario es válido
     this.http.post('http://localhost:5230/login', this.loginRequest).subscribe(
       (response: any) => {
         // Manejar la respuesta del servidor, por ejemplo, guardar el token en el almacenamiento local.
         console.log('Login exitoso');
         localStorage.setItem('token', response.token);
+        console.log(response.token);
         this.loginService.setUserLoginOn(true);
+        this.registerForm.reset();
+        this.loginForm.reset();
         this.router.navigateByUrl('/inicio');
         // Redireccionar a la página principal o realizar otras acciones necesarias.
       },
@@ -130,19 +165,24 @@ export class LoginRegisterComponent implements OnInit {
       }
     );
   }
+}
 
-  // Función para realizar el registro
-  registrar() {
-    // Realizar la solicitud HTTP para registrarse utilizando this.registroRequest
+// Función para realizar el registro
+registrar() {
+  if (this.registerForm.valid) {
+    // Realizar la solicitud HTTP solo si el formulario es válido
     this.http.post('http://localhost:5230/Registrar', this.registroRequest).subscribe(
       (response: any) => {
-        console.log('Registro exitoso');
+       alert('Registro exitoso');
+       this.registerForm.reset();
+       this.loginForm.reset();
+       this.iniciarSesion();
       },
       (error) => {
-        
-          // El registro se realizó con éxito (estado 200)
+        // El registro se realizó con éxito (estado 200)
         console.error('Error al obtener datos de la API', error);
       }
     );
   }
+}
 }

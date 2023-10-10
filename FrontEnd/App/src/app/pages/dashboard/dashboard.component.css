@@ -30,6 +30,22 @@
 }
 
 .mi-imagen {
-    inline-size: 500px;
-    block-size:500px;
+    inline-size: 40em;
+    block-size:40em;
   }
+
+  .card-img-top {
+    width: 50%; /* Las imágenes ocuparán todo el ancho de la tarjeta */
+    height: 100%; /* Las imágenes ocuparán toda la altura de la tarjeta */
+    object-fit: cover; /* Mantiene la proporción de aspecto y recorta la imagen si es necesario */
+  }
+
+  
+  .imagen img {
+    width: 50px; /* Tamaño de la imagen */
+    height: 50px; /* Tamaño de la imagen */
+    object-fit: cover; /* Ajustar la imagen al cuadro */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+}

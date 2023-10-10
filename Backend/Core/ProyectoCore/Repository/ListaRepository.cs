@@ -10,6 +10,14 @@ namespace ProyectoCore.Repository
         {
             _context = context;
         }
+
+        public bool CreateLista(ListaDeseo lista)
+        {
+                _context.Add(lista);
+                return save();
+            
+        }
+
         public ICollection<ListaDeseo> GetLista()
         {
             return _context.ListaDeseos.OrderBy(H => H.IdLista).ToList();

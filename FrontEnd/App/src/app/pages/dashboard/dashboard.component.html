@@ -23,169 +23,69 @@
 
   <!-- Articulos  -->
 <!-- 1 -->
-  <div class="cards  g-4 mx-4 py-5">
-    <div class="col">
+<div class="cards g-4 mx-4 py-5">
+  <div class="col" *ngFor="let item of category">
+    <a [routerLink]="['/tienda']">
       <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
+        <img class="card-img-top" [src]="item.imagen ? item.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Imagen">
         <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Lorem Ipsum</p> 
+          <p class="tip">{{ item.categoria.nombre }}</p>
+          <p class="second-text">{{ item.categoria.descripcion }}</p> 
         </div>
       </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/qIkzmAm3EvzpLwNIQ7AZwGQyUQFxoUrwWKImqrzGiOk/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS1jbGRucnkucy1u/YmNuZXdzLmNvbS9p/bWFnZS91cGxvYWQv/dF9maXQtNzIwdyxm/X2F1dG8scV9hdXRv/OmJlc3QvbmV3c2Nt/cy8yMDIzXzMwLzE5/NTI1OTIvMmY5ZTIy/ZjUtNDdiMC00NGQ3/LWI3YzUtYzRkMGI5/NmJhZDgyLTEtMDVm/MjI3M2Q0MWJjMzE4/MjQwYTYwNTgxOWQ1/ZDdlOTUtNjNhNGJm/ZmFlMGMwZC5qcGVn" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">hola</p>
-          <p class="second-text">This is a short card.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/F3dF3uJDEG-cJuv4xLmxubHB0Bry6aSYILFqxKeZ2vE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxUC1KVGlUWXNM/LmpwZw" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/7yYGGhJzoGN3DOzsmGc5koqlkYEsXI2W95YdRbd2iig/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF83/MzAxMDYtTUxNNDU3/NDQwNTU5NDVfMDQy/MDIxLVYud2VicA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Ingeniero en Software Diq.</p>
-        </div>
-      </div>
-    </div>
+    </a>
+  </div>
   </div>
   <!-- Feature 1 -->
   <div class="card mx-5">
-    <p class="card-header ">Featured</p>
+    <p class="card-header ">Ultimas Novedades</p>
     <div class="shadow-sm card-body">
-      <p class="tip">Special title treatment</p>
-      <p class="second-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+     <!-- <p class="tip">Productos recientes...</p>-->
+      <p class="second-text">No pierdas tu oportunidad, compra nuestros ultimos productos antes que nadie.</p>
+      <a href="#" class="btn btn-primary">Comprar</a>
     </div>
   </div>
   <!-- 2 -->
   <div class="cards  g-4 mx-4 py-5">
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Lorem Ipsum</p> 
+    <div class="col" *ngFor="let item of recent">
+      <a [routerLink]="['/product', item.idProducto]">
+        <div class="shadow-sm card h-100">
+          <img class="card-img-top" [src]="item.imagen ? item.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Imagen">
+          <div class="card-body">
+            <p class="tip">{{ item.nombre }}</p>
+            <p class="second-text">{{ item.descripcion }}</p> 
+          </div>
         </div>
-      </div>
+      </a>
     </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/qIkzmAm3EvzpLwNIQ7AZwGQyUQFxoUrwWKImqrzGiOk/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS1jbGRucnkucy1u/YmNuZXdzLmNvbS9p/bWFnZS91cGxvYWQv/dF9maXQtNzIwdyxm/X2F1dG8scV9hdXRv/OmJlc3QvbmV3c2Nt/cy8yMDIzXzMwLzE5/NTI1OTIvMmY5ZTIy/ZjUtNDdiMC00NGQ3/LWI3YzUtYzRkMGI5/NmJhZDgyLTEtMDVm/MjI3M2Q0MWJjMzE4/MjQwYTYwNTgxOWQ1/ZDdlOTUtNjNhNGJm/ZmFlMGMwZC5qcGVn" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">hola</p>
-          <p class="second-text">This is a short card.</p>
-        </div>
-      </div>
     </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/F3dF3uJDEG-cJuv4xLmxubHB0Bry6aSYILFqxKeZ2vE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxUC1KVGlUWXNM/LmpwZw" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/7yYGGhJzoGN3DOzsmGc5koqlkYEsXI2W95YdRbd2iig/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF83/MzAxMDYtTUxNNDU3/NDQwNTU5NDVfMDQy/MDIxLVYud2VicA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Ingeniero en Software Diq.</p>
-        </div>
-      </div>
-    </div>
-  </div>
   <!-- Feature 2 -->
   <div class="card text-center mx-5">
     <div class="card-header">
-      Featured
+      Productos mejores calificados
     </div>
     <div class="shadow-sm card-body">
-      <p class="tip">Special title treatment</p>
-      <p class="second-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+      <p class="tip"></p>
+      <p class="second-text">Recuerda que puedes calificar nuestros productos para una mejor experiencia para ti y para los demas</p>
+      <a href="#" class="btn btn-primary">Comprar</a>
     </div>
     <div class="card-footer text-body-secondary">
-      2 days ago
+  <!--    2 days ago -->
     </div>
   </div>
   <!-- 3 -->
   <div class="cards  g-4 mx-4 py-5">
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Lorem Ipsum</p> 
+    <div class="col" *ngFor="let item of popular">
+      <a [routerLink]="['/product', item.idProducto]">
+        <div class="shadow-sm card h-100">
+          <img class="card-img-top" [src]="item.imagen ? item.imagen : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'" alt="Imagen">
+          <div class="card-body">
+            <p class="tip">{{ item.nombre }}</p>
+            <p class="second-text">{{ item.descripcion }}</p> 
+          </div>
         </div>
-      </div>
+      </a>
     </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/qIkzmAm3EvzpLwNIQ7AZwGQyUQFxoUrwWKImqrzGiOk/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS1jbGRucnkucy1u/YmNuZXdzLmNvbS9p/bWFnZS91cGxvYWQv/dF9maXQtNzIwdyxm/X2F1dG8scV9hdXRv/OmJlc3QvbmV3c2Nt/cy8yMDIzXzMwLzE5/NTI1OTIvMmY5ZTIy/ZjUtNDdiMC00NGQ3/LWI3YzUtYzRkMGI5/NmJhZDgyLTEtMDVm/MjI3M2Q0MWJjMzE4/MjQwYTYwNTgxOWQ1/ZDdlOTUtNjNhNGJm/ZmFlMGMwZC5qcGVn" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">hola</p>
-          <p class="second-text">This is a short card.</p>
-        </div>
-      </div>
+
     </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/F3dF3uJDEG-cJuv4xLmxubHB0Bry6aSYILFqxKeZ2vE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxUC1KVGlUWXNM/LmpwZw" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/7yYGGhJzoGN3DOzsmGc5koqlkYEsXI2W95YdRbd2iig/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF83/MzAxMDYtTUxNNDU3/NDQwNTU5NDVfMDQy/MDIxLVYud2VicA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Producto</p>
-          <p class="second-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="shadow-sm card h-100">
-        <img src="https://imgs.search.brave.com/pLStqgfpBjwsGe7nj18COH08Wya_OkGRO4duTEDulOw/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMud2lraWEubm9j/b29raWUubmV0L25h/cnV0by9pbWFnZXMv/ZC9kOC9HYXRvLnBu/Zy9yZXZpc2lvbi9s/YXRlc3Qvc2NhbGUt/dG8td2lkdGgtZG93/bi8zMDA_Y2I9MjAx/NTAyMjExMzU1MzA" class="card-img-top" alt="...">
-        <div class="card-body">
-          <p class="tip">Rayfel</p>
-          <p class="second-text">Ingeniero en Software Diq.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+

@@ -111,5 +111,10 @@ namespace ProyectoCore.Repository
 
         }
 
+        public Usuario GetUltimoUsuarioAgregado()
+        {
+            return _context.Usuarios.OrderByDescending(u => u.IdUsuario).FirstOrDefault();
+        }
+
     }
 }
