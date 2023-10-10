@@ -21,9 +21,6 @@ jobs:
     - name: Verificar versión de .NET Core
       run: dotnet --version
 
-    - name: Restaurar paquetes NuGet
-      run: dotnet restore
-
     - name: Compilar la aplicación
       run: dotnet build --configuration Release
 
