@@ -34,14 +34,14 @@
     block-size:40em;
   }
 
-  .card-img-top {
+.card-img-top {
     width: 50%; /* Las imágenes ocuparán todo el ancho de la tarjeta */
     height: 100%; /* Las imágenes ocuparán toda la altura de la tarjeta */
     object-fit: cover; /* Mantiene la proporción de aspecto y recorta la imagen si es necesario */
   }
 
   
-  .imagen img {
+.imagen img {
     width: 50px; /* Tamaño de la imagen */
     height: 50px; /* Tamaño de la imagen */
     object-fit: cover; /* Ajustar la imagen al cuadro */

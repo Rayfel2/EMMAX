@@ -3,9 +3,8 @@
     <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Cualquier sugerencia o duda no dudes en contactar.</p>
     </div>
 
-      <form (submit)="enviarCorreo()">
+    <form>
         <div class="form-group">
-
             <label for="formGroupExampleInput">Usuario:</label>
             <input type="Usuario" class="shadow-sm form-control">
           </div>
@@ -35,30 +34,3 @@
         </button>
         </div>        
     </form>
-          <label for="usuario">Usuario:</label>
-          <input type="text" class="shadow-sm form-control" id="usuario" name="usuario" [(ngModel)]="usuario">
-        </div>
-        <div class="form-group">
-          <label for="gmail">Gmail:</label>
-          <input type="email" class="shadow-sm form-control" id="gmail" name="gmail" [(ngModel)]="gmail">
-        </div>
-        <div class="form-group">
-          <label for="comentarios">Comentarios:</label>
-          <textarea class="form-control" id="comentarios" name="comentarios" [(ngModel)]="comentarios"></textarea>
-        </div>
-        
-        <div class="redes-sociales">
-            <h2>Redes Sociales</h2>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-       
-          <!-- Resto del formulario aquí -->
-          <div class="d-grid gap-2 col-6 mx-auto py-3">
-            <button class="btn btn-dark" type="submit">Enviar</button>
-          </div>
-        </form>
-           
- 
