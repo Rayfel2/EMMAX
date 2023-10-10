@@ -1,0 +1,32 @@
+name: Configuración de Entorno .netCore
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configurar el entorno de .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.x'  # Especifica la versión de Node.js que necesitas
+     
+    - name: Verificar versión de .NET Core
+      run: dotnet --version
+
+    - name: Restaurar paquetes NuGet
+      run: dotnet restore
+
+    - name: Compilar la aplicación
+      run: dotnet build --configuration Release
+
+    - name: Ejecutar pruebas
+      run: dotnet test
+     
