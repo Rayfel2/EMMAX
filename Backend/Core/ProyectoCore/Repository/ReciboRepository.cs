@@ -1,38 +1,49 @@
-﻿using ProyectoCore.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoCore.Interface;
 using ProyectoCore.Models;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Repository
 {
     public class ReciboRepository : IReciboRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public ReciboRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-
-        public bool save()
+        public async Task<bool> CreateReciboAsync(Recibo recibo)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            _context.Add(recibo);
+            return await SaveAsync();
         }
 
-        public bool CreateRecibo (Recibo Recibo)
+        public async Task<ICollection<Recibo>> GetReciboAsync()
         {
-            _context.Add(Recibo);
-            return save();
+            return await _context.Recibos.OrderBy(r => r.IdRecibo).ToListAsync();
         }
 
-        public ICollection<Recibo> GetRecibo()
+        public async Task<Recibo> GetReciboAsync(int id)
         {
-            return _context.Recibos.OrderBy(H => H.IdRecibo).ToList();
+            return await _context.Recibos.FirstOrDefaultAsync(e => e.IdRecibo == id);
         }
 
-        public Recibo GetRecibo(int id)
+        public async Task<bool> SaveAsync()
         {
-            return _context.Recibos.Where(e => e.IdRecibo == id).FirstOrDefault();
+            try
+            {
+                return (await _context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                // Manejar errores aquí si es necesario
+                return false;
+            }
         }
     }
 }

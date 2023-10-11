@@ -1,19 +1,23 @@
 ﻿using ProyectoCore.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Interface
 {
     public interface IUsuarioRepository
     {
-        ICollection<Usuario> GetUsuarios();
-        Usuario GetUsuario(int id);
-        bool save();
-        Usuario GetUsuarioByEmailAndPassword(string email, string password);
-        bool VerifyPasswordHash(string password, string storedHash);
-        string HashPassword(string password);
+        Task<ICollection<Usuario>> GetUsuariosAsync();
+        Task<Usuario> GetUsuarioAsync(int id);
+        Task<bool> SaveAsync();
+        Task<Usuario> GetUsuarioByEmailAndPasswordAsync(string email, string password);
+        Task<bool> VerifyPasswordHashAsync(string password, string storedHash);
+        Task<string> HashPasswordAsync(string password);
 
-        bool UsuarioExist(int idUsuario);
-        bool CreateUsuario(Usuario Usuario);
-        int GetUsuarioIds(string partialNames);
-        Usuario GetUltimoUsuarioAgregado();
+        Task<bool> UsuarioExistAsync(int idUsuario);
+        Task<bool> CreateUsuarioAsync(Usuario Usuario);
+        Task<int> GetUsuarioIdsAsync(string partialNames);
+        Task<Usuario> GetUltimoUsuarioAgregadoAsync();
     }
 }
+

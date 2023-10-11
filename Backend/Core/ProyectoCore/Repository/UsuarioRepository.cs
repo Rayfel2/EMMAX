@@ -1,89 +1,83 @@
-﻿using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProyectoCore.Interface;
 using ProyectoCore.Models;
+using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public UsuarioRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-        public bool CreateUsuario(Usuario Usuario)
+        public async Task<bool> CreateUsuarioAsync(Usuario Usuario)
         {
             _context.Add(Usuario);
-            return save();
+            return await SaveAsync();
         }
 
-        public bool UsuarioExist(int idUsuario)
+        public async Task<bool> UsuarioExistAsync(int idUsuario)
         {
-            return _context.Usuarios.Any(p => p.IdUsuario == idUsuario);
-        }
-        public ICollection<Usuario> GetUsuarios()
-        {
-            return _context.Usuarios.OrderBy(H => H.IdUsuario).ToList();
+            return await _context.Usuarios.AnyAsync(p => p.IdUsuario == idUsuario);
         }
 
-        public Usuario GetUsuario(int id)
+        public async Task<ICollection<Usuario>> GetUsuariosAsync()
         {
-            return _context.Usuarios.Where(e => e.IdUsuario == id).FirstOrDefault();
+            return await _context.Usuarios.OrderBy(H => H.IdUsuario).ToListAsync();
         }
 
-        public bool save()
+        public async Task<Usuario> GetUsuarioAsync(int id)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            return await _context.Usuarios.Where(e => e.IdUsuario == id).FirstOrDefaultAsync();
         }
 
-        // para el hash
-
-        public Usuario GetUsuarioByEmailAndPassword(string email, string password)
+        public async Task<bool> SaveAsync()
         {
-            // Buscar un usuario con el correo electrónico proporcionado
-            var usuario = _context.Usuarios.SingleOrDefault(u => u.Email == email);
+            var saved = await _context.SaveChangesAsync();
+            return saved > 0;
+        }
 
-            // Verificar si se encontró un usuario con ese correo electrónico
+        public async Task<Usuario> GetUsuarioByEmailAndPasswordAsync(string email, string password)
+        {
+            var usuario = await _context.Usuarios.SingleOrDefaultAsync(u => u.Email == email);
+
             if (usuario == null)
             {
-                return null; // Usuario no encontrado
+                return null;
             }
 
-            // Verificar la contraseña
-            if (!VerifyPasswordHash(password, usuario.ContraseñaHash))
+            if (!await VerifyPasswordHashAsync(password, usuario.ContraseñaHash))
             {
-                return null; // Contraseña incorrecta
+                return null;
             }
 
-            return usuario; // Usuario encontrado y contraseña correcta
+            return usuario;
         }
 
-
-        // Método para verificar si la contraseña coincide
-        public bool VerifyPasswordHash(string password, string storedHash)
+        public async Task<int> GetUsuarioIdsAsync(string partialNames)
         {
-            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(storedHash))
-            {
-                return false; // Contraseña o hash almacenados son inválidos
-            }
+            var UsuarioId = await _context.Usuarios
+                .Where(Usuario => Usuario.Email == partialNames)
+                .Select(Usuario => Usuario.IdUsuario)
+                .FirstOrDefaultAsync();
 
-            using (var sha256 = SHA256.Create())
-            {
-                // Calcula el hash de la contraseña proporcionada
-                var computedHashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var computedHashString = BitConverter.ToString(computedHashBytes).Replace("-", "").ToLower();
-
-                // Compara el hash calculado con el hash almacenado
-                return string.Equals(computedHashString, storedHash, StringComparison.OrdinalIgnoreCase);
-            }
+            return UsuarioId;
         }
 
-        public string HashPassword(string password)
+        public async Task<Usuario> GetUltimoUsuarioAgregadoAsync()
+        {
+            return await _context.Usuarios.OrderByDescending(u => u.IdUsuario).FirstOrDefaultAsync();
+        }
+
+        public async Task<string> HashPasswordAsync(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -92,29 +86,27 @@ namespace ProyectoCore.Repository
 
             using (var sha256 = SHA256.Create())
             {
-                // Calcula el hash de la contraseña como una cadena hexadecimal
                 var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
                 return hashString;
             }
         }
-        public int GetUsuarioIds(string partialNames)
+
+        public async Task<bool> VerifyPasswordHashAsync(string password, string storedHash)
         {
-            var UsuarioId = _context.Usuarios
-    .Where(Usuario => Usuario.Email == partialNames)
-    .Select(Usuario => Usuario.IdUsuario)
-    .FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(storedHash))
+            {
+                return false;
+            }
 
+            using (var sha256 = SHA256.Create())
+            {
+                var computedHashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var computedHashString = BitConverter.ToString(computedHashBytes).Replace("-", "").ToLower();
 
-            return UsuarioId;
-
+                return string.Equals(computedHashString, storedHash, StringComparison.OrdinalIgnoreCase);
+            }
         }
-
-        public Usuario GetUltimoUsuarioAgregado()
-        {
-            return _context.Usuarios.OrderByDescending(u => u.IdUsuario).FirstOrDefault();
-        }
-
     }
 }

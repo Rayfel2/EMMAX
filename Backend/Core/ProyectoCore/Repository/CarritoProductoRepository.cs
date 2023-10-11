@@ -1,65 +1,73 @@
 ﻿using ProyectoCore.Models;
 using ProyectoCore.Interface;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Repository
 {
     public class CarritoProductoRepository : ICarritoProductoRepository
     {
-
         private readonly TiendaPruebaContext _context;
+
         public CarritoProductoRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-        public bool CarritoProductoExist(int idCarrito, int idProducto)
+        public async Task<bool> CarritoProductoExistAsync(int idCarrito, int idProducto)
         {
-            return _context.CarritoProductos.Any(cp => cp.IdCarrito == idCarrito && cp.IdProducto == idProducto);
+            return await _context.CarritoProductos.AnyAsync(cp => cp.IdCarrito == idCarrito && cp.IdProducto == idProducto);
         }
 
-        public ICollection<CarritoProducto> GetCarritoProducto()
+        public async Task<List<CarritoProducto>> GetCarritoProductoAsync()
         {
-            return _context.CarritoProductos.OrderBy(H => H.IdCarrito).ToList();
+            return await _context.CarritoProductos.OrderBy(H => H.IdCarrito).ToListAsync();
         }
 
-        public ICollection<CarritoProducto> GetCarritoProducto(int id)
+        public async Task<List<CarritoProducto>> GetCarritoProductoAsync(int id)
         {
-            return _context.CarritoProductos.Where(e => e.IdCarrito == id).ToList();
+            return await _context.CarritoProductos.Where(e => e.IdCarrito == id).ToListAsync();
         }
 
-        public bool save()
+        public async Task<bool> CreateCarritoProductoAsync(CarritoProducto carritoProducto)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            await _context.AddAsync(carritoProducto);
+            return await saveAsync();
         }
 
-        public bool CreateCarritoProducto(CarritoProducto carritoProducto)
-        {
-            _context.Add(carritoProducto);
-            return save();
-        }
-
-        public bool DeleteCarritoProducto(CarritoProducto carritoProducto)
+        public async Task<bool> DeleteCarritoProductoAsync(CarritoProducto carritoProducto)
         {
             _context.Remove(carritoProducto);
-            return save();
+            return await saveAsync();
         }
 
-        public bool UpdateCarritoProducto(CarritoProducto carritoProducto)
+        public async Task<bool> UpdateCarritoProductoAsync(CarritoProducto carritoProducto)
         {
             _context.Update(carritoProducto);
-            return save();
+            return await saveAsync();
         }
 
-        public CarritoProducto GetCarritosProductos(int IdCarritos, int IdProductos)
+        public async Task<CarritoProducto> GetCarritosProductosAsync(int IdCarritos, int IdProductos)
         {
-            return _context.CarritoProductos
+            return await _context.CarritoProductos
                 .Where(e => e.IdCarrito == IdCarritos && e.IdProducto == IdProductos)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
 
-
-
-
+        private async Task<bool> saveAsync()
+        {
+            try
+            {
+                return (await _context.SaveChangesAsync()) > 0;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Manejar excepciones si es necesario
+                return false;
+            }
+        }
     }
 }

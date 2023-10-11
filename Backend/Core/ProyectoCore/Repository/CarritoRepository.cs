@@ -1,36 +1,49 @@
-﻿using ProyectoCore.Interface;
-using ProyectoCore.Models;
+﻿using ProyectoCore.Models;
+using ProyectoCore.Interface;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProyectoCore.Repository
 {
     public class CarritoRepository : ICarritoRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public CarritoRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-        public bool CreateCarrito(Carrito carrito)
+        public async Task<bool> CreateCarritoAsync(Carrito carrito)
         {
             _context.Add(carrito);
-            return save();
+            return await SaveAsync();
         }
 
-        public ICollection<Carrito> GetCarrito()
+        public async Task<List<Carrito>> GetCarritoAsync()
         {
-            return _context.Carritos.OrderBy(H => H.IdCarrito).ToList();
+            return await _context.Carritos.OrderBy(H => H.IdCarrito).ToListAsync();
         }
 
-        public Carrito GetCarrito(int id)
+        public async Task<Carrito> GetCarritoAsync(int id)
         {
-            return _context.Carritos.Where(e => e.IdUsuario == id).FirstOrDefault();
+            return await _context.Carritos.Where(e => e.IdUsuario == id).FirstOrDefaultAsync();
         }
 
-        public bool save()
+        public async Task<bool> SaveAsync()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            try
+            {
+                return (await _context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                // Manejar errores aquí si es necesario
+                return false;
+            }
         }
+
     }
 }

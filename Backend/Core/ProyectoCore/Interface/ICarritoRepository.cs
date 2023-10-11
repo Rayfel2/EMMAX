@@ -1,12 +1,14 @@
 ﻿using ProyectoCore.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Interface
 {
     public interface ICarritoRepository
     {
-        ICollection<Carrito> GetCarrito();
-        Carrito GetCarrito(int id);
-        bool save();
-        bool CreateCarrito(Carrito carrito);
+        Task<List<Carrito>> GetCarritoAsync();
+        Task<Carrito> GetCarritoAsync(int id);
+        Task<bool> CreateCarritoAsync(Carrito carrito);
+        Task<bool> SaveAsync();
     }
 }

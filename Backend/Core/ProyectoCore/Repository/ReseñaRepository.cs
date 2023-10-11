@@ -1,36 +1,59 @@
 ﻿using ProyectoCore.Interface;
 using ProyectoCore.Models;
-
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace ProyectoCore.Repository
 {
     public class ReseñaRepository : IReseñaRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public ReseñaRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
-        public ICollection<Reseña> GetReseñas()
+
+        public async Task<ICollection<Reseña>> GetReseñasAsync()
         {
-            return _context.Reseñas.OrderBy(H => H.IdReseña).ToList();
+            return await _context.Reseñas.OrderBy(r => r.IdReseña).ToListAsync();
         }
 
-        public Reseña GetReseñas(int id)
+        public async Task<ICollection<Reseña>> GetReseñasAsyncWithId(int productId)
         {
-            return _context.Reseñas.Where(e => e.IdReseña == id).FirstOrDefault();
+            return await _context.Reseñas
+                .Where(r => r.IdProducto == productId)
+                .OrderBy(r => r.IdReseña)
+                .ToListAsync();
         }
 
-        public bool save()
+
+
+        public async Task<Reseña> GetReseñasAsync(int id)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            return await _context.Reseñas.Where(r => r.IdReseña == id).FirstOrDefaultAsync();
         }
 
-        public bool CreateReseña (Reseña reseña)
+        public async Task<bool> CreateReseñaAsync(Reseña reseña)
         {
             _context.Add(reseña);
-            return save();
+            return await SaveAsync();
+        }
+
+        public async Task<bool> SaveAsync()
+        {
+            try
+            {
+                return (await _context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                // Manejar errores aquí si es necesario
+                return false;
+            }
         }
     }
 }
