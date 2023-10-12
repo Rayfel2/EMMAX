@@ -98,64 +98,46 @@ builder.Services.AddGraphQLServer()
 
 var app = builder.Build();
 
-
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
 
-
-
-
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseCors("AllowSpecificOrigin");
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowSpecificOrigin");
-
 app.MapGraphQL("/graphQL");
-
 app.Run();
 
+// Configuración de la API
+var api = WebApplication.CreateBuilder(args);
 
-//para el api
+// Agregue servicios y configuraciones de API, incluyendo Swagger, aquí
 
-builder.Services.AddControllers();
+api.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+api.Services.AddEndpointsApiExplorer();
+api.Services.AddSwaggerGen();
 
-var api = builder.Build();
+var apiApp = api.Build();
 
-// Configure the HTTP request pipeline.
-if (api.Environment.IsDevelopment())
+if (apiApp.Environment.IsDevelopment())
 {
-    api.UseSwagger();
-    api.UseSwaggerUI();
+    apiApp.UseSwagger();
+    apiApp.UseSwaggerUI();
 }
 
-
-api.MapControllers();
-
+apiApp.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-
-api.UseCors("AllowSpecificOrigin");
-
-
-api.Run();
+apiApp.UseCors("AllowSpecificOrigin");
+apiApp.Run();
