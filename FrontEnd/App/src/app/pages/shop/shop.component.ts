@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
   selector: 'app-shop',
@@ -16,9 +17,11 @@ export class ShopComponent {
   pageSize: number = 8;
   categoryFilter: string = '---';
   searchText: string = ''; // Propiedad para almacenar el valor de búsqueda
+  logger: NGXLogger;
 
-  constructor(private httpClient: HttpClient, private route: ActivatedRoute) {
+  constructor(private httpClient: HttpClient, private route: ActivatedRoute,logger: NGXLogger) {
     // Obtiene el valor de búsqueda desde la URL al inicializar el componente
+    this.logger = logger;
     this.route.queryParams.subscribe(params => {
       this.searchText = params['search'] || '';
       // Llama a la función para cargar datos con el valor de búsqueda si es necesario
@@ -31,6 +34,10 @@ export class ShopComponent {
     });
   }
 
+  logSomething() {
+    this.logger.debug('Este es un registro de ejemplo.');
+  }
+  
   hasMoreRecords: boolean = true;
   getData() {
     let productoApi: string;

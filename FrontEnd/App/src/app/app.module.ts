@@ -20,6 +20,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 import { ProductCompont } from './pages/product/product.component';
 import { BuyComponent } from './pages/buy/buy.component';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { BuyComponent } from './pages/buy/buy.component';
     BuyComponent,
   ],
   imports: [
+    [LoggerModule.forRoot({ level: NgxLoggerLevel.DEBUG })],
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
