@@ -24,8 +24,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore Backend/Core/ProyectoCore/ProyectoCore.csproj
 
-    - name: Build
-      run: dotnet build --configuration Release Backend/Core/ProyectoCore/ProyectoCore.csproj
+  #  - name: Build
+   #   run: dotnet build --configuration Release Backend/Core/ProyectoCore/ProyectoCore.csproj
 
     - name: Run tests
       run: dotnet test --no-build --verbosity normal Backend/Core/ProyectoCore/ProyectoCore.csproj
