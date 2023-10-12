@@ -64,7 +64,7 @@ jobs:
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Cambiar al Directorio del Proyecto #extraaaaaaaaa
-      run: cd ruta/al/directorio/del/proyecto
+      run: cd Backend/Core/ProyectoCore
 
 
 
