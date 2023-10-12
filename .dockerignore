@@ -1,0 +1,25 @@
+# Excluye archivos y directorios específicos
+
+bin/
+obj/
+node_modules/
+*.log
+*.tmp
+
+# Excluye archivos de configuración locales o sensibles
+appsettings.Development.json
+secrets.json
+*.pem
+.env
+
+# Excluye archivos de control de versiones
+.git/
+.gitignore
+
+# Excluye archivos temporales o de respaldo
+*.swp
+*.swo
+*.swn
+
+# Excluye archivos de generación de documentación
+doc/

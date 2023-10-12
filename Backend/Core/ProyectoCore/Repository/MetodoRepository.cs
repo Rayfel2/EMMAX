@@ -1,33 +1,35 @@
 ﻿using ProyectoCore.Interface;
 using ProyectoCore.Models;
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProyectoCore.Repository
 {
     public class MetodoRepository : IMetodoRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public MetodoRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-
-        public bool save()
+        public async Task<bool> SaveAsync()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            var saved = await _context.SaveChangesAsync();
+            return saved > 0;
         }
 
-
-        public ICollection<MetodoPago> GetMetodo()
+        public async Task<ICollection<MetodoPago>> GetMetodoAsync()
         {
-            return _context.MetodoPagos.OrderBy(H => H.IdMetodo).ToList();
+            return await _context.MetodoPagos.OrderBy(H => H.IdMetodo).ToListAsync();
         }
 
-        public MetodoPago GetMetodo(int id)
+        public async Task<MetodoPago> GetMetodoAsync(int id)
         {
-            return _context.MetodoPagos.Where(e => e.IdMetodo == id).FirstOrDefault();
+            return await _context.MetodoPagos.Where(e => e.IdMetodo == id).FirstOrDefaultAsync();
         }
     }
 }

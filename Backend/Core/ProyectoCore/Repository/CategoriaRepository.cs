@@ -1,43 +1,56 @@
 ﻿using ProyectoCore.Interface;
 using ProyectoCore.Models;
-
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Repository
 {
     public class CategoriaRepository : ICategoriaRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public CategoriaRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
-        public ICollection<Categorium> GetCategorias()
+
+        public async Task<List<Categorium>> GetCategoriasAsync()
         {
-            return _context.Categoria.OrderBy(H => H.IdCategoria).ToList();
+            return await _context.Categoria.OrderBy(c => c.IdCategoria).ToListAsync();
         }
 
-        public Categorium GetCategorias(int id)
+        public async Task<Categorium> GetCategoriaAsync(int id)
         {
-            return _context.Categoria.Where(e => e.IdCategoria == id).FirstOrDefault();
+            return await _context.Categoria.FirstOrDefaultAsync(e => e.IdCategoria == id);
         }
 
-        public bool save()
+        public async Task<bool> SaveAsync()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            try
+            {
+                var saved = await _context.SaveChangesAsync();
+                return saved > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Manejar excepciones específicas aquí si es necesario
+                throw new Exception("Error al guardar en la base de datos.", ex);
+            }
         }
 
-        public List<int> GetCategoriaIdsByPartialNames(List<string> partialNames)
+        public async Task<List<int>> GetCategoriaIdsByPartialNamesAsync(List<string> partialNames)
         {
-            // Utiliza LINQ para buscar los IDs de empleados cuyos nombres contienen alguna cadena parcial
-            var categoriaIds = _context.Categoria
-                 .AsEnumerable() // Esto carga los datos en memoria (soluciona un error de constains)
+            var categoriaIds = await _context.Categoria
                 .Where(categoria => partialNames.Any(partialName => categoria.Nombre.Contains(partialName)))
                 .Select(categoria => categoria.IdCategoria)
-                .ToList();
+                .ToListAsync(); 
 
             return categoriaIds;
-
         }
+
+
     }
 }

@@ -1,68 +1,84 @@
 ﻿using ProyectoCore.Interface;
 using ProyectoCore.Models;
-
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Repository
 {
     public class ProductoRepository : IProductoRepository
     {
         private readonly TiendaPruebaContext _context;
+
         public ProductoRepository(TiendaPruebaContext context)
         {
             _context = context;
         }
 
-        public bool UpdateProducto(Producto Producto)
+        public async Task<bool> UpdateProductoAsync(Producto producto)
         {
-            _context.Update(Producto);
-            return save();
+            try
+            {
+                _context.Update(producto);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public ICollection<Producto> GetProductos()
+        public async Task<ICollection<Producto>> GetProductosAsync()
         {
-            return _context.Productos.OrderBy(H => H.IdProducto).ToList();
+            return await _context.Productos.OrderBy(p => p.IdProducto).ToListAsync();
         }
 
-        public ICollection<Producto> GetProductosDescending()
+        public async Task<ICollection<Producto>> GetProductosDescendingAsync()
         {
-            return _context.Productos.OrderByDescending(H => H.IdProducto).ToList();
+            return await _context.Productos.OrderByDescending(p => p.IdProducto).ToListAsync();
         }
 
-
-        public List<Producto> GetProductoCategoria()
+        public async Task<List<Producto>> GetProductoCategoriaAsync()
         {
-            var productosConCategoria = _context.Productos
-                .Where(p => p.IdCategoria != null) // Filtrar productos con categoría
-                .GroupBy(p => p.IdCategoria) // Agrupa los productos por IdCategoria
-                .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
-                .ToList();
+            var productosConCategoria = await _context.Productos
+                .Where(p => p.IdCategoria != null)
+                .GroupBy(p => p.IdCategoria)
+                .Select(group => group.First())
+                .ToListAsync();
 
             return productosConCategoria;
         }
 
-
-        public Producto GetProductos(int id)
+        public async Task<Producto> GetProductosAsync(int id)
         {
-            return _context.Productos.Where(e => e.IdProducto == id).FirstOrDefault();
+            return await _context.Productos.Where(p => p.IdProducto == id).FirstOrDefaultAsync();
         }
-
-        public List<int> GetProductoIdsByPartialNames(List<string> partialNames)
+        public async Task<List<int>> GetProductoIdsByPartialNamesAsync(List<string> partialNames)
         {
-            // Utiliza LINQ para buscar los IDs de empleados cuyos nombres contienen alguna cadena parcial
             var productoIds = _context.Productos
-                 .AsEnumerable() // Esto carga los datos en memoria (soluciona un error de constains)
+                .AsEnumerable()
                 .Where(producto => partialNames.Any(partialName => producto.Nombre.Contains(partialName)))
                 .Select(producto => producto.IdProducto)
                 .ToList();
 
             return productoIds;
-
         }
 
-        public bool save()
+        public async Task<List<Producto>> GetProductosByProductAndCategoryIdsAsync(List<int> productIds, List<int> categoryIds)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            var productos = _context.Productos
+                .AsEnumerable()
+                .Where(producto => productIds.Contains(producto.IdProducto) || categoryIds.Contains(Convert.ToInt32(producto.IdCategoria)))
+                .ToList();
+
+            return productos;
         }
+
+
+
+
     }
 }

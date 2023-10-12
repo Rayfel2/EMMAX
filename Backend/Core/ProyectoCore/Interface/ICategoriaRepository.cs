@@ -1,12 +1,15 @@
 ﻿using ProyectoCore.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Interface
 {
     public interface ICategoriaRepository
     {
-        ICollection<Categorium> GetCategorias();
-        Categorium GetCategorias(int id);
-        bool save();
-        List<int> GetCategoriaIdsByPartialNames(List<string> partialNames);
+        Task<List<Categorium>> GetCategoriasAsync();
+        Task<Categorium> GetCategoriaAsync(int id);
+        Task<bool> SaveAsync();
+        Task<List<int>> GetCategoriaIdsByPartialNamesAsync(List<string> partialNames);
     }
 }

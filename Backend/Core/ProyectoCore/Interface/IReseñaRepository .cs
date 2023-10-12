@@ -1,13 +1,15 @@
 ﻿using ProyectoCore.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Interface
 {
     public interface IReseñaRepository
     {
-        ICollection<Reseña> GetReseñas();
-        Reseña GetReseñas(int id);
-        bool CreateReseña(Reseña reseña);
-        bool save();
-        
+        Task<ICollection<Reseña>> GetReseñasAsync();
+        Task<ICollection<Reseña>> GetReseñasAsyncWithId(int id);
+        Task<Reseña> GetReseñasAsync(int id);
+        Task<bool> CreateReseñaAsync(Reseña reseña);
+        Task<bool> SaveAsync();
     }
 }

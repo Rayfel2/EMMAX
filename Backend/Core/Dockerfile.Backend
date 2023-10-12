@@ -1,0 +1,21 @@
+# Imagen de ASP.NET Core como base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+WORKDIR /app
+EXPOSE 80
+
+# Imagen de SDK de ASP.NET Core para compilar la aplicación
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["ProyectoCore/ProyectoCore.csproj", "ProyectoCore/"]
+RUN dotnet restore "ProyectoCore/ProyectoCore.csproj"
+COPY . .
+WORKDIR "/src/ProyectoCore"
+RUN dotnet build "ProyectoCore.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "ProyectoCore.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ProyectoCore.dll"]

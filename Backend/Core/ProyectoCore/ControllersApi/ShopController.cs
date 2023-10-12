@@ -9,6 +9,8 @@ using System.Collections.Immutable;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
 using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
+using ProyectoCore.Models.ViewModels;
 
 namespace ProyectoCore.ControllersApi
 {
@@ -33,15 +35,15 @@ namespace ProyectoCore.ControllersApi
             _RepositoryMetodo = RepositoryMetodo;
         }
 
-
         [HttpGet("/Producto")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Producto>))]
-        public IActionResult GetProducto(int page, int pageSize, 
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProductoDto>))]
+        public async Task<IActionResult> GetProductoAsync(int page, int pageSize,
             [FromQuery] List<string> categoryFilter = null,
             [FromQuery] List<string> productFilter = null,
             [FromQuery] bool recentProduct = false,
-             [FromQuery] bool categoryProduct = false,
-             [FromQuery] bool reviewProduct = false)
+            [FromQuery] bool categoryProduct = false,
+            [FromQuery] bool reviewProduct = false)
+
         {
             try
             {
@@ -59,49 +61,47 @@ namespace ProyectoCore.ControllersApi
                 // Utilizado para determinar dónde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
-                var allProductos = _RepositoryProducto.GetProductos()
-                  .Join(
-                _RepositoryCategoria.GetCategorias(),
-                cp => cp.IdCategoria,
-                p => p.IdCategoria,
-                (cp, p) => new { Producto = cp, Categoria = p }
-            )
-            .Select(result => _mapper.Map<ProductoDto>(result.Producto))
-            .ToList();
+                var productos = await _RepositoryProducto.GetProductosAsync();
+                var categorias = await _RepositoryCategoria.GetCategoriasAsync();
 
-                // Aplicar filtros según los valores proporcionados
-                if (categoryFilter != null && categoryFilter.Any())
+                var allProductos = productos
+                    .Join(
+                        categorias,
+                        cp => cp.IdCategoria,
+                        p => p.IdCategoria,
+                        (cp, p) => new { Producto = cp, Categoria = p }
+                    )
+                    .Select(result => _mapper.Map<ProductoDto>(result.Producto))
+                    .ToList();
+
+                if (categoryFilter != null && categoryFilter.Count > 0)
                 {
-                    var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(categoryFilter);
-
-                    allProductos = allProductos
-                        .Where(i => categoriasIds.Contains(Convert.ToInt32(i.Categoria.IdCategoria)))
-                        .ToList();
+                    // Filtrar productos por categoría
+                    allProductos = allProductos.Where(p => categoryFilter.Contains(p.Categoria.Nombre)).ToList();
+                }
+                if (productFilter != null && productFilter.Count > 0)
+                {
+                    allProductos = allProductos.Where(p =>
+                        productFilter.Any(filterTerm =>
+                            p.Nombre.IndexOf(filterTerm, StringComparison.OrdinalIgnoreCase) >= 0
+                            || p.Categoria.Nombre.IndexOf(filterTerm, StringComparison.OrdinalIgnoreCase) >= 0
+                        )
+                    ).ToList();
                 }
 
-                if (productFilter != null && productFilter.Any())
-                {
-                    var productosIds = _RepositoryProducto.GetProductoIdsByPartialNames(productFilter);
-                    var categoriasIds = _RepositoryCategoria.GetCategoriaIdsByPartialNames(productFilter);
 
-                    allProductos = allProductos
-                        .Where(i => productosIds.Contains(Convert.ToInt32(i.IdProducto)) || categoriasIds.Contains(Convert.ToInt32(i.Categoria.IdCategoria)))
-                        .ToList();
-
-                }
 
                 if (recentProduct)
                 {
-                    allProductos = allProductos.OrderByDescending(H => H.IdProducto).ToList();
+                    allProductos = allProductos.OrderByDescending(p => p.IdProducto).ToList();
                 }
 
                 if (categoryProduct)
                 {
                     allProductos = allProductos.Where(p => p.Categoria.IdCategoria != null) // Filtrar productos con categoría
-                .GroupBy(p => p.Categoria.IdCategoria) // Agrupa los productos por IdCategoria
-                .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
-                .ToList();
-
+                        .GroupBy(p => p.Categoria.IdCategoria) // Agrupa los productos por IdCategoria
+                        .Select(group => group.First()) // Selecciona el primer producto de cada grupo (categoría)
+                        .ToList();
                 }
 
                 if (reviewProduct)
@@ -109,10 +109,10 @@ namespace ProyectoCore.ControllersApi
                     foreach (var producto in allProductos)
                     {
                         // Obtener las reseñas filtradas por ID de producto, incluyendo datos de usuario
-                        var reseñasFiltradas = _RepositoryReseña
-                            .GetReseñas()
-                            .Where(r => r.IdProducto == producto.IdProducto)
-                            .ToList();
+                        var reseñasFiltradasTask = _RepositoryReseña.GetReseñasAsyncWithId(producto.IdProducto);
+                        await reseñasFiltradasTask; // Espera a que la tarea se complete
+
+                        var reseñasFiltradas = await reseñasFiltradasTask; // Obtiene el resultado de la tarea
 
                         // Inicializar una variable para almacenar la suma de valor reseña
                         int sumaValorReseña = 0;
@@ -129,17 +129,11 @@ namespace ProyectoCore.ControllersApi
                     allProductos = allProductos.OrderByDescending(p => p.Stock).ToList();
                 }
 
-               
-
-
                 // Aplicar paginación utilizando LINQ para seleccionar los registros apropiados.
                 // A nivel de rutas sería, por ejemplo, http://localhost:5230/Producto?page=1&pageSize=10
                 var pagedProductos = allProductos.Skip(startIndex).Take(pageSize).ToList();
 
-                // Mapear los productos paginados en lugar de todos
-                var ProductoDtoList = _mapper.Map<List<ProductoDto>>(pagedProductos);
-
-                return Ok(ProductoDtoList);
+                return Ok(pagedProductos);
             }
             catch (Exception ex)
             {
@@ -148,14 +142,17 @@ namespace ProyectoCore.ControllersApi
             }
         }
 
+
+
+
         [HttpGet("/Producto/{idProducto}")]
         [ProducesResponseType(200, Type = typeof(Producto))]
         [ProducesResponseType(404)]
-        public IActionResult GetProductoPorId(int idProducto)
+        public async Task<IActionResult> GetProductoPorIdAsync(int idProducto)
         {
             try
             {
-                var producto = _RepositoryProducto.GetProductos(idProducto);
+                var producto = await _RepositoryProducto.GetProductosAsync(idProducto);
 
                 if (producto == null)
                 {
@@ -175,9 +172,10 @@ namespace ProyectoCore.ControllersApi
 
 
 
+
         [HttpGet("/Categoria")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Categorium>))]
-        public IActionResult Getcategoria(int page, int pageSize)
+        public async Task<IActionResult> GetcategoriaAsync(int page, int pageSize)
         {
             try
             {
@@ -192,39 +190,34 @@ namespace ProyectoCore.ControllersApi
                     pageSize = 10; // Tamaño de página predeterminado
                 }
 
-                // Utilizado para determinar donde comienza cada pagina
+                // Utilizado para determinar donde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
-
-                var allcategorias = _RepositoryCategoria.GetCategorias();
+                var allcategorias = await _RepositoryCategoria.GetCategoriasAsync();
 
                 // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/categoria?page=1&pageSize=10
+                // A nivel de rutas sería, por ejemplo, http://localhost:5230/categoria?page=1&pageSize=10
                 var pagedcategorias = allcategorias.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
-
 
                 // Mapeo los empleados paginados en vez de todos
                 var categoriaDtoList = _mapper.Map<List<CategoriaDto>>(pagedcategorias);
-
 
                 return Ok(categoriaDtoList);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                ModelState.AddModelError("", "Ocurrió un error al obtener las categorías: " + ex.Message);
                 return BadRequest(ModelState);
             }
         }
 
         [HttpGet("/reseña/{productId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Categorium>))]
-        public IActionResult Getreseña(int page, int pageSize, int productId)
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ReseñaDto>))]
+        public async Task<IActionResult> GetReseña(int page, int pageSize, int productId)
         {
             try
             {
-                // Evitando valores negativos
+                // Evita valores negativos
                 if (page < 1)
                 {
                     page = 1; // Página mínima
@@ -235,26 +228,33 @@ namespace ProyectoCore.ControllersApi
                     pageSize = 10; // Tamaño de página predeterminado
                 }
 
-                // Utilizado para determinar donde comienza cada pagina
+                // Utilizado para determinar dónde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
                 // Obtener las reseñas filtradas por ID de producto, incluyendo datos de usuario
-                var reseñasFiltradas = _RepositoryReseña
-    .GetReseñas()
-    .Where(r => r.IdProducto == productId)
-    .Skip(startIndex)
-    .Take(pageSize)
-    .ToList();
+                var reseñasFiltradas = await _RepositoryReseña.GetReseñasAsyncWithId(productId);
+                var reseñasFiltradasList = reseñasFiltradas
+                    .Skip(startIndex)
+                    .Take(pageSize)
+                    .ToList();
 
                 // Mapear las reseñas a objetos ReseñaDto y asignar nombres de usuario
-                var reseñaDtoList = reseñasFiltradas.Select(reseña => new ReseñaDto
+                var reseñaDtoList = new List<ReseñaDto>();
+
+                foreach (var reseña in reseñasFiltradas)
                 {
-                    IdReseña = reseña.IdReseña,
-                    Usuario = _RepositoryUsuario.GetUsuario(Convert.ToInt32(reseña.IdUsuario))?.NombreUsuario,
-                    IdProducto = reseña.IdProducto,
-                    ValorReseña = reseña.ValorReseña,
-                    Comentario = reseña.Comentario
-                }).ToList();
+                    var usuario = await _RepositoryUsuario.GetUsuarioAsync(Convert.ToInt32(reseña.IdUsuario));
+                    var reseñaDto = new ReseñaDto
+                    {
+                        IdReseña = reseña.IdReseña,
+                        Usuario = usuario?.NombreUsuario,
+                        IdProducto = reseña.IdProducto,
+                        ValorReseña = reseña.ValorReseña,
+                        Comentario = reseña.Comentario
+                    };
+
+                    reseñaDtoList.Add(reseñaDto);
+                }
 
                 return Ok(reseñaDtoList);
             }
@@ -266,13 +266,18 @@ namespace ProyectoCore.ControllersApi
         }
 
 
+
+
+
+
+
         [HttpGet("/Metodo")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<MetodoPago>))]
-        public IActionResult GetMetodo(int page, int pageSize)
+        [ProducesResponseType(200, Type = typeof(IEnumerable<MetodoDto>))]
+        public async Task<IActionResult> GetMetodoAsync(int page, int pageSize)
         {
             try
             {
-                // Evitando valores negativos
+                // Evitar valores negativos
                 if (page < 1)
                 {
                     page = 1; // Página mínima
@@ -283,31 +288,27 @@ namespace ProyectoCore.ControllersApi
                     pageSize = 10; // Tamaño de página predeterminado
                 }
 
-                // Utilizado para determinar donde comienza cada pagina
+                // Utilizado para determinar donde comienza cada página
                 int startIndex = (page - 1) * pageSize;
 
+                // Obtener métodos de pago de forma asincrónica
+                var allMetodos = await _RepositoryMetodo.GetMetodoAsync();
 
-                var allmetodos = _RepositoryMetodo.GetMetodo();
+                // Aplicar paginación utilizando LINQ
+                var pagedMetodos = allMetodos.Skip(startIndex).Take(pageSize).ToList();
 
-                // Aplicamos paginación utilizando LINQ para seleccionar los registros apropiados.
-                // A nivel de rutas seria por ejemplo http://localhost:5230/categoria?page=1&pageSize=10
-                var pagedmetodos = allmetodos.Skip(startIndex).Take(pageSize).ToList();
-                //.skip omite un numero de registro
-                //.Take cantidad elemento que se van a tomar
-
-
-                // Mapeo los empleados paginados en vez de todos
-                var metodoDtoList = _mapper.Map<List<MetodoDto>>(pagedmetodos);
-
+                // Mapear los métodos de pago a objetos MetodoDto
+                var metodoDtoList = _mapper.Map<List<MetodoDto>>(pagedMetodos);
 
                 return Ok(metodoDtoList);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Ocurrió un error al obtener los empleados: " + ex.Message);
+                ModelState.AddModelError("", "Ocurrió un error al obtener los métodos de pago: " + ex.Message);
                 return BadRequest(ModelState);
             }
         }
+
     }
 
 }

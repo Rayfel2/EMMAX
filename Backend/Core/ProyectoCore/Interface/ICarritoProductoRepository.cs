@@ -1,17 +1,18 @@
 ﻿using ProyectoCore.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProyectoCore.Interface
 {
     public interface ICarritoProductoRepository
     {
-        ICollection<CarritoProducto> GetCarritoProducto();
-        ICollection<CarritoProducto> GetCarritoProducto(int id);
-        bool CreateCarritoProducto(CarritoProducto carritoProducto);
-        bool CarritoProductoExist(int idCarrito, int idProducto);
-        bool DeleteCarritoProducto(CarritoProducto carritoProducto);
-        CarritoProducto GetCarritosProductos(int IdCarritos, int IdProductos);
-        
-        bool UpdateCarritoProducto(CarritoProducto carritoProducto);
-        bool save();
+        Task<List<CarritoProducto>> GetCarritoProductoAsync();
+        Task<List<CarritoProducto>> GetCarritoProductoAsync(int id);
+        Task<bool> CreateCarritoProductoAsync(CarritoProducto carritoProducto);
+        Task<bool> CarritoProductoExistAsync(int idCarrito, int idProducto);
+        Task<bool> DeleteCarritoProductoAsync(CarritoProducto carritoProducto);
+        Task<CarritoProducto> GetCarritosProductosAsync(int IdCarritos, int IdProductos);
+        Task<bool> UpdateCarritoProductoAsync(CarritoProducto carritoProducto);
     }
 }
+

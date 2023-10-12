@@ -154,6 +154,7 @@ export class ProductCompont implements OnInit {
     this.httpClient.post('http://localhost:5230/Comentarios', this.comentarioRequest, { headers }).subscribe(
       (response: any) => {
         alert('Has comentado con exito');
+        this.getProductReviews();
       },
       (error) => {
         console.error('Error al agregar comentario', error);
