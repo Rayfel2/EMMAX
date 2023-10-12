@@ -16,7 +16,7 @@ jobs:
     - name: Configurar el entorno de .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '20.5'  # Especifica la versión de Node.js que necesitas
+        dotnet-version: '5.x'  # Especifica la versión de Node.js que necesitas
      
     - name: Verificar versión de .NET Core
       run: dotnet --version
