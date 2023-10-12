@@ -63,6 +63,9 @@ jobs:
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
     # If this step fails, then you should remove it and run the build manually (see below)
+    - name: Cambiar al Directorio del Proyecto #extraaaaaaaaa
+      run: cd ruta/al/directorio/del/proyecto
+
 
 
     # ℹ️ Command-line programs to run using the OS shell.
@@ -72,7 +75,7 @@ jobs:
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
     - run: |
-         echo "Run, dotnet build".Backend/Core/ProyectoCore.sln
+         echo dotnet build Backend/Core/ProyectoCore.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
