@@ -800,5 +800,40 @@ namespace ProyectoCore.ControllersApi
                 return BadRequest(ModelState);
             }
         }
+
+        [Authorize]
+        [HttpGet("/ID")]
+        [ProducesResponseType(200, Type = typeof(Producto))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> IDAsync()
+        {
+            try
+            {
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+                if (userIdClaim == null)
+                {
+                    // El claim "Name" no se encontró en el token
+                    return BadRequest("No se encontró el claim 'Name' en el token.");
+                }
+
+                if (!int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    // No se pudo convertir el valor del claim "Name" a un entero
+                    return BadRequest("No se pudo convertir 'userId' a un entero.");
+                }
+
+                var allUsuarios = await _RepositoryUsuario.GetUsuarioAsync(userId);
+
+                return Ok(allUsuarios.IdUsuario);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error al obtener el id: " + ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
+
     }
 }

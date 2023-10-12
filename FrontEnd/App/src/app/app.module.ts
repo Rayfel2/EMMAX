@@ -20,6 +20,8 @@ import { RegisterComponent } from './auth/register/register.component';
 import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 import { ProductCompont } from './pages/product/product.component';
 import { BuyComponent } from './pages/buy/buy.component';
+import { HistorialComponent } from './pages/historial/historial.component';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -39,13 +41,15 @@ import { BuyComponent } from './pages/buy/buy.component';
     LoginRegisterComponent,
     ProductCompont,
     BuyComponent,
+    HistorialComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    GraphQLModule
   ],
   providers: [],
   bootstrap: [AppComponent]

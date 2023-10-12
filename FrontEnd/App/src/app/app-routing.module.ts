@@ -12,6 +12,7 @@ import { ShopComponent } from './pages/shop/shop.component';
 import { LoginRegisterComponent } from './auth/login-register/login-register.component';
 import { ProductCompont } from './pages/product/product.component'; 
 import { BuyComponent } from './pages/buy/buy.component'; 
+import { HistorialComponent } from './pages/historial/historial.component'; 
 
 
 const routes: Routes = [
@@ -28,6 +29,7 @@ const routes: Routes = [
   {path: 'tienda', component:ShopComponent},
   {path: 'compra', component:BuyComponent},
   {path: 'product/:idProducto', component:ProductCompont},
+  {path: 'historial', component:HistorialComponent},
 ];
 
 @NgModule({

@@ -1,0 +1,39 @@
+<div *ngIf="loading" class="loading-icon">
+    <i class="fa fa-spinner fa-spin fa-4x"></i>
+  </div>
+  
+  <div *ngIf="!loading && data" class="form-container">
+    <h1>Historial de Recibos</h1>
+    <div class="section">
+      <p class="section-title">Información del Usuario</p>
+      <div class="form-field">
+        <p>Nombre: {{ data.usuario[0]?.nombre }}</p>
+      </div>
+      <div class="form-field">
+        <p>Apellido: {{ data.usuario[0]?.apellido }}</p>
+      </div>
+      <div class="form-field">
+        <p>Nombre de Usuario: {{ data.usuario[0]?.nombreUsuario }}</p>
+      </div>
+    </div>
+    
+    <!-- Recorre los carritos y sus recibos -->
+    <div *ngFor="let carrito of data.usuario[0]?.carritos" class="section">
+      <h2>Compras hasta el momento</h2>
+      <div *ngFor="let recibo of carrito.recibos" class="receipt-details">
+        <p>Método de Pago: {{ recibo.oMetodoPago.tipoMetodo }}</p>
+        <p>Subtotal: {{ recibo.subtotal }}</p>
+        <p>Impuestos: {{ recibo.impuestos }}</p>
+      </div>
+  
+      <!-- Recorre los productos del carrito si es necesario -->
+      <div *ngFor="let producto of carrito.carritoProductos" class="product-details">
+        <h3>Productos pendientes de compra</h3>
+        <p>Nombre: {{ producto.oProducto.nombre }}</p>
+        <p>Descripción: {{ producto.oProducto.descripcion }}</p>
+        <p>Categoría: {{ producto.oProducto.oCategorium.nombre }}</p>
+        <p>Precio: {{ producto.oProducto.precio }}</p>
+      </div>
+    </div>
+  </div>
+  

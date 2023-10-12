@@ -8,6 +8,10 @@ using System.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ProyectoCore.GraphQL;
+using HotChocolate;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,9 +49,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllersWithViews();
 var env = Environment.GetEnvironmentVariable("ConnectionStrings__cadenaSQL"); //esta usa el connectionstring de la variable de entorno
 var appsettings = builder.Configuration.GetConnectionString("cadenaSQL"); // esta usa el connectionstring del que esta en el app setting
-//var jwtSecret = "Aguacate"; 
 var jwtSecret = "AguacateMiClaveMuyLargaQueCumpleConLosRequisitosDelAlgoritmoHMACSHA256123";
 builder.Services.AddSingleton(jwtSecret);
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -76,10 +80,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration("Jwt:Key")))
     }
 }*/
-
 builder.Services.AddDbContext<TiendaPruebaContext>(options =>
     options.UseSqlServer(env) // en este caso usamos la varaibles de entorno
 );
+
+
+
+
+builder.Services.AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddProjections()
+    .AddSorting()
+    .AddFiltering()
+    .AddType<UsuarioType>()
+    ;
 
 
 var app = builder.Build();
@@ -108,6 +122,13 @@ app.UseCors("AllowSpecificOrigin");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseCors("AllowSpecificOrigin");
+
+app.MapGraphQL("/graphQL");
 
 app.Run();
 

@@ -1,4 +1,5 @@
 <h1>Mi carrito</h1>
+<button type="button" class="btn btn-dark icono-grupo" routerLink="/historial">Ver historial de compras</button>
 <div *ngFor="let producto of carritoProductos">  
   <div class="tarjeta">
     <a [routerLink]="['/product', producto.producto.idProducto]">
@@ -30,3 +31,4 @@
   </div>
 </div>
 <button type="button" class="btn btn-success icono-grupo" routerLink="/compra">Realizar Compra</button>
+
