@@ -72,7 +72,7 @@ jobs:
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
     - run: |
-         echo dotnet build Backend/Core/ProyectoCore.sln
+         echo "Run, dotnet build".Backend/Core/ProyectoCore.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
