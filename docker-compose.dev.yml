@@ -1,0 +1,18 @@
+version: '3'
+services:
+  backend-development:
+    build:
+      context: ./backend/Core
+      dockerfile: Dockerfile.Backend
+    ports:
+      - "5230:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__cadenaSQL=Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TiendaPrueba;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+
+  frontend-development:
+    build:
+      context: ./frontend/App
+      dockerfile: Dockerfile.Frontend
+    ports:
+      - "4200:80"
