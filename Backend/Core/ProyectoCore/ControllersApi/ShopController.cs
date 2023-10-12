@@ -18,6 +18,7 @@ namespace ProyectoCore.ControllersApi
     [Route("[controller]")]
     public class ShopController : Controller
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IProductoRepository _RepositoryProducto;
         private readonly ICategoriaRepository _RepositoryCategoria;
         private readonly IReseñaRepository _RepositoryReseña;
@@ -47,6 +48,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el get de producto");
                 // Evitar valores negativos
                 if (page < 1)
                 {
@@ -137,6 +139,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los productos: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -152,6 +155,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el get de producto");
                 var producto = await _RepositoryProducto.GetProductosAsync(idProducto);
 
                 if (producto == null)
@@ -165,6 +169,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -179,6 +184,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el get de categoria");
                 // Evitando valores negativos
                 if (page < 1)
                 {
@@ -206,6 +212,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener las categorías: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -217,6 +224,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el get de producto");
                 // Evita valores negativos
                 if (page < 1)
                 {
@@ -260,6 +268,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener las reseñas: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -277,6 +286,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el get de metodo");
                 // Evitar valores negativos
                 if (page < 1)
                 {
@@ -304,6 +314,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los métodos de pago: " + ex.Message);
                 return BadRequest(ModelState);
             }

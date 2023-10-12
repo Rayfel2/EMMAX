@@ -56,7 +56,7 @@ namespace ProyectoCore.Controllers
 
                 return View(oProductoVM);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al traer los productos " + ex.Message);

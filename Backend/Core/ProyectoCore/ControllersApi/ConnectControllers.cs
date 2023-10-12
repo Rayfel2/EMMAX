@@ -20,7 +20,7 @@ namespace ProyectoCore.ControllersApi
     [Route("[controller]")]
     public class ConnectControllers : Controller
     {
-
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IUsuarioRepository _RepositoryUsuario;
         private readonly ICarritoProductoRepository _RepositoryCarritoProducto;
         private readonly IListaProductoRepository _RepositoryListaProducto;
@@ -53,6 +53,7 @@ namespace ProyectoCore.ControllersApi
         [HttpPost("/login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginRequest)
         {
+            log.Debug("la aplicacion paso por el post de login");
             try
             {
                 // Verificar si el correo electrónico es válido
@@ -84,6 +85,7 @@ namespace ProyectoCore.ControllersApi
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Ocurrió un error al iniciar sesión: " + ex.Message);
+                log.Error(ex);
                 return BadRequest(ModelState);
             }
         }
@@ -95,6 +97,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacion paso por el get de usuario");
                 var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
 
                 if (userIdClaim == null)
@@ -115,6 +118,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los Usuarios: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -127,6 +131,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacion paso por el get de carritoProducto");
                 // Obtén el ID del usuario autenticado
                 var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
 
@@ -187,6 +192,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los CarritoProducto: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -200,6 +206,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacion paso por el get de ListaProducto");
                 // Obtén el ID del usuario autenticado
                 var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
 
@@ -264,6 +271,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener los listaproductoDto: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -281,6 +289,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacion paso por el posr de registrar");
                 // Por si el DTO es null
                 if (UsuarioPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -329,6 +338,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -344,6 +354,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacion paso por el post de carrito producto");
                 // Por si el DTO es null
                 if (CarritoProductoPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -406,6 +417,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -420,6 +432,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Info("la aplicacions paso por el post de lista producto");
                 // Por si el DTO es null
                 if (ListaProductoPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -469,6 +482,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -484,6 +498,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el post de comentarios");
                 // Por si el DTO es null
                 if (ReseñaPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -535,6 +550,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -549,6 +565,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el delete de listaProducto");
                 // por si el idProducto es null
                 if (idProducto == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -586,6 +603,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -600,6 +618,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el delete de CarritoProducto");
                 // por si el idProducto es null
                 if (idProducto == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -637,6 +656,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -651,6 +671,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el post de comprar");
                 // por si el DTO es null
                 if (ReciboPostDTO == null || !ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -709,6 +730,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al procesar la solicitud: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -722,6 +744,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el Patch de producto");
                 var producto = await _RepositoryProducto.GetProductosAsync(idProducto);
                 if (producto == null)
                 {
@@ -739,6 +762,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Debug("la aplicacion paso por el patch de producto");
                 ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
                 return BadRequest(ModelState);
             }
@@ -752,6 +776,7 @@ namespace ProyectoCore.ControllersApi
         {
             try
             {
+                log.Debug("la aplicacion paso por el patch de carritoProducto");
                 var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
 
                 if (userIdClaim == null)
@@ -796,6 +821,7 @@ namespace ProyectoCore.ControllersApi
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 ModelState.AddModelError("", "Ocurrió un error al obtener el producto: " + ex.Message);
                 return BadRequest(ModelState);
             }
