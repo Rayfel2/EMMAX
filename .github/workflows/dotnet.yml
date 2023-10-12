@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Cambiar al Directorio del Proyecto # comentario
-      run: cd ruta/al/directorio/del/proyecto # comentario
+      run: cd Backend/Core/ProyectoCore # comentario
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
