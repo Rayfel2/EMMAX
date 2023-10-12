@@ -3,32 +3,34 @@
     <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Cualquier sugerencia o duda no dudes en contactar.</p>
     </div>
 
-      <form (submit)="enviarCorreo()">
+    <form>
         <div class="form-group">
-          <label for="usuario">Usuario:</label>
-          <input type="text" class="shadow-sm form-control" id="usuario" name="usuario" [(ngModel)]="usuario">
-        </div>
-        <div class="form-group">
-          <label for="gmail">Gmail:</label>
-          <input type="email" class="shadow-sm form-control" id="gmail" name="gmail" [(ngModel)]="gmail">
-        </div>
-        <div class="form-group">
-          <label for="comentarios">Comentarios:</label>
-          <textarea class="form-control" id="comentarios" name="comentarios" [(ngModel)]="comentarios"></textarea>
-        </div>
-        
-        <div class="redes-sociales">
-            <h2>Redes Sociales</h2>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.instagram.com/just.jcob/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-       
-          <!-- Resto del formulario aquí -->
-          <div class="d-grid gap-2 col-6 mx-auto py-3">
-            <button class="btn btn-dark" type="submit">Enviar</button>
+            <label for="formGroupExampleInput">Usuario:</label>
+            <input type="Usuario" class="shadow-sm form-control">
           </div>
-        </form>
-           
-  
+          <div class="form-group">
+            <label for="formGroupExampleInput2">Gmail:</label>
+            <input type="Gmail" class="shadow-sm form-control">
+          </div>
+        <div class="">
+        <label for="comentarios">Comentarios:</label>
+        <textarea type="comentarios" class=""></textarea>
+         </div>
+      
+        <div class="d-grid gap-2 col-6 mx-auto py-3">
+          <button class="continue-application">
+            <div>
+                <div class="pencil"></div>
+                <div class="folder">
+                    <div class="top">
+                        <svg viewBox="0 0 24 27">
+                            <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                        </svg>
+                    </div>
+                    <div class="paper"></div>
+                </div>
+            </div>
+            Enviar
+        </button>
+        </div>        
+    </form>
